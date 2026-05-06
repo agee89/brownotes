@@ -1,5 +1,8 @@
 // UI module - handles DOM manipulation and rendering
 const UI = {
+  labelSuggestions: [],
+  labelSuggestionIndex: -1,
+
   // Get element by ID
   get(id) {
     return document.getElementById(id);
@@ -8,12 +11,54 @@ const UI = {
   // Show/hide drawer
   showDrawer() {
     const drawer = this.get('bronotes-drawer');
-    if (drawer) drawer.style.transform = 'translateX(0)';
+    if (drawer) {
+      drawer.dataset.collapsed = 'false';
+      drawer.style.transform = 'translateX(0)';
+    }
   },
 
   hideDrawer() {
     const drawer = this.get('bronotes-drawer');
-    if (drawer) drawer.style.transform = 'translateX(100%)';
+    if (drawer) {
+      drawer.dataset.collapsed = 'true';
+      drawer.style.transform = 'translateX(100%)';
+    }
+  },
+
+  toggleDrawer() {
+    const drawer = this.get('bronotes-drawer');
+    if (!drawer) return;
+
+    if (drawer.dataset.collapsed === 'true') {
+      this.showDrawer();
+    } else {
+      this.hideDrawer();
+    }
+  },
+
+  // Toggle transparent drawer mode
+  setDrawerTransparent(enabled) {
+    const drawer = this.get('bronotes-drawer');
+    const button = this.get('bn-btn-transparency');
+    const icon = this.get('bn-transparency-icon');
+    if (!drawer) return;
+
+    drawer.dataset.transparent = enabled ? 'true' : 'false';
+    drawer.style.setProperty('background', enabled ? 'rgba(255, 255, 255, 0.38)' : '#ffffff', 'important');
+    drawer.style.setProperty(
+      'box-shadow',
+      enabled ? 'none' : '-1px 0 0 #e0e0e0',
+      'important'
+    );
+
+    if (button) {
+      button.setAttribute('aria-pressed', enabled ? 'true' : 'false');
+      button.style.opacity = enabled ? '1' : '0.72';
+    }
+
+    if (icon) {
+      icon.src = chrome.runtime.getURL(enabled ? 'icons/eye-off.png' : 'icons/eye.png');
+    }
   },
 
   // Switch view
@@ -279,14 +324,91 @@ const UI = {
     };
   },
 
-  // Update label suggestions datalist
+  // Update label suggestions
   updateLabelSuggestions(labels) {
-    const datalist = this.get('bn-label-suggestions');
-    if (!datalist) return;
+    this.labelSuggestions = labels || [];
+    this.renderLabelAutocomplete();
+  },
 
-    datalist.innerHTML = labels.map(label => 
-      `<option value="${Utils.escapeHtml(label)}">`
+  renderLabelAutocomplete() {
+    const input = this.get('bn-note-label');
+    const menu = this.get('bn-label-autocomplete');
+    if (!input || !menu) return;
+
+    const query = input.value.trim().toLowerCase();
+    const matches = this.labelSuggestions
+      .filter(label => label.toLowerCase().includes(query))
+      .slice(0, 8);
+
+    if (matches.length === 0 || document.activeElement !== input) {
+      this.hideLabelAutocomplete();
+      return;
+    }
+
+    if (this.labelSuggestionIndex >= matches.length) {
+      this.labelSuggestionIndex = matches.length - 1;
+    }
+
+    menu.innerHTML = matches.map((label, index) =>
+      `<button type="button" class="bn-label-option" data-label="${Utils.escapeHtml(label)}" style="width: 100%; padding: 8px 10px; background: ${index === this.labelSuggestionIndex ? '#f3f3f3' : 'transparent'}; color: #2a2a2a; border: none; cursor: pointer; display: block; text-align: left; font-size: 12px; font-family: inherit;">${Utils.escapeHtml(label)}</button>`
     ).join('');
+
+    menu.style.display = 'block';
+    menu.querySelectorAll('.bn-label-option').forEach(button => {
+      button.addEventListener('mousedown', (event) => {
+        event.preventDefault();
+        this.selectLabelSuggestion(button.dataset.label);
+      });
+    });
+  },
+
+  showLabelAutocomplete() {
+    this.labelSuggestionIndex = -1;
+    this.renderLabelAutocomplete();
+  },
+
+  hideLabelAutocomplete() {
+    const menu = this.get('bn-label-autocomplete');
+    if (menu) menu.style.display = 'none';
+    this.labelSuggestionIndex = -1;
+  },
+
+  handleLabelAutocompleteKey(event) {
+    const input = this.get('bn-note-label');
+    const query = input.value.trim().toLowerCase();
+    const matches = this.labelSuggestions
+      .filter(label => label.toLowerCase().includes(query))
+      .slice(0, 8);
+
+    if (event.key === 'Escape') {
+      this.hideLabelAutocomplete();
+      return;
+    }
+
+    if (matches.length === 0) return;
+
+    if (event.key === 'ArrowDown') {
+      event.preventDefault();
+      this.labelSuggestionIndex = Math.min(this.labelSuggestionIndex + 1, matches.length - 1);
+      this.renderLabelAutocomplete();
+    } else if (event.key === 'ArrowUp') {
+      event.preventDefault();
+      this.labelSuggestionIndex = Math.max(this.labelSuggestionIndex - 1, 0);
+      this.renderLabelAutocomplete();
+    } else if (event.key === 'Enter' && this.labelSuggestionIndex >= 0) {
+      event.preventDefault();
+      this.selectLabelSuggestion(matches[this.labelSuggestionIndex]);
+    }
+  },
+
+  selectLabelSuggestion(label) {
+    const input = this.get('bn-note-label');
+    if (!input) return;
+
+    input.value = label;
+    input.dispatchEvent(new Event('input', { bubbles: true }));
+    this.hideLabelAutocomplete();
+    input.focus();
   },
 
   // Update label filter dropdown

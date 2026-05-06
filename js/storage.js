@@ -56,6 +56,28 @@ const Storage = {
     await this.set({ nickname });
   },
 
+  // Get drawer transparency preference
+  async getDrawerTransparent() {
+    const result = await this.get(['drawerTransparent']);
+    return !!result.drawerTransparent;
+  },
+
+  // Save drawer transparency preference
+  async saveDrawerTransparent(enabled) {
+    await this.set({ drawerTransparent: enabled });
+  },
+
+  // Get drawer collapsed preference
+  async getDrawerCollapsed() {
+    const result = await this.get(['drawerCollapsed']);
+    return !!result.drawerCollapsed;
+  },
+
+  // Save drawer collapsed preference
+  async saveDrawerCollapsed(enabled) {
+    await this.set({ drawerCollapsed: enabled });
+  },
+
   // Get manually created labels
   async getManualLabels() {
     const result = await this.get(['labels']);

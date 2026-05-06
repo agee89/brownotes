@@ -12,7 +12,7 @@ const App = {
       if (request.action === 'toggleDrawer') {
         if (request.enabled) {
           if (!this.drawerInjected) this.injectDrawer();
-          UI.showDrawer();
+          this.restoreDrawerState();
         } else {
           UI.hideDrawer();
         }
@@ -25,7 +25,7 @@ const App = {
     chrome.storage.local.get(['globalEnabled'], (result) => {
       if (result.globalEnabled) {
         this.injectDrawer();
-        UI.showDrawer();
+        this.restoreDrawerState();
       }
     });
   },
@@ -68,7 +68,19 @@ const App = {
     UI.get('bn-nav-allnotes').onclick = () => this.switchView('allnotes');
     UI.get('bn-nav-labels').onclick = () => this.switchView('labels');
     UI.get('bn-nav-settings').onclick = () => this.switchView('settings');
-    UI.get('bn-btn-close').onclick = () => UI.hideDrawer();
+    UI.get('bn-btn-close').onclick = async () => {
+      UI.hideDrawer();
+      await Storage.saveDrawerCollapsed(true);
+    };
+    UI.get('bn-btn-open-panel').onclick = async () => {
+      UI.showDrawer();
+      await Storage.saveDrawerCollapsed(false);
+    };
+    UI.get('bn-btn-transparency').onclick = async () => {
+      const enabled = UI.get('bronotes-drawer').dataset.transparent !== 'true';
+      UI.setDrawerTransparent(enabled);
+      await Storage.saveDrawerTransparent(enabled);
+    };
 
     // Home
     UI.get('bn-btn-new-note').onclick = () => EditorView.open(null);
@@ -93,7 +105,15 @@ const App = {
 
     // Editor input handlers
     UI.get('bn-note-title').oninput = () => EditorView.handleInput();
-    UI.get('bn-note-label').oninput = () => EditorView.handleInput();
+    UI.get('bn-note-label').oninput = () => {
+      EditorView.handleInput();
+      UI.renderLabelAutocomplete();
+    };
+    UI.get('bn-note-label').onfocus = () => UI.showLabelAutocomplete();
+    UI.get('bn-note-label').onkeydown = (event) => UI.handleLabelAutocompleteKey(event);
+    UI.get('bn-note-label').onblur = () => {
+      setTimeout(() => UI.hideLabelAutocomplete(), 120);
+    };
     UI.get('bn-editor').oninput = () => EditorView.handleInput();
 
     // Labels
@@ -104,6 +124,19 @@ const App = {
     UI.get('bn-btn-export').onclick = () => SettingsView.export();
     UI.get('bn-btn-import').onclick = () => UI.get('bn-import-file').click();
     UI.get('bn-import-file').onchange = (e) => SettingsView.import(e);
+
+    Storage.getDrawerTransparent().then((enabled) => {
+      UI.setDrawerTransparent(enabled);
+    });
+  },
+
+  async restoreDrawerState() {
+    const collapsed = await Storage.getDrawerCollapsed();
+    if (collapsed) {
+      UI.hideDrawer();
+    } else {
+      UI.showDrawer();
+    }
   },
 
   // Switch between views

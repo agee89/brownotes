@@ -112,5 +112,17 @@ const EditorView = {
     const content = UI.get('bn-editor').value;
     const previewContainer = UI.get('bn-preview-container');
     previewContainer.innerHTML = Utils.markdownToHtml(content);
+    previewContainer.querySelectorAll('.bn-copy-code').forEach(button => {
+      button.addEventListener('click', async () => {
+        const code = button.parentElement.querySelector('code')?.textContent || '';
+        await navigator.clipboard.writeText(code);
+
+        const originalText = button.textContent;
+        button.textContent = 'copied';
+        setTimeout(() => {
+          button.textContent = originalText;
+        }, 900);
+      });
+    });
   }
 };
