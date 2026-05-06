@@ -15,6 +15,7 @@ Complete documentation for Bro Notes Chrome Extension v3.0.0.
 - **[QUICK_REFERENCE.md](development/QUICK_REFERENCE.md)** - Quick lookup reference
 - **[DEVELOPER.md](development/DEVELOPER.md)** - Complete development guide
 - **[CONTRIBUTING.md](development/CONTRIBUTING.md)** - How to contribute
+- **[GIT_WORKFLOW.md](development/GIT_WORKFLOW.md)** - Git workflow and best practices
 
 #### Architecture
 - **[ARCHITECTURE.md](architecture/ARCHITECTURE.md)** - Complete architecture documentation
@@ -50,7 +51,8 @@ docs/
 ├── development/                # Developer documentation
 │   ├── QUICK_REFERENCE.md      # Quick reference
 │   ├── DEVELOPER.md            # Development guide
-│   └── CONTRIBUTING.md         # Contribution guide
+│   ├── CONTRIBUTING.md         # Contribution guide
+│   └── GIT_WORKFLOW.md         # Git workflow
 │
 ├── guides/                     # User guides
 │   ├── START_HERE.md           # Getting started
@@ -110,6 +112,7 @@ Guides for developers working on the project.
 - `development/QUICK_REFERENCE.md` - Quick lookup
 - `development/DEVELOPER.md` - Complete guide
 - `development/CONTRIBUTING.md` - Contribution guide
+- `development/GIT_WORKFLOW.md` - Git workflow
 
 ### User Guides
 Guides for end users and getting started.
@@ -151,10 +154,10 @@ Documentation of bugs found and fixed.
 ## 📊 Documentation Statistics
 
 - **Architecture:** 1 file
-- **Development:** 3 files
+- **Development:** 4 files
 - **Guides:** 3 files
 - **Bug Reports:** 5 files
-- **Total:** 14 files
+- **Total:** 15 files
 
 ---
 
