@@ -1,0 +1,29 @@
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Temporary files
+*.tmp
+*.log
+
+# Build files (jika nanti ada build process)
+dist/
+build/
+
+# Node modules (jika nanti menggunakan npm)
+node_modules/
+
+# Backup files
+*.backup
+*.bak
+
+# Chrome extension files yang di-generate
+*.crx
+*.pem
