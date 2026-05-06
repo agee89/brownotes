@@ -1,6 +1,11 @@
 // All Notes view controller
 const AllNotesView = {
   async render() {
+    if (!UI.get('bn-notes-list') || !UI.get('bn-filter-label') || !UI.get('bn-search') || !UI.get('bn-sort')) {
+      setTimeout(() => this.render(), 50);
+      return;
+    }
+
     const notes = await Storage.getNotes();
     let notesArray = Object.entries(notes).map(([id, note]) => ({ id, ...note }));
 
@@ -16,7 +21,9 @@ const AllNotesView = {
 
     // Label filter
     const filterLabel = UI.get('bn-filter-label').value;
-    if (filterLabel) {
+    if (filterLabel === '__NO_LABEL__') {
+      notesArray = notesArray.filter(note => !note.label);
+    } else if (filterLabel) {
       notesArray = notesArray.filter(note => note.label === filterLabel);
     }
 
@@ -50,19 +57,21 @@ const AllNotesView = {
     }
 
     listDiv.innerHTML = notesArray.map(note => {
-      const dateStr = Utils.formatDate(note.updatedAt);
+      const dateStr = Utils.formatDate(note.updatedAt, 'long');
       const preview = (note.content || '').substring(0, 100);
       const title = Utils.escapeHtml(note.title || 'untitled');
       const label = Utils.escapeHtml(note.label || 'no label');
       const noteId = Utils.escapeHtml(note.id);
+      const labelIcon = chrome.runtime.getURL('icons/label.png');
+      const calendarIcon = chrome.runtime.getURL('icons/calendar.png');
       
       return `
         <div class="bn-note-item" data-note-id="${noteId}" role="button" tabindex="0" style="padding: 16px; border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: background 0.15s, transform 0.1s ease;">
           <div style="font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #2a2a2a;">${title}</div>
           <div style="font-size: 12px; color: #6a6a6a; margin-bottom: 8px; line-height: 1.5;">${Utils.escapeHtml(preview)}${preview.length >= 100 ? '...' : ''}</div>
           <div style="display: flex; justify-content: space-between; font-size: 11px; color: #9a9a9a;">
-            <span>${label}</span>
-            <span>${dateStr}</span>
+            <span style="display: inline-flex; align-items: center; gap: 4px; min-width: 0;"><img src="${labelIcon}" alt="" style="width: 11px; height: 11px; opacity: 0.55; pointer-events: none; flex: 0 0 auto;" /><span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${label}</span></span>
+            <span style="display: inline-flex; align-items: center; gap: 4px; flex: 0 0 auto;"><img src="${calendarIcon}" alt="" style="width: 11px; height: 11px; opacity: 0.55; pointer-events: none;" />${dateStr}</span>
           </div>
         </div>
       `;

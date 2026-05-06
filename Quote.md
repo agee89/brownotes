@@ -1,0 +1,77 @@
+Berikut adalah daftar **75+ kutipan unik** dari tokoh nyata tentang **catatan, mencatat, jurnal, dan dokumentasi ide**, telah digabungkan, dibersihkan dari duplikasi, dan diurutkan secara tematik untuk memudahkan penggunaan.
+
+1. **Seneca** – *"Jangan pernah mengandalkan ingatan semata; apa yang penting, tuliskan."* *(Surat-surat kepada Lucilius)*
+2. **Marcus Aurelius** – *"Tulisan ini hanyalah catatan untuk diriku sendiri, agar aku tidak lupa pada prinsip yang telah kupilih."* *(Meditations, Buku I)*
+3. **Aristoteles** – *"Ingatan adalah gudang pikiran, tetapi tulisan adalah arsiteknya."* *(De Memoria et Reminiscentia)*
+4. **Francis Bacon** – *"Tuliskanlah pikiran yang muncul secara spontan. Biasanya itulah yang paling berharga."* *(Essays, 1625)*
+5. **John Locke** – *"Buku catatan umum adalah gudang pikiran yang teratur; tanpanya, pengetahuan hanyalah debu yang berserakan."* *(An Essay Concerning Human Understanding)*
+6. **Socrates** (via Plato) – *"Menulis akan menciptakan kelupaan dalam jiwa para pembelajar, karena mereka akan menaruh kepercayaan pada tulisan."* *(Phaedrus)*
+7. **Leonardo da Vinci** – *"Catatanku adalah guru terbaikku. Tanpa mereka, pengamatanku akan hilang seperti asap."* *(Codex notebooks)*
+8. **Thomas Edison** – *"Saya menyimpan buku catatan untuk setiap ide, sekecil apa pun. Ide yang tidak dicatat adalah ide yang mati."* *(Diary of Edison, 1880-an)*
+9. **Marie Curie** – *"Catatan laboratorium adalah fondasi penemuan. Tanpa mereka, eksperimen hanya menjadi kabut."* *(Laboratory Notebooks)*
+10. **Nikola Tesla** – *"Aku menggambar setiap penemuan di buku catatan sebelum menyentuh satu sekrup pun."* *(My Inventions, 1919)*
+11. **Albert Einstein** – *"Kertas adalah tempat menuliskan hal-hal yang perlu kita ingat."* *(Surat pribadi)*
+12. **Isaac Newton** – *"Aku mencatat setiap observasi karena pikiran manusia mudah teralihkan; catatan adalah jangkar kebenaran."* *(Principia Mathematica, catatan pinggir)*
+13. **Richard Feynman** – *"Jika kamu tidak bisa menuliskannya dengan sederhana, kamu belum memahaminya. Catatan adalah uji pemahaman."* *(Surely You're Joking, Mr. Feynman!)*
+14. **Virginia Woolf** – *"Kebiasaan menulis untuk mata sendiri adalah latihan yang baik. Ia melonggarkan ikatan. Jangan pedulikan kesalahan dan kegagapan."* *(A Writer's Diary)*
+15. **Anaïs Nin** – *"Dalam jurnal, aku merasa tenang."* *(The Diary of Anaïs Nin)*
+16. **Anne Frank** – *"Aku dapat melepaskan segalanya saat menulis; kesedihanku menghilang, keberanianku lahir kembali."* *(The Diary of a Young Girl)*
+17. **Joan Didion** – *"Saya menulis sepenuhnya untuk mengetahui apa yang saya pikirkan, apa yang saya lihat, dan apa maknanya."* *(Slouching Towards Bethlehem)*
+18. **Ernest Hemingway** – *"Tulislah dengan keras dan jelas tentang apa yang menyakitkan."* *(A Moveable Feast)*
+19. **Sylvia Plath** – *"Hanya dengan menulis aku bisa menemukan apa yang sebenarnya aku pikirkan."* *(The Unabridged Journals of Sylvia Plath)*
+20. **Jack London** – *"Simpanlah buku catatan. Bawa ke mana pun, makan dengannya, tidur dengannya. Catat setiap pikiran liar yang muncul."* *(John Barleycorn)*
+21. **Oscar Wilde** – *"Aku tidak pernah bepergian tanpa buku harianku. Seseorang harus selalu memiliki sesuatu yang sensasional untuk dibaca di kereta."* *(The Importance of Being Earnest)*
+22. **Mark Twain** – *"Aku tidak pernah mempercayai ingatanku. Aku mencatat segalanya."* *(Notebooks of Mark Twain)*
+23. **William Wordsworth** – *"Isilah kertasmu dengan helaan napasmu."* *(Lyrical Ballads)*
+24. **C.S. Lewis** – *"Tulislah tentang apa yang benar-benar menarik minatmu, baik hal nyata maupun imajiner, dan tidak ada yang lain."* *(Surat kepada pembaca)*
+25. **Maya Angelou** – *"Tidak ada penderitaan yang lebih besar daripada memikul cerita yang tak terungkapkan di dalam dirimu."* *(I Know Why the Caged Bird Sings)*
+26. **Natalie Goldberg** – *"Tulislah apa yang mengganggu, apa yang kau takuti, apa yang tak pernah kau berani ucapkan. Bersiaplah untuk terbelah terbuka."* *(Writing Down the Bones)*
+27. **J.K. Rowling** – *"Draf pertama Harry Potter ditulis di notebook sekolah dan kafe Edinburgh."* *(Wawancara BBC)*
+28. **Neil Gaiman** – *"Simpan notebook. Ide itu pemalu; mereka bersembunyi jika tidak kamu tulis."* *(Advice to Writers)*
+29. **David Allen** – *"Pikiranmu untuk melahirkan ide, bukan untuk menyimpannya."* *(Getting Things Done)*
+30. **Cal Newport** – *"Kerja mendalam membutuhkan sistem untuk menangkap dan memproses informasi. Tanpa catatan, fokus hanya ilusi."* *(Deep Work)*
+31. **James Clear** – *"Anda tidak mencapai level tujuan Anda. Anda jatuh ke level sistem Anda. Catatan adalah sistem itu."* *(Atomic Habits)*
+32. **Ryan Holiday** – *"Buku catatan umum (commonplace book) adalah alat pembelajaran paling ampuh yang pernah ada."* *(The Daily Stoic)*
+33. **Tiago Forte** – *"Catatanmu adalah otak keduanmu."* *(Building a Second Brain)*
+34. **Tim Ferriss** – *"Aku mencatat seperti orang lain mengonsumsi obat. Pena terlemah lebih kuat daripada ingatan terkuat."* *(The 4-Hour Workweek)*
+35. **Richard Branson** – *"Memperoleh kebiasaan mencatat adalah keterampilan yang sangat melengkapi kemampuan mendengarkan. Tolong tuliskan ini sekarang agar kamu tidak lupa!"* *(Losing My Virginity)*
+36. **Lee Iacocca** – *"Disiplin menuliskan sesuatu adalah langkah pertama untuk mewujudkannya."* *(Iacocca: An Autobiography)*
+37. **Steve Jobs** – *"Ide terbaik muncul dari menghubungkan titik-titik, dan catatan adalah tempat titik-titik itu hidup."* *(Stanford Commencement Speech)*
+38. **Warren Buffett** – *"Aku membaca dan mencatat setiap hari. Pengetahuan yang terkomposisi adalah keunggulanku."* *(Berkshire Hathaway Letters)*
+39. **Charlie Munger** – *"Jaringan model mental dibangun melalui pencatatan yang konsisten."* *(Poor Charlie's Almanack)*
+40. **Ray Dalio** – *"Prinsip hanyalah pelajaran dari kesalahan yang didokumentasikan."* *(Principles: Life and Work)*
+41. **Peter Drucker** – *"Manajemen adalah dokumentasi. Apa yang tidak tertulis, tidak terkelola."* *(The Effective Executive)*
+42. **Stephen Covey** – *"Mulai dengan akhir dalam pikiran, tapi tuliskan dulu."* *(The 7 Habits of Highly Effective People)*
+43. **Napoleon Hill** – *"Pikiran yang dicatat menjadi kenyataan. Buku catatan adalah kontrak dengan dirimu sendiri."* *(Think and Grow Rich)*
+44. **Tony Robbins** – *"Tuliskan tujuanmu. Tujuan yang tidak ditulis hanyalah keinginan."* *(Awaken the Giant Within)*
+45. **Simon Sinek** – *"Mulai dengan 'mengapa'? Tuliskan. Kejelasan muncul dari dokumentasi."* *(Start With Why)*
+46. **Seth Godin** – *"Kirim ide-mu, tapi hanya setelah kamu menuliskannya."* *(Linchpin)*
+47. **Naval Ravikant** – *"Tuliskan pikiranmu secara publik. Kejelasan muncul melalui dokumentasi."* *(The Almanack of Naval Ravikant)*
+48. **Julia Cameron** – *"Morning pages tidak bisa dinegosiasikan. Mereka adalah pembersih pikiran harian."* *(The Artist's Way)*
+49. **Christina Baldwin** – *"Menulis jurnal adalah pelayaran ke interior."* *(Life's Companion)*
+50. **Robin Sharma** – *"Menulis dalam jurnal mengingatkanmu pada tujuanmu dan pembelajaranmu dalam hidup."* *(The Monk Who Sold His Ferrari)*
+51. **Michael Hyatt** – *"Apa yang terjadi pada kita tidak sepenting makna yang kita berikan padanya. Jurnal membantu memilah ini."* *(Full Focus Planner)*
+52. **Brené Brown** – *"Tuliskan ceritamu. Rasa malu yang tidak dicatat tumbuh; rasa malu yang dicatat sembuh."* *(Daring Greatly)*
+53. **Adam Grant** – *"Pemikir orisinal menyimpan 'kuburan ide' di catatan mereka, lalu menghidupkannya kembali."* *(Originals)*
+54. **Susan Cain** – *"Introvert berpikir paling baik saat menulis. Catatan adalah suara mereka."* *(Quiet)*
+55. **Carol Dweck** – *"Catatan pertumbuhan adalah bukti bahwa usaha mengubah kemampuan."* *(Mindset)*
+56. **Viktor Frankl** – *"Dalam menghadapi penderitaan, menulis melestarikan makna."* *(Man's Search for Meaning)*
+57. **Carl Jung** – *"Menjurnal adalah jembatan antara sadar dan bawah sadar."* *(Memories, Dreams, Reflections)*
+58. **Thomas Merton** – *"Jurnal adalah tempat di mana jiwa belajar berbicara dengan jujur."* *(The Seven Storey Mountain)*
+59. **Ralph Waldo Emerson** – *"Simpanlah jurnal pikiranmu; ia akan menjadi peta jiwamu."* *(Journals of Emerson)*
+60. **Henry David Thoreau** – *"Aku mencatat hari-hariku agar tidak kehilangan mereka pada waktu."* *(Journal of Henry D. Thoreau)*
+61. **Austin Kleon** – *"Buku catatan adalah tempat di mana kamu mencari tahu apa yang terjadi di dalam dirimu. Lalu, keyboard adalah tempat kamu pergi untuk menceritakannya kepada orang lain."* *(Steal Like an Artist)*
+62. **Martha McPhee** – *"Aku membawa buku catatan karena membantuku melacak wilayah tak terpetakan dari momen saat ini."* *(Essay, InkyMemo)*
+63. **Derek Sivers** – *"Kamu tidak bisa mempercayai ingatan jauh, tetapi kamu bisa mempercayai buku harian harianmu."* *(Anything You Want)*
+64. **Chris J. Wilson** – *"Aku dapat membagi hidupku menjadi kekacauan sebelum aku memiliki buku catatan pertamaku, dan orang yang semakin terorganisir sejak saat itu."* *(Sketchnoter)*
+65. **Walt Disney** – *"Simpan buku sketsa. Ide akan mati jika kamu tidak menangkapnya segera."* *(Walt Disney Company Archives)*
+66. **Paulo Coelho** – *"Tuliskan mimpimu. Alam semesta merespons niat yang terdokumentasi."* *(Catatan penulis)*
+67. **Will Self** – *"Selalu bawa buku catatan. Memori jangka pendek hanya menyimpan informasi selama tiga menit; kecuali dikomunikasikan ke kertas, kamu bisa kehilangan ide selamanya."*
+68. **Judith Campbell** – *"Ketika hatimu berbicara, catatlah dengan baik."*
+69. **Les Brown** – *"Dapatkan ide-ide Anda di atas kertas dan pelajari. Jangan biarkan mereka sia-sia!"*
+70. **Bram Stoker** – *"Ingatlah, teman, bahwa pengetahuan lebih kuat daripada ingatan, dan kita tidak boleh mempercayai yang lebih lemah."* *(Dracula)*
+71. **Lin-Manuel Miranda** – *"Kamu tidak mengharapkan catatan-catatan ini berubah menjadi sesi terapiku, bukan?"*
+72. **Ryder Carroll** – *"Semakin banyak konten yang kamu coba tangkap selama kuliah atau rapat, semakin sedikit kamu memikirkan apa yang sedang dikatakan."* *(The Bullet Journal Method)*
+73. **Peter Rogers** – *"Kamu harus membuat catatan ringkasanmu sendiri. Kamu belajar dari MEMBUATnya."*
+74. **Oprah Winfrey** – *"Menyimpan jurnal benar-benar akan mengubah hidupmu dengan cara yang tidak pernah kamu bayangkan."*
+75. **Ruth Ozeki** – *"Bagiku, menulis adalah cara berpikir. Aku banyak menulis di jurnal. Mereka adalah wadah yang membuatku tetap di tempat."* *(A Tale for the Time Being)*

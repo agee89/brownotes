@@ -28,5 +28,24 @@ const HomeView = {
     } else {
       summaryDiv.style.display = 'none';
     }
+
+    await this.loadQuote();
+  },
+
+  async loadQuote() {
+    const quoteCard = UI.get('bn-quote-card');
+    const quoteText = UI.get('bn-quote-text');
+    const quoteAuthor = UI.get('bn-quote-author');
+    if (!quoteCard || !quoteText || !quoteAuthor || typeof Quotes === 'undefined') return;
+
+    const quote = await Quotes.random();
+    if (!quote) {
+      quoteCard.style.display = 'none';
+      return;
+    }
+
+    quoteText.textContent = `"${quote.text}"`;
+    quoteAuthor.textContent = quote.source ? `${quote.author} · ${quote.source}` : quote.author;
+    quoteCard.style.display = 'block';
   }
 };

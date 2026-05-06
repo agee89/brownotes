@@ -75,6 +75,8 @@ const UI = {
       if (btn) {
         btn.style.color = '#9a9a9a';
         btn.style.borderBottom = '2px solid transparent';
+        const icon = btn.querySelector('img');
+        if (icon) icon.style.opacity = '0.45';
       }
     });
 
@@ -93,6 +95,8 @@ const UI = {
     if (navBtn) {
       navBtn.style.color = '#2a2a2a';
       navBtn.style.borderBottom = '2px solid #2a2a2a';
+      const icon = navBtn.querySelector('img');
+      if (icon) icon.style.opacity = '1';
     }
   },
 
@@ -416,7 +420,7 @@ const UI = {
     const filterSelect = this.get('bn-filter-label');
     if (!filterSelect) return;
 
-    filterSelect.innerHTML = '<option value="">all labels</option>' +
+    filterSelect.innerHTML = '<option value="">all labels</option><option value="__NO_LABEL__">no label</option>' +
       labels.map(label => 
         `<option value="${Utils.escapeHtml(label)}">${Utils.escapeHtml(label)}</option>`
       ).join('');

@@ -28,6 +28,7 @@
       "matches": ["<all_urls>"],
       "js": [
         "js/utils.js",
+        "js/quotes.js",
         "js/storage.js",
         "js/ui.js",
         "js/drawer.js",
@@ -46,6 +47,7 @@
     {
       "resources": [
         "icons/*",
+        "Quote.md",
         "js/*.js",
         "js/views/*.js"
       ],

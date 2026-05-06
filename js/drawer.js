@@ -37,9 +37,22 @@ const DrawerHTML = `
       border-color: transparent !important;
     }
 
+    #bronotes-drawer input:focus,
+    #bronotes-drawer textarea:focus,
+    #bronotes-drawer select:focus {
+      outline: none !important;
+      border-color: rgba(42, 42, 42, 0.48) !important;
+    }
+
+    #bronotes-drawer[data-transparent="true"] input:focus,
+    #bronotes-drawer[data-transparent="true"] textarea:focus,
+    #bronotes-drawer[data-transparent="true"] select:focus {
+      border-color: rgba(42, 42, 42, 0.62) !important;
+    }
+
     #bn-drawer-ribbon {
       position: absolute;
-      top: 16px;
+      top: 76px;
       left: -44px;
       width: 44px;
       height: 44px;
@@ -84,6 +97,14 @@ const DrawerHTML = `
         <div style="display: flex; justify-content: space-between; margin-bottom: 8px;"><span style="color: #6a6a6a;">total label:</span><span id="bn-total-labels" style="font-weight: 600;">0</span></div>
         <div style="display: flex; justify-content: space-between;"><span style="color: #6a6a6a;">terakhir mencatat:</span><span id="bn-last-note" style="font-weight: 600;">-</span></div>
       </div>
+    </div>
+    <div id="bn-quote-card" style="display: none; width: 100%; margin-top: 44px; padding: 0 4px; box-sizing: border-box; text-align: center;">
+      <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px; color: #6a6a6a; font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase;">
+        <img src="${chrome.runtime.getURL('icons/quotes.png')}" alt="" style="width: 14px; height: 14px; opacity: 0.62; pointer-events: none;" />
+        <span>daily note spark</span>
+      </div>
+      <div id="bn-quote-text" style="font-size: 16px; line-height: 1.65; color: #686868; font-weight: 600; font-style: italic; margin: 0 auto 10px auto; max-width: 340px;"></div>
+      <div id="bn-quote-author" style="font-size: 11px; color: #7a7a7a; text-align: center;"></div>
     </div>
   </div>
   
@@ -131,10 +152,10 @@ const DrawerHTML = `
     <div id="bn-privacy-panel" style="margin-top: 24px; padding: 12px; background: #f8f8f8; border-radius: 4px; font-size: 11px; color: #6a6a6a; line-height: 1.6;"><strong>privacy:</strong> all notes stored locally. no data sent to servers.</div>
   </div>
   
-  <div style="padding: 16px 24px; border-top: 1px solid #e8e8e8; display: flex; justify-content: center; gap: 20px;">
-    <button id="bn-nav-home" style="padding: 0; background: transparent; color: #2a2a2a; border: none; border-bottom: 2px solid #2a2a2a; cursor: pointer; font-size: 11px; font-family: inherit; letter-spacing: 0.5px; padding-bottom: 4px; transition: transform 0.1s ease;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">home</button>
-    <button id="bn-nav-allnotes" style="padding: 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-size: 11px; font-family: inherit; letter-spacing: 0.5px; padding-bottom: 4px; transition: transform 0.1s ease;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">all notes</button>
-    <button id="bn-nav-labels" style="padding: 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-size: 11px; font-family: inherit; letter-spacing: 0.5px; padding-bottom: 4px; transition: transform 0.1s ease;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">labels</button>
-    <button id="bn-nav-settings" style="padding: 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-size: 11px; font-family: inherit; letter-spacing: 0.5px; padding-bottom: 4px; transition: transform 0.1s ease;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">settings</button>
+  <div style="padding: 12px 18px; border-top: 1px solid #e8e8e8; display: flex; justify-content: space-between; gap: 8px;">
+    <button id="bn-nav-home" style="flex: 1; padding: 4px 0 6px 0; background: transparent; color: #2a2a2a; border: none; border-bottom: 2px solid #2a2a2a; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; display: flex; flex-direction: column; align-items: center; gap: 5px;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/home.png')}" alt="" style="width: 18px; height: 18px; opacity: 1; pointer-events: none;" /><span>HOME</span></button>
+    <button id="bn-nav-allnotes" style="flex: 1; padding: 4px 0 6px 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; display: flex; flex-direction: column; align-items: center; gap: 5px;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/allnotes.png')}" alt="" style="width: 18px; height: 18px; opacity: 0.45; pointer-events: none;" /><span>ALL NOTES</span></button>
+    <button id="bn-nav-labels" style="flex: 1; padding: 4px 0 6px 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; display: flex; flex-direction: column; align-items: center; gap: 5px;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/label.png')}" alt="" style="width: 18px; height: 18px; opacity: 0.45; pointer-events: none;" /><span>LABELS</span></button>
+    <button id="bn-nav-settings" style="flex: 1; padding: 4px 0 6px 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; display: flex; flex-direction: column; align-items: center; gap: 5px;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/settings.png')}" alt="" style="width: 18px; height: 18px; opacity: 0.45; pointer-events: none;" /><span>SETTINGS</span></button>
   </div>
 `;

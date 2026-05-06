@@ -21,6 +21,7 @@
     try {
       // Core utilities
       await loadScript('js/utils.js');
+      await loadScript('js/quotes.js');
       await loadScript('js/storage.js');
       await loadScript('js/ui.js');
       

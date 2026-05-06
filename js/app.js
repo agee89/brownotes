@@ -137,6 +137,22 @@ const App = {
     } else {
       UI.showDrawer();
     }
+
+    this.refreshCurrentView();
+  },
+
+  refreshCurrentView() {
+    if (!this.drawerInjected) return;
+
+    if (this.currentView === 'home') {
+      HomeView.load();
+    } else if (this.currentView === 'allnotes') {
+      AllNotesView.render();
+    } else if (this.currentView === 'labels') {
+      LabelsView.load();
+    } else if (this.currentView === 'settings') {
+      SettingsView.load();
+    }
   },
 
   // Switch between views

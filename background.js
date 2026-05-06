@@ -54,7 +54,19 @@ chrome.action.onClicked.addListener(async (tab) => {
         // Inject content script secara manual
         await chrome.scripting.executeScript({
           target: { tabId: t.id },
-          files: ['content.js']
+          files: [
+            'js/utils.js',
+            'js/quotes.js',
+            'js/storage.js',
+            'js/ui.js',
+            'js/drawer.js',
+            'js/views/home.js',
+            'js/views/allnotes.js',
+            'js/views/editor.js',
+            'js/views/labels.js',
+            'js/views/settings.js',
+            'js/app.js'
+          ]
         });
         
         console.log('Bro Notes: Content script injected to tab', t.id);
