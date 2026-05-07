@@ -1,4 +1,4 @@
-# Bro Notes
+# Brow Notes
 
 **Minimalist task-based note taking extension for Chrome**
 
@@ -48,7 +48,7 @@ Markdown notepad yang selalu tersedia di browser. Tulis catatan, pindah tab, cat
 
 3. **Start Using**
    ```
-   Klik icon Bro Notes di toolbar
+   Klik icon Brow Notes di toolbar
    Drawer akan slide-in dari kanan
    Mulai mencatat!
    ```
@@ -190,7 +190,7 @@ const MyView = {
 
 Each module logs with prefix:
 ```
-Bro Notes: [Module] Action
+Brow Notes: [Module] Action
 ```
 
 Check console (F12) for errors and logs.
@@ -341,7 +341,7 @@ See [CHANGELOG.md](CHANGELOG.md) for details.
 
 - **For users:** Just click the icon and start typing!
 - **For developers:** Start with [docs/development/QUICK_REFERENCE.md](docs/development/QUICK_REFERENCE.md)
-- **For debugging:** Check console logs with "Bro Notes:" prefix
+- **For debugging:** Check console logs with "Brow Notes:" prefix
 - **For contributing:** Read [docs/development/DEVELOPER.md](docs/development/DEVELOPER.md) first
 - **Need help?** Check [docs/guides/QUICK_FIX.md](docs/guides/QUICK_FIX.md)
 
@@ -360,7 +360,7 @@ Built with focus on:
 
 ---
 
-**Bro Notes** - Your lightweight notepad in the browser 📝
+**Brow Notes** - Your lightweight notepad in the browser 📝
 
 **Version:** 3.0.0 | **Status:** ✅ Stable | **License:** MIT
 

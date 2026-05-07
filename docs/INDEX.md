@@ -1,6 +1,6 @@
-# 📚 Bro Notes Documentation
+# 📚 Brow Notes Documentation
 
-Complete documentation for Bro Notes Chrome Extension v3.0.0.
+Complete documentation for Brow Notes Chrome Extension v3.0.0.
 
 ## 📖 Quick Navigation
 

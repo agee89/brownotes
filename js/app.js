@@ -5,7 +5,7 @@ const App = {
 
   // Initialize app
   init() {
-    console.log('Bro Notes: Content script loaded');
+    console.log('Brow Notes: Content script loaded');
 
     // Message listener
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {

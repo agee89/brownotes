@@ -303,7 +303,7 @@ const DrawerHTML = `
   <div style="padding: 20px 24px 16px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #e8e8e8;">
     <div class="bn-drawer-brand">
       <img class="bn-drawer-brand-icon" src="${chrome.runtime.getURL('icons/icon32.png')}" alt="" />
-      <div class="bn-drawer-brand-text">BrowNotes</div>
+      <div class="bn-drawer-brand-text">Brow Notes</div>
     </div>
     <button id="bn-btn-transparency" title="toggle transparency" aria-label="toggle transparency" aria-pressed="false" style="width: 28px; height: 28px; padding: 5px; background: transparent; color: #9a9a9a; border: none; cursor: pointer; opacity: 0.72; transition: transform 0.1s ease, opacity 0.2s ease; display: flex; align-items: center; justify-content: center;" onmousedown="this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">
       <img id="bn-transparency-icon" src="${chrome.runtime.getURL('icons/eye.png')}" alt="" style="width: 18px; height: 18px; display: block; pointer-events: none;" />

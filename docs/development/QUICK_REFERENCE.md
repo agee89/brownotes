@@ -1,6 +1,6 @@
 # 🚀 Quick Reference
 
-Quick guide untuk developer yang ingin cepat memahami struktur Bro Notes.
+Quick guide untuk developer yang ingin cepat memahami struktur Brow Notes.
 
 ## 📂 File Structure (Simplified)
 
@@ -73,7 +73,7 @@ bronotes/
 ## 🐛 Debugging Flow
 
 1. **See error in console**
-   - Look for "Bro Notes: [Module]" prefix
+   - Look for "Brow Notes: [Module]" prefix
    - Open that module file
 
 2. **Feature not working**

@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to Bro Notes will be documented in this file.
+All notable changes to Brow Notes will be documented in this file.
 
 ## [3.0.0] - 2024-01-XX (Current Version - Refactored)
 

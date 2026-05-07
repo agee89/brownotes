@@ -1,10 +1,10 @@
 # 👋 Start Here!
 
-Welcome to Bro Notes! This guide will help you get started quickly.
+Welcome to Brow Notes! This guide will help you get started quickly.
 
-## 🎯 What is Bro Notes?
+## 🎯 What is Brow Notes?
 
-Bro Notes adalah Chrome extension untuk note-taking yang:
+Brow Notes adalah Chrome extension untuk note-taking yang:
 - ✅ Minimalist dan lightweight
 - ✅ Privacy-first (semua data lokal)
 - ✅ Task-based workflow
@@ -26,7 +26,7 @@ Bro Notes adalah Chrome extension untuk note-taking yang:
 
 **2. Start Using**
 ```
-1. Klik icon Bro Notes di toolbar
+1. Klik icon Brow Notes di toolbar
 2. Drawer akan muncul dari kanan
 3. Mulai mencatat!
 ```
@@ -41,7 +41,7 @@ Bro Notes adalah Chrome extension untuk note-taking yang:
 
 **1. Understand the Structure**
 
-Bro Notes v3.0.0 menggunakan **modular MVC architecture**:
+Brow Notes v3.0.0 menggunakan **modular MVC architecture**:
 
 ```
 js/
@@ -102,7 +102,7 @@ chrome://extensions/ → Load unpacked
 # Check console for errors
 
 # 5. Debug
-# Check "Bro Notes: [Module]" logs in console
+# Check "Brow Notes: [Module]" logs in console
 ```
 
 **4. Common Tasks**
@@ -184,7 +184,7 @@ See [DEVELOPER.md](DEVELOPER.md) for detailed examples:
 ### Quick Debug Steps
 1. Open DevTools (F12)
 2. Check Console tab
-3. Look for "Bro Notes: [Module]" logs
+3. Look for "Brow Notes: [Module]" logs
 4. Find module name in error
 5. Open that module file
 6. Fix the issue

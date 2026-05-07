@@ -10,7 +10,7 @@ const Quotes = {
       const markdown = await response.text();
       this.items = this.parse(markdown);
     } catch (error) {
-      console.error('Bro Notes: Error loading quotes:', error);
+      console.error('Brow Notes: Error loading quotes:', error);
       this.items = [];
     }
 

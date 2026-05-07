@@ -1,6 +1,6 @@
-# Contributing to Bro Notes
+# Contributing to Brow Notes
 
-Terima kasih atas minat Anda untuk berkontribusi pada Bro Notes! 🎉
+Terima kasih atas minat Anda untuk berkontribusi pada Brow Notes! 🎉
 
 ## Cara Berkontribusi
 

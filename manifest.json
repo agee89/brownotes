@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Bro Notes",
+  "name": "Brow Notes",
   "version": "3.0.0",
   "description": "Markdown note drawer yang selalu tersedia di setiap tab browser",
   "permissions": [
@@ -18,7 +18,7 @@
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
     },
-    "default_title": "Toggle Bro Notes"
+    "default_title": "Toggle Brow Notes"
   },
   "background": {
     "service_worker": "background.js"

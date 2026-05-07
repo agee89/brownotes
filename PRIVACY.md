@@ -1,11 +1,11 @@
-# Privacy Policy - Bro Notes
+# Privacy Policy - Brow Notes
 
 **Last Updated:** January 2024  
 **Version:** 3.0.0
 
 ## Overview
 
-Bro Notes is committed to protecting your privacy. This extension is designed with a **privacy-first** approach.
+Brow Notes is committed to protecting your privacy. This extension is designed with a **privacy-first** approach.
 
 ## Data Collection
 
@@ -88,13 +88,13 @@ Bro Notes is committed to protecting your privacy. This extension is designed wi
 ### How to Delete Your Data
 
 **Option 1: Clear from Extension**
-1. Open Bro Notes
+1. Open Brow Notes
 2. Go to Settings
 3. Delete individual notes or labels
 
 **Option 2: Uninstall Extension**
 1. Go to `chrome://extensions/`
-2. Remove Bro Notes
+2. Remove Brow Notes
 3. All data is automatically deleted
 
 **Option 3: Clear Chrome Data**
@@ -111,7 +111,7 @@ Bro Notes is committed to protecting your privacy. This extension is designed wi
 
 ## Children's Privacy
 
-Bro Notes does not knowingly collect any information from children under 13. The extension is designed for general use and does not target children.
+Brow Notes does not knowingly collect any information from children under 13. The extension is designed for general use and does not target children.
 
 ## Changes to Privacy Policy
 
@@ -162,6 +162,6 @@ Since we don't collect any data, we comply with virtually all privacy regulation
 
 ---
 
-**Bro Notes** - Privacy-first note taking 🔒
+**Brow Notes** - Privacy-first note taking 🔒
 
 Version 3.0.0 | [README](README.md) | [Source Code](https://github.com/yourusername/bronotes)

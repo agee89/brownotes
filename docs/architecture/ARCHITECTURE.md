@@ -1,4 +1,4 @@
-# Bro Notes - Architecture Documentation
+# Brow Notes - Architecture Documentation
 
 ## 📁 Project Structure
 
@@ -220,7 +220,7 @@ User clicks navigation
 ### Enable Debug Logging
 Each module logs its operations:
 ```javascript
-console.log('Bro Notes: [Module] Action');
+console.log('Brow Notes: [Module] Action');
 ```
 
 ### Common Debug Points

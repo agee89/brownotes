@@ -3,25 +3,25 @@ let globalEnabled = false;
 
 // Initialize state saat extension pertama kali diinstall
 chrome.runtime.onInstalled.addListener(async () => {
-  console.log('Bro Notes: Extension installed');
+  console.log('Brow Notes: Extension installed');
   const result = await chrome.storage.local.get(['globalEnabled']);
   globalEnabled = result.globalEnabled ?? false;
-  console.log('Bro Notes: Initial state:', globalEnabled);
+  console.log('Brow Notes: Initial state:', globalEnabled);
   updateIcon(globalEnabled);
 });
 
 // Load state saat service worker dimulai
 chrome.storage.local.get(['globalEnabled'], (result) => {
   globalEnabled = result.globalEnabled ?? false;
-  console.log('Bro Notes: Service worker started, state:', globalEnabled);
+  console.log('Brow Notes: Service worker started, state:', globalEnabled);
   updateIcon(globalEnabled);
 });
 
 // Toggle drawer saat icon extension diklik
 chrome.action.onClicked.addListener(async (tab) => {
-  console.log('Bro Notes: Icon clicked, current state:', globalEnabled);
+  console.log('Brow Notes: Icon clicked, current state:', globalEnabled);
   globalEnabled = !globalEnabled;
-  console.log('Bro Notes: New state:', globalEnabled);
+  console.log('Brow Notes: New state:', globalEnabled);
   
   // Simpan state ke storage
   await chrome.storage.local.set({ globalEnabled });
@@ -31,12 +31,12 @@ chrome.action.onClicked.addListener(async (tab) => {
   
   // Kirim pesan ke semua tabs untuk toggle drawer
   const tabs = await chrome.tabs.query({});
-  console.log('Bro Notes: Sending message to', tabs.length, 'tabs');
+  console.log('Brow Notes: Sending message to', tabs.length, 'tabs');
   
   for (const t of tabs) {
     // Skip chrome:// dan chrome-extension:// pages
     if (t.url && (t.url.startsWith('chrome://') || t.url.startsWith('chrome-extension://'))) {
-      console.log('Bro Notes: Skipping chrome internal page:', t.id);
+      console.log('Brow Notes: Skipping chrome internal page:', t.id);
       continue;
     }
     
@@ -45,10 +45,10 @@ chrome.action.onClicked.addListener(async (tab) => {
         action: 'toggleDrawer',
         enabled: globalEnabled
       });
-      console.log('Bro Notes: Message sent successfully to tab', t.id);
+      console.log('Brow Notes: Message sent successfully to tab', t.id);
     } catch (error) {
       // Content script belum ready, coba inject
-      console.log('Bro Notes: Content script not ready in tab', t.id, '- trying to inject');
+      console.log('Brow Notes: Content script not ready in tab', t.id, '- trying to inject');
       
       try {
         // Inject content script secara manual
@@ -69,7 +69,7 @@ chrome.action.onClicked.addListener(async (tab) => {
           ]
         });
         
-        console.log('Bro Notes: Content script injected to tab', t.id);
+        console.log('Brow Notes: Content script injected to tab', t.id);
         
         // Tunggu sebentar lalu kirim message lagi
         setTimeout(async () => {
@@ -78,13 +78,13 @@ chrome.action.onClicked.addListener(async (tab) => {
               action: 'toggleDrawer',
               enabled: globalEnabled
             });
-            console.log('Bro Notes: Message sent after injection to tab', t.id);
+            console.log('Brow Notes: Message sent after injection to tab', t.id);
           } catch (e) {
-            console.log('Bro Notes: Still could not send message to tab', t.id);
+            console.log('Brow Notes: Still could not send message to tab', t.id);
           }
         }, 100);
       } catch (injectError) {
-        console.log('Bro Notes: Could not inject to tab', t.id, injectError.message);
+        console.log('Brow Notes: Could not inject to tab', t.id, injectError.message);
       }
     }
   }
@@ -92,7 +92,7 @@ chrome.action.onClicked.addListener(async (tab) => {
 
 // Update icon berdasarkan state
 function updateIcon(enabled) {
-  console.log('Bro Notes: Updating icon, enabled:', enabled);
+  console.log('Brow Notes: Updating icon, enabled:', enabled);
   
   // Set badge untuk visual feedback
   chrome.action.setBadgeText({
@@ -113,13 +113,13 @@ function updateIcon(enabled) {
       128: `${iconPath}128.png`
     }
   }).then(() => {
-    console.log('Bro Notes: Icon updated successfully');
+    console.log('Brow Notes: Icon updated successfully');
   }).catch((error) => {
-    console.error('Bro Notes: Error updating icon:', error);
+    console.error('Brow Notes: Error updating icon:', error);
   });
   
   chrome.action.setTitle({
-    title: enabled ? 'Bro Notes (Aktif)' : 'Bro Notes (Nonaktif)'
+    title: enabled ? 'Brow Notes (Aktif)' : 'Brow Notes (Nonaktif)'
   });
 }
 

@@ -1,4 +1,4 @@
-// Bro Notes - Modular Content Script
+// Brow Notes - Modular Content Script
 // This is the main entry point that loads all modules
 
 // Load all modules in order
@@ -38,9 +38,9 @@
       // Main app controller (must be last)
       await loadScript('js/app.js');
       
-      console.log('Bro Notes: All modules loaded successfully');
+      console.log('Brow Notes: All modules loaded successfully');
     } catch (error) {
-      console.error('Bro Notes: Error loading modules:', error);
+      console.error('Brow Notes: Error loading modules:', error);
     }
   }
 

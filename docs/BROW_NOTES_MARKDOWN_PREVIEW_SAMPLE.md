@@ -1,10 +1,10 @@
-# BroNotes Markdown Preview Sample
+# Brow Notes Markdown Preview Sample
 
-BroNotes adalah extension catatan ringan untuk mencatat ide, referensi, dan ringkasan langsung dari halaman yang sedang dibaca.
+Brow Notes adalah extension catatan ringan untuk mencatat ide, referensi, dan ringkasan langsung dari halaman yang sedang dibaca.
 
-## Kenapa BroNotes?
+## Kenapa Brow Notes?
 
-BroNotes dibuat untuk momen ketika kamu sedang membaca artikel, dokumentasi, atau riset kecil, lalu ingin menulis catatan tanpa pindah tab.
+Brow Notes dibuat untuk momen ketika kamu sedang membaca artikel, dokumentasi, atau riset kecil, lalu ingin menulis catatan tanpa pindah tab.
 
 ### Fitur utama
 
@@ -28,11 +28,11 @@ Contoh link: [Buka dokumentasi Chrome Extensions](https://developer.chrome.com/d
 
 Contoh gambar sederhana:
 
-![BroNotes icon](../icons/icon128.png)
+![Brow Notes icon](../icons/icon128.png)
 
 ## Checklist
 
-- [x] Buka drawer BroNotes
+- [x] Buka drawer Brow Notes
 - [x] Tulis catatan dari halaman referensi
 - [x] Aktifkan mode transparan saat perlu melihat konten belakang
 - [ ] Rapikan catatan sebelum disimpan
@@ -51,7 +51,7 @@ Contoh gambar sederhana:
 ## Ordered List
 
 1. Buka halaman referensi
-2. Aktifkan BroNotes
+2. Aktifkan Brow Notes
 3. Buat catatan baru
    1. Isi judul
    2. Tambahkan label
@@ -60,7 +60,7 @@ Contoh gambar sederhana:
 
 ## Blockquote
 
-> BroNotes membantu menjaga konteks tetap dekat dengan halaman yang sedang dibaca.
+> Brow Notes membantu menjaga konteks tetap dekat dengan halaman yang sedang dibaca.
 > Catatan bisa dibuat tanpa memutus alur riset.
 
 ## Horizontal Rule
@@ -88,7 +88,7 @@ const note = {
   savedLocally: true
 };
 
-console.log("BroNotes menyimpan catatan secara lokal:", note.savedLocally);
+console.log("Brow Notes menyimpan catatan secara lokal:", note.savedLocally);
 ```
 
 ```css
@@ -102,5 +102,5 @@ console.log("BroNotes menyimpan catatan secara lokal:", note.savedLocally);
 
 ## Catatan Panjang
 
-BroNotes cocok digunakan untuk membuat ringkasan singkat, daftar tugas, potongan kode, atau catatan referensi. Preview Markdown ini sengaja dibuat essential agar tetap ringan dan responsif saat digunakan di banyak halaman.
+Brow Notes cocok digunakan untuk membuat ringkasan singkat, daftar tugas, potongan kode, atau catatan referensi. Preview Markdown ini sengaja dibuat essential agar tetap ringan dan responsif saat digunakan di banyak halaman.
 
