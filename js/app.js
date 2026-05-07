@@ -90,6 +90,7 @@ const App = {
     UI.get('bn-search').oninput = () => AllNotesView.render();
     UI.get('bn-filter-label').onchange = () => AllNotesView.render();
     UI.get('bn-sort').onchange = () => AllNotesView.render();
+    UI.get('bn-filter-favorite').onclick = () => AllNotesView.toggleFavoriteFilter();
 
     // Editor
     UI.get('bn-btn-back').onclick = () => this.switchView('allnotes');
@@ -102,6 +103,7 @@ const App = {
     };
     UI.get('bn-btn-save').onclick = () => EditorView.save(false);
     UI.get('bn-btn-delete').onclick = () => EditorView.delete();
+    UI.get('bn-note-favorite').onclick = () => EditorView.toggleFavorite();
 
     // Editor input handlers
     UI.get('bn-note-title').oninput = () => EditorView.handleInput();

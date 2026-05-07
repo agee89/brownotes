@@ -48,7 +48,7 @@ const Storage = {
   // Get nickname
   async getNickname() {
     const result = await this.get(['nickname']);
-    return result.nickname || 'bro';
+    return result.nickname || 'Brow';
   },
 
   // Save nickname
@@ -76,6 +76,17 @@ const Storage = {
   // Save drawer collapsed preference
   async saveDrawerCollapsed(enabled) {
     await this.set({ drawerCollapsed: enabled });
+  },
+
+  // Get last backup timestamp
+  async getLastBackupAt() {
+    const result = await this.get(['lastBackupAt']);
+    return result.lastBackupAt || null;
+  },
+
+  // Save last backup timestamp
+  async saveLastBackupAt(lastBackupAt) {
+    await this.set({ lastBackupAt });
   },
 
   // Get manually created labels
@@ -138,11 +149,12 @@ const Storage = {
     const notes = await this.getNotes();
     const nickname = await this.getNickname();
     const labels = await this.getManualLabels();
+    const exportedAt = new Date().toISOString();
     return {
       notes,
       nickname,
       labels,
-      exportedAt: new Date().toISOString()
+      exportedAt
     };
   },
 
@@ -150,7 +162,7 @@ const Storage = {
   async importData(data) {
     await this.set({
       notes: data.notes || {},
-      nickname: data.nickname || 'bro',
+      nickname: data.nickname || 'Brow',
       labels: data.labels || []
     });
   }

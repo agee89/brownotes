@@ -6,7 +6,7 @@ const SettingsView = {
   },
 
   async save() {
-    const nickname = UI.get('bn-nickname').value.trim() || 'bro';
+    const nickname = UI.get('bn-nickname').value.trim() || 'Brow';
     await Storage.saveNickname(nickname);
     await UI.showAlert('Settings saved!', 'saved');
   },
@@ -16,6 +16,7 @@ const SettingsView = {
     const json = JSON.stringify(data, null, 2);
     const filename = `bronotes-export-${Date.now()}.json`;
     Utils.downloadFile(json, filename);
+    await Storage.saveLastBackupAt(data.exportedAt);
   },
 
   async import(event) {

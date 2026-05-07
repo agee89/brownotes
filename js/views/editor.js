@@ -35,17 +35,21 @@ const EditorView = {
     
     // Update save button state
     this.updateSaveButton();
+    const { title, content } = UI.getEditorValues();
+    UI.setSaveStatus(title || content ? 'saved' : 'empty');
     
     console.log('EditorView.open completed');
   },
 
   updateSaveButton() {
     const { title, content } = UI.getEditorValues();
-    UI.updateSaveButton(title || content);
+    const hasContent = !!(title || content);
+    UI.updateSaveButton(hasContent);
+    UI.setSaveStatus(hasContent ? 'dirty' : 'empty');
   },
 
   async save(silent = false) {
-    const { title, label, content } = UI.getEditorValues();
+    const { title, label, content, favorite } = UI.getEditorValues();
 
     // Validation
     if (!title && !content) {
@@ -55,6 +59,8 @@ const EditorView = {
 
     const now = Date.now();
 
+    UI.setSaveStatus('saving');
+
     if (this.currentNoteId) {
       // Update existing note
       const existingNote = await Storage.getNote(this.currentNoteId);
@@ -63,6 +69,7 @@ const EditorView = {
         title,
         label,
         content,
+        favorite,
         updatedAt: now
       });
     } else {
@@ -72,6 +79,7 @@ const EditorView = {
         title,
         label,
         content,
+        favorite,
         createdAt: now,
         updatedAt: now
       });
@@ -79,9 +87,7 @@ const EditorView = {
       UI.get('bn-btn-delete').style.display = 'block';
     }
 
-    if (!silent) {
-      UI.showSaveFeedback();
-    }
+    UI.showSaveFeedback();
   },
 
   async delete() {
@@ -106,6 +112,13 @@ const EditorView = {
     this.autoSaveTimeout = setTimeout(() => {
       this.save(true);
     }, 1000);
+  },
+
+  toggleFavorite() {
+    const favoriteButton = UI.get('bn-note-favorite');
+    const active = favoriteButton?.dataset.active !== 'true';
+    UI.setFavoriteToggle(active);
+    this.handleInput();
   },
 
   renderPreview() {

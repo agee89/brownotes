@@ -75,3 +75,28 @@ Berikut adalah daftar **75+ kutipan unik** dari tokoh nyata tentang **catatan, m
 73. **Peter Rogers** – *"Kamu harus membuat catatan ringkasanmu sendiri. Kamu belajar dari MEMBUATnya."*
 74. **Oprah Winfrey** – *"Menyimpan jurnal benar-benar akan mengubah hidupmu dengan cara yang tidak pernah kamu bayangkan."*
 75. **Ruth Ozeki** – *"Bagiku, menulis adalah cara berpikir. Aku banyak menulis di jurnal. Mereka adalah wadah yang membuatku tetap di tempat."* *(A Tale for the Time Being)*
+76. **Alexandra Johnson** – *"Rahasia menyimpan jurnal adalah melihatnya sebagai draf, batu pijakan, sebuah proses."* *(Leaving a Trace)*
+77. **Hilary Mantel** – *"Wawasan tidak biasa datang di mejaku, melainkan masuk ke buku catatan saat aku sedang bergerak. Atau setengah tertidur."* *(Wawancara penulis)*
+78. **Susan Sontag** – *"Dalam jurnal aku tidak sekadar mengekspresikan diri lebih terbuka dari yang bisa kukatakan kepada siapa pun; aku menciptakan diriku sendiri."* *(Reborn: Journals and Notebooks, 1947–1963)*
+79. **Flannery O'Connor** – *"Aku menulis karena aku tidak tahu apa yang kupikirkan sampai aku membaca apa yang kukatakan."* *(Mystery and Manners)*
+80. **Madeleine L'Engle** – *"Jika kamu ingin menulis, kamu perlu menyimpan jurnal yang jujur, tidak diterbitkan, yang tidak dibaca siapa pun kecuali kamu. Tempat di mana kamu menuangkan apa yang kamu pikirkan tentang kehidupan."* *(Walking on Water)*
+81. **William Makepeace Thackeray** – *"Ada ribuan pikiran yang tersimpan dalam diri seseorang yang tidak ia ketahui sampai ia mengambil pena untuk menulis."* *(The History of Henry Esmond)*
+82. **Anne Lister** – *"Betapa nyamannya jurnal ini. Aku bercerita kepada diriku sendiri dan melempar bebanku ke dalam buku ini, lalu merasa lega."* *(I Know My Own Heart: The Diaries of Anne Lister)*
+83. **André Gide** – *"Jurnal berguna selama evolusi spiritual yang sadar, disengaja, dan menyakitkan. Ia sangat menarik saat mencatat kebangkitan gagasan."* *(Journals: 1889–1913)*
+84. **Joyce Carol Oates** – *"Jurnal adalah tempat perlindungan ideal bagi diri batin, karena ia membentuk dunia tandingan: dunia penyeimbang dunia yang lain."* *(The Journal of Joyce Carol Oates)*
+85. **Jennifer Williamson** – *"Menulis jurnal, saat ia menjadi ritual transformasi, bukan hanya mengubah hidup, tetapi juga memperluas hidup."* *(Esai)*
+86. **Robyn Scott** – *"Segera setelah setiap kuliah, rapat, atau pengalaman penting apa pun, ambil 30 detik untuk menuliskan poin-poin terpenting. Hanya dengan ini, kamu akan baik-baik saja."* *(Wawancara penulis)*
+87. **Roger N. Walsh** – *"Menulis mengkristalkan wawasan, mengecoh pertahanan kelupaan, dan membangun koleksi ide yang dapat memicu lebih banyak wawasan bahkan bertahun-tahun kemudian."* *(Essential Spirituality)*
+88. **Jim Harrison** – *"Bawah sadarmu berusaha membantumu sepanjang waktu. Itulah mengapa aku menyimpan jurnal — bukan untuk obrolan, melainkan untuk gambar dan ide kecil yang mengalir ke dalam pikiran. Ia seperti tambang emasmu."* *(Wawancara penulis)*
+89. **Louisa May Alcott** – *"Lestarikan kenangan-kenanganmu, jaga mereka dengan baik; apa yang kamu lupakan tidak pernah bisa kamu ceritakan kembali."* *(Little Women)*
+90. **Terry Tempest Williams** – *"Aku telah menjalani setiap pertemuan dalam hidupku dua kali: sekali di dunia, dan sekali lagi di atas halaman."* *(When Women Were Birds)*
+91. **Anthony Doerr** – *"Entri jurnal yang baik harus memecah kebiasaan dan mengangkat lapisan yang terbentuk di atas mata, jari, lidah, dan hati. Ia harus menjadi surat cinta kepada dunia."* *(Four Seasons in Rome)*
+92. **Isaac Watts** – *"Setiap hari, terutama di tahun-tahun awal belajar, tuntut dirimu sendiri: ide baru apa, kebenaran apa yang telah kamu peroleh, dan kemajuan apa yang telah kamu buat dalam pengetahuan."* *(The Improvement of the Mind)*
+93. **Martina Navratilova** – *"Menyimpan jurnal tentang apa yang terjadi dalam hidupmu adalah cara yang baik untuk membantu dirimu memilah mana yang penting dan mana yang tidak."* *(Wawancara)*
+94. **Camille Perri** – *"Menyimpan jurnal adalah cara terbaik nomor satu untuk mengembangkan suara tulisanmu."* *(Esai penulis)*
+95. **Eric Maisel** – *"Menulis jurnal bisa menjadi cara utama kamu menggunakan pikiranmu, mempertahankan kesadaran sehari-hari, dan bertanggung jawab atas hidupmu."* *(Fearless Creating)*
+96. **Gloria Reuben** – *"Aku selalu suka menulis jurnal sebagai cara untuk menjernihkan pikiran. Hal pertama yang kulakukan saat bangun adalah mengeluarkan buku catatanku dan mencatat hal-hal positif yang telah terjadi."* *(Wawancara)*
+97. **Patrick Nathan** – *"Bentuk jurnal sangat ideal untuk menangkap hubungan rapuh kehidupan dengan waktu; ia membuat fuga dari kehidupan seseorang yang telah selesai."* *(Esai)*
+98. **Tom Wujec** – *"Mengapa mencatat? Alasan jelasnya adalah untuk mengingat. Pencatatan visual menerjemahkan apa yang kita dengar ke dalam gambar yang memberi konteks, warna, dan makna."* *(Build a Better Business Book)*
+99. **Wilford Woodruff** – *"Ada porsi dalam hidupku yang telah kuhabiskan untuk menulis jurnal — dan aku menganggapnya sebagai waktu yang sangat bermanfaat. Jika tidak ada motif lain, saja hak untuk membaca kembali jurnal kita sudah cukup sebagai imbalan."* *(Journal of Wilford Woodruff)*
+100. **Anne Wilson Schaef** – *"Setiap beberapa menit, kita memproses lebih banyak informasi daripada yang diproses sepanjang hidup oleh mereka yang hidup di Abad Pertengahan. Catatan adalah cara kita bertahan dari banjir itu."* *(Living in Process)*

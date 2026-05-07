@@ -108,18 +108,53 @@ const UI = {
     saveBtn.disabled = !enabled;
     saveBtn.style.opacity = enabled ? '1' : '0.5';
     saveBtn.style.cursor = enabled ? 'pointer' : 'not-allowed';
+    if (!enabled) {
+      this.setSaveStatus('empty');
+    }
+  },
+
+  setSaveStatus(status) {
+    const saveBtn = this.get('bn-btn-save');
+    if (!saveBtn) return;
+
+    const savedIcon = chrome.runtime.getURL('icons/saved.png');
+    const states = {
+      empty: {
+        html: 'save',
+        opacity: '0.5',
+        cursor: 'not-allowed',
+        disabled: true
+      },
+      dirty: {
+        html: 'save',
+        opacity: '1',
+        cursor: 'pointer',
+        disabled: false
+      },
+      saved: {
+        html: `<img src="${savedIcon}" alt="" style="width: 13px; height: 13px; display: block; pointer-events: none;" /><span>saved</span>`,
+        opacity: '0.78',
+        cursor: 'default',
+        disabled: false
+      },
+      saving: {
+        html: 'saving...',
+        opacity: '0.78',
+        cursor: 'progress',
+        disabled: true
+      }
+    };
+
+    const state = states[status] || states.dirty;
+    saveBtn.innerHTML = state.html;
+    saveBtn.style.opacity = state.opacity;
+    saveBtn.style.cursor = state.cursor;
+    saveBtn.disabled = state.disabled;
   },
 
   // Show save feedback
   showSaveFeedback() {
-    const saveBtn = this.get('bn-btn-save');
-    if (!saveBtn) return;
-
-    const originalText = saveBtn.textContent;
-    saveBtn.textContent = 'saved!';
-    setTimeout(() => {
-      saveBtn.textContent = originalText;
-    }, 1000);
+    this.setSaveStatus('saved');
   },
 
   // In-drawer modal dialog
@@ -308,6 +343,7 @@ const UI = {
     this.get('bn-note-title').value = '';
     this.get('bn-note-label').value = '';
     this.get('bn-editor').value = '';
+    this.setFavoriteToggle(false);
     this.get('bn-btn-delete').style.display = 'none';
   },
 
@@ -316,6 +352,7 @@ const UI = {
     this.get('bn-note-title').value = note.title || '';
     this.get('bn-note-label').value = note.label || '';
     this.get('bn-editor').value = note.content || '';
+    this.setFavoriteToggle(!!note.favorite);
     this.get('bn-btn-delete').style.display = 'block';
   },
 
@@ -324,8 +361,39 @@ const UI = {
     return {
       title: this.get('bn-note-title').value.trim(),
       label: this.get('bn-note-label').value.trim(),
-      content: this.get('bn-editor').value.trim()
+      content: this.get('bn-editor').value.trim(),
+      favorite: this.get('bn-note-favorite')?.dataset.active === 'true'
     };
+  },
+
+  setFavoriteToggle(active) {
+    const button = this.get('bn-note-favorite');
+    if (!button) return;
+
+    const enabled = !!active;
+    const icon = button.querySelector('img');
+    button.dataset.active = String(enabled);
+    button.setAttribute('aria-pressed', String(enabled));
+    button.title = enabled ? 'remove favorite' : 'favorite note';
+    button.setAttribute('aria-label', button.title);
+    if (icon) {
+      icon.src = chrome.runtime.getURL(enabled ? 'icons/bookmarked.png' : 'icons/bookmark.png');
+    }
+  },
+
+  setFavoriteFilter(active) {
+    const button = this.get('bn-filter-favorite');
+    if (!button) return;
+
+    const enabled = !!active;
+    const icon = button.querySelector('img');
+    button.dataset.active = String(enabled);
+    button.setAttribute('aria-pressed', String(enabled));
+    button.title = enabled ? 'show all notes' : 'show favorite notes';
+    button.setAttribute('aria-label', button.title);
+    if (icon) {
+      icon.src = chrome.runtime.getURL(enabled ? 'icons/bookmarked.png' : 'icons/bookmark.png');
+    }
   },
 
   // Update label suggestions

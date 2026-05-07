@@ -2,29 +2,35 @@
 const HomeView = {
   async load() {
     const nickname = await Storage.getNickname();
+    const displayName = String(nickname || '').trim() || 'Brow';
     const notes = await Storage.getNotes();
     const notesArray = Object.values(notes);
 
     // Welcome message - ALWAYS show
     const welcomeMsg = UI.get('bn-welcome-message');
-    welcomeMsg.textContent = `Ada yang mau dicatat hari ini ${nickname}?, catat biar gak nguap`;
+    welcomeMsg.textContent = `Welcome back, ${displayName} 👋`;
 
     // Summary - show if there are notes
     const summaryDiv = UI.get('bn-summary');
-    if (notesArray.length > 0) {
+    const labels = await Storage.getLabels();
+    const lastBackupAt = await Storage.getLastBackupAt();
+    if (notesArray.length > 0 || lastBackupAt) {
       summaryDiv.style.display = 'block';
-      
-      // Count unique labels
-      const labels = await Storage.getLabels();
-      
-      // Find last updated note
-      const sortedNotes = notesArray.sort((a, b) => b.updatedAt - a.updatedAt);
-      const lastNote = sortedNotes[0];
-      const lastDateStr = Utils.formatDate(lastNote.updatedAt, 'long');
+      const favoriteNotes = notesArray.filter(note => !!note.favorite).length;
+      let lastDateStr = '-';
+
+      if (notesArray.length > 0) {
+        // Find last updated note
+        const sortedNotes = notesArray.sort((a, b) => b.updatedAt - a.updatedAt);
+        const lastNote = sortedNotes[0];
+        lastDateStr = Utils.formatDate(lastNote.updatedAt, 'long');
+      }
       
       UI.get('bn-total-notes').textContent = notesArray.length;
       UI.get('bn-total-labels').textContent = labels.length;
+      UI.get('bn-total-favorites').textContent = favoriteNotes;
       UI.get('bn-last-note').textContent = lastDateStr;
+      UI.get('bn-last-backup').textContent = lastBackupAt ? Utils.formatDate(lastBackupAt, 'datetime') : 'never';
     } else {
       summaryDiv.style.display = 'none';
     }

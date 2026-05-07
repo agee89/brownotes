@@ -1,7 +1,7 @@
 // All Notes view controller
 const AllNotesView = {
   async render() {
-    if (!UI.get('bn-notes-list') || !UI.get('bn-filter-label') || !UI.get('bn-search') || !UI.get('bn-sort')) {
+    if (!UI.get('bn-notes-list') || !UI.get('bn-filter-label') || !UI.get('bn-filter-favorite') || !UI.get('bn-search') || !UI.get('bn-sort')) {
       setTimeout(() => this.render(), 50);
       return;
     }
@@ -27,6 +27,12 @@ const AllNotesView = {
       notesArray = notesArray.filter(note => note.label === filterLabel);
     }
 
+    // Favorite filter
+    const favoriteOnly = UI.get('bn-filter-favorite').dataset.active === 'true';
+    if (favoriteOnly) {
+      notesArray = notesArray.filter(note => !!note.favorite);
+    }
+
     // Sort
     const sortBy = UI.get('bn-sort').value;
     if (sortBy === 'updated-desc') {
@@ -45,14 +51,20 @@ const AllNotesView = {
     UI.updateLabelFilter(labels, currentFilter);
 
     // Render notes list
-    this.renderList(notesArray);
+    this.renderList(notesArray, favoriteOnly);
   },
 
-  renderList(notesArray) {
+  toggleFavoriteFilter() {
+    const active = UI.get('bn-filter-favorite')?.dataset.active !== 'true';
+    UI.setFavoriteFilter(active);
+    this.render();
+  },
+
+  renderList(notesArray, favoriteOnly = false) {
     const listDiv = UI.get('bn-notes-list');
     
     if (notesArray.length === 0) {
-      listDiv.innerHTML = '<div style="text-align: center; padding: 40px 0; color: #9a9a9a; font-size: 12px;">no notes yet</div>';
+      listDiv.innerHTML = `<div style="text-align: center; padding: 40px 0; color: #9a9a9a; font-size: 12px;">${favoriteOnly ? 'no favorite notes yet' : 'no notes yet'}</div>`;
       return;
     }
 
@@ -64,13 +76,17 @@ const AllNotesView = {
       const noteId = Utils.escapeHtml(note.id);
       const labelIcon = chrome.runtime.getURL('icons/label.png');
       const calendarIcon = chrome.runtime.getURL('icons/calendar.png');
+      const bookmarkIcon = chrome.runtime.getURL('icons/bookmark.png');
+      const favoriteIcon = note.favorite
+        ? `<img src="${bookmarkIcon}" alt="" title="favorite" style="width: 11px; height: 11px; opacity: 0.72; pointer-events: none; flex: 0 0 auto;" />`
+        : '';
       
       return `
         <div class="bn-note-item" data-note-id="${noteId}" role="button" tabindex="0" style="padding: 16px; border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: background 0.15s, transform 0.1s ease;">
           <div style="font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #2a2a2a;">${title}</div>
           <div style="font-size: 12px; color: #6a6a6a; margin-bottom: 8px; line-height: 1.5;">${Utils.escapeHtml(preview)}${preview.length >= 100 ? '...' : ''}</div>
           <div style="display: flex; justify-content: space-between; font-size: 11px; color: #9a9a9a;">
-            <span style="display: inline-flex; align-items: center; gap: 4px; min-width: 0;"><img src="${labelIcon}" alt="" style="width: 11px; height: 11px; opacity: 0.55; pointer-events: none; flex: 0 0 auto;" /><span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${label}</span></span>
+            <span style="display: inline-flex; align-items: center; gap: 4px; min-width: 0;"><img src="${labelIcon}" alt="" style="width: 11px; height: 11px; opacity: 0.55; pointer-events: none; flex: 0 0 auto;" /><span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${label}</span>${favoriteIcon}</span>
             <span style="display: inline-flex; align-items: center; gap: 4px; flex: 0 0 auto;"><img src="${calendarIcon}" alt="" style="width: 11px; height: 11px; opacity: 0.55; pointer-events: none;" />${dateStr}</span>
           </div>
         </div>

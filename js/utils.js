@@ -11,6 +11,15 @@ const Utils = {
     if (format === 'short') {
       return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short' });
     }
+    if (format === 'datetime') {
+      return date.toLocaleString('id-ID', {
+        day: 'numeric',
+        month: 'short',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
     return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
   },
 
