@@ -6,7 +6,13 @@ const Quotes = {
     if (this.items) return this.items;
 
     try {
-      const response = await fetch(chrome.runtime.getURL('Quote.md'));
+      const quoteUrl = Utils.assetUrl('Quote.md');
+      if (!quoteUrl) {
+        this.items = [];
+        return this.items;
+      }
+
+      const response = await fetch(quoteUrl);
       const markdown = await response.text();
       this.items = this.parse(markdown);
     } catch (error) {

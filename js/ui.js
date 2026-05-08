@@ -14,6 +14,7 @@ const UI = {
     if (drawer) {
       drawer.dataset.collapsed = 'false';
       drawer.style.transform = 'translateX(0)';
+      this.updateDrawerRibbon(false);
     }
   },
 
@@ -22,6 +23,7 @@ const UI = {
     if (drawer) {
       drawer.dataset.collapsed = 'true';
       drawer.style.transform = 'translateX(100%)';
+      this.updateDrawerRibbon(true);
     }
   },
 
@@ -36,6 +38,23 @@ const UI = {
     }
   },
 
+  updateDrawerRibbon(collapsed) {
+    const button = this.get('bn-btn-drawer-ribbon');
+    const icon = this.get('bn-drawer-ribbon-icon');
+    const isCollapsed = !!collapsed;
+    const label = isCollapsed ? 'open panel' : 'close panel';
+
+    if (button) {
+      button.title = label;
+      button.setAttribute('aria-label', label);
+      button.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');
+    }
+
+    if (icon) {
+      icon.src = Utils.assetUrl(isCollapsed ? 'icons/panel-left-close.png' : 'icons/panel-right-close.png');
+    }
+  },
+
   // Toggle transparent drawer mode
   setDrawerTransparent(enabled) {
     const drawer = this.get('bronotes-drawer');
@@ -43,11 +62,16 @@ const UI = {
     const icon = this.get('bn-transparency-icon');
     if (!drawer) return;
 
+    const dark = drawer.dataset.theme === 'dark';
     drawer.dataset.transparent = enabled ? 'true' : 'false';
-    drawer.style.setProperty('background', enabled ? 'rgba(255, 255, 255, 0.38)' : '#ffffff', 'important');
+    drawer.style.setProperty(
+      'background',
+      enabled ? (dark ? 'rgba(20, 20, 20, 0.52)' : 'rgba(255, 255, 255, 0.38)') : (dark ? '#181818' : '#ffffff'),
+      'important'
+    );
     drawer.style.setProperty(
       'box-shadow',
-      enabled ? 'none' : '-1px 0 0 #e0e0e0',
+      enabled ? 'none' : (dark ? '-1px 0 0 #303030' : '-1px 0 0 #e0e0e0'),
       'important'
     );
 
@@ -57,24 +81,57 @@ const UI = {
     }
 
     if (icon) {
-      icon.src = chrome.runtime.getURL(enabled ? 'icons/eye-off.png' : 'icons/eye.png');
+      icon.src = Utils.assetUrl(enabled ? 'icons/eye-off.png' : 'icons/eye.png');
+    }
+  },
+
+  // Toggle light/dark drawer theme
+  setDrawerTheme(theme) {
+    const drawer = this.get('bronotes-drawer');
+    const button = this.get('bn-btn-theme');
+    const icon = this.get('bn-theme-icon');
+    if (!drawer) return;
+
+    const nextTheme = theme === 'dark' ? 'dark' : 'light';
+    const dark = nextTheme === 'dark';
+    drawer.dataset.theme = nextTheme;
+
+    if (button) {
+      const label = dark ? 'switch to light mode' : 'switch to dark mode';
+      button.title = label;
+      button.setAttribute('aria-label', label);
+      button.setAttribute('aria-pressed', dark ? 'true' : 'false');
+      button.style.opacity = dark ? '1' : '0.72';
+    }
+
+    if (icon) {
+      icon.src = Utils.assetUrl(dark ? 'icons/light.png' : 'icons/dark.png');
+    }
+
+    this.setDrawerTransparent(drawer.dataset.transparent === 'true');
+    if (typeof App !== 'undefined' && App.currentView) {
+      this.switchView(App.currentView);
     }
   },
 
   // Switch view
   switchView(view) {
+    const drawer = this.get('bronotes-drawer');
+    const dark = drawer?.dataset.theme === 'dark';
+    const activeColor = dark ? '#ffffff' : '#2a2a2a';
+
     // Hide all views
-    ['home', 'allnotes', 'editor', 'labels', 'settings'].forEach(v => {
+    ['home', 'allnotes', 'editor', 'labels', 'trash', 'settings'].forEach(v => {
       const el = this.get(`bn-${v}-view`);
       if (el) el.style.display = 'none';
     });
 
     // Reset navigation
-    ['home', 'allnotes', 'labels', 'settings'].forEach(nav => {
+    ['home', 'allnotes', 'labels', 'trash', 'settings'].forEach(nav => {
       const btn = this.get(`bn-nav-${nav}`);
       if (btn) {
         btn.style.color = '#9a9a9a';
-        btn.style.borderBottom = '2px solid transparent';
+        btn.style.setProperty('border-bottom', '2px solid transparent', 'important');
         const icon = btn.querySelector('img');
         if (icon) icon.style.opacity = '0.45';
       }
@@ -87,14 +144,15 @@ const UI = {
                              view === 'allnotes' ? 'flex' : 
                              view === 'editor' ? 'flex' : 
                              view === 'labels' ? 'flex' : 
+                             view === 'trash' ? 'flex' : 
                              view === 'settings' ? 'flex' : 'none';
     }
 
     // Highlight navigation
     const navBtn = this.get(`bn-nav-${view}`);
     if (navBtn) {
-      navBtn.style.color = '#2a2a2a';
-      navBtn.style.borderBottom = '2px solid #2a2a2a';
+      navBtn.style.color = activeColor;
+      navBtn.style.setProperty('border-bottom', `2px solid ${activeColor}`, 'important');
       const icon = navBtn.querySelector('img');
       if (icon) icon.style.opacity = '1';
     }
@@ -108,16 +166,28 @@ const UI = {
     saveBtn.disabled = !enabled;
     saveBtn.style.opacity = enabled ? '1' : '0.5';
     saveBtn.style.cursor = enabled ? 'pointer' : 'not-allowed';
+    this.updateExportMdButton(enabled);
     if (!enabled) {
       this.setSaveStatus('empty');
     }
+  },
+
+  updateExportMdButton(enabled) {
+    const exportBtn = this.get('bn-btn-export-md');
+    if (!exportBtn) return;
+
+    exportBtn.disabled = !enabled;
+    exportBtn.style.opacity = enabled ? '1' : '0.45';
+    exportBtn.style.cursor = enabled ? 'pointer' : 'not-allowed';
+    exportBtn.style.color = enabled ? '#2a2a2a' : '#9a9a9a';
+    exportBtn.setAttribute('aria-disabled', String(!enabled));
   },
 
   setSaveStatus(status) {
     const saveBtn = this.get('bn-btn-save');
     if (!saveBtn) return;
 
-    const savedIcon = chrome.runtime.getURL('icons/saved.png');
+    const savedIcon = Utils.assetUrl('icons/saved.png');
     const states = {
       empty: {
         html: 'save',
@@ -171,11 +241,12 @@ const UI = {
 
       const overlay = document.createElement('div');
       overlay.id = 'bn-modal-overlay';
+      const dark = drawer.dataset.theme === 'dark';
       overlay.style.cssText = `
         position: absolute;
         inset: 0;
         z-index: 10;
-        background: rgba(255,255,255,0.72);
+        background: ${dark ? 'rgba(0,0,0,0.58)' : 'rgba(255,255,255,0.72)'};
         display: flex;
         align-items: center;
         justify-content: center;
@@ -188,22 +259,26 @@ const UI = {
       modal.style.cssText = `
         width: 100%;
         max-width: 360px;
-        background: #ffffff;
-        border: 1px solid #e0e0e0;
-        box-shadow: 0 12px 36px rgba(0,0,0,0.16);
+        background: ${dark ? '#202020' : '#ffffff'};
+        border: 1px solid ${dark ? '#3a3a3a' : '#e0e0e0'};
+        box-shadow: 0 12px 36px ${dark ? 'rgba(0,0,0,0.46)' : 'rgba(0,0,0,0.16)'};
         padding: 18px;
         box-sizing: border-box;
       `;
+      modal.style.setProperty('background', dark ? '#202020' : '#ffffff', 'important');
+      modal.style.setProperty('border-color', dark ? '#3a3a3a' : '#e0e0e0', 'important');
 
       const titleEl = document.createElement('div');
       titleEl.textContent = title;
-      titleEl.style.cssText = 'font-size: 13px; font-weight: 600; color: #2a2a2a; margin-bottom: 8px; letter-spacing: 0.5px;';
+      titleEl.style.cssText = `font-size: 13px; font-weight: 600; color: ${dark ? '#f1f1f1' : '#2a2a2a'}; margin-bottom: 8px; letter-spacing: 0.5px;`;
+      titleEl.style.setProperty('color', dark ? '#f1f1f1' : '#2a2a2a', 'important');
       modal.appendChild(titleEl);
 
       if (message) {
         const messageEl = document.createElement('div');
         messageEl.textContent = message;
-        messageEl.style.cssText = 'font-size: 12px; line-height: 1.6; color: #6a6a6a; margin-bottom: 14px;';
+        messageEl.style.cssText = `font-size: 12px; line-height: 1.6; color: ${dark ? '#c7c7c7' : '#6a6a6a'}; margin-bottom: 14px;`;
+        messageEl.style.setProperty('color', dark ? '#c7c7c7' : '#6a6a6a', 'important');
         modal.appendChild(messageEl);
       }
 
@@ -215,15 +290,18 @@ const UI = {
         inputEl.style.cssText = `
           width: 100%;
           padding: 10px 12px;
-          border: 1px solid #e0e0e0;
-          background: transparent;
-          color: #2a2a2a;
+          border: 1px solid ${dark ? '#3a3a3a' : '#e0e0e0'};
+          background: ${dark ? '#181818' : 'transparent'};
+          color: ${dark ? '#f1f1f1' : '#2a2a2a'};
           font-size: 12px;
           font-family: inherit;
           outline: none;
           box-sizing: border-box;
           margin-bottom: 16px;
         `;
+        inputEl.style.setProperty('background', dark ? '#181818' : 'transparent', 'important');
+        inputEl.style.setProperty('border-color', dark ? '#3a3a3a' : '#e0e0e0', 'important');
+        inputEl.style.setProperty('color', dark ? '#f1f1f1' : '#2a2a2a', 'important');
         modal.appendChild(inputEl);
       }
 
@@ -242,12 +320,15 @@ const UI = {
         cancelButton.style.cssText = `
           padding: 8px 12px;
           background: transparent;
-          color: #6a6a6a;
-          border: 1px solid #e0e0e0;
+          color: ${dark ? '#d8d8d8' : '#6a6a6a'};
+          border: 1px solid ${dark ? '#555555' : '#e0e0e0'};
           cursor: pointer;
           font-size: 11px;
           font-family: inherit;
         `;
+        cancelButton.style.setProperty('background', 'transparent', 'important');
+        cancelButton.style.setProperty('border-color', dark ? '#555555' : '#e0e0e0', 'important');
+        cancelButton.style.setProperty('color', dark ? '#d8d8d8' : '#6a6a6a', 'important');
         cancelButton.addEventListener('click', () => close(input ? null : false));
         actions.appendChild(cancelButton);
       }
@@ -257,13 +338,16 @@ const UI = {
       confirmButton.textContent = confirmText;
       confirmButton.style.cssText = `
         padding: 8px 12px;
-        background: ${danger ? '#dc3545' : '#2a2a2a'};
-        color: #ffffff;
-        border: 1px solid ${danger ? '#dc3545' : '#2a2a2a'};
+        background: ${danger ? '#dc3545' : (dark ? '#f1f1f1' : '#2a2a2a')};
+        color: ${danger ? '#ffffff' : (dark ? '#181818' : '#ffffff')};
+        border: 1px solid ${danger ? '#dc3545' : (dark ? '#f1f1f1' : '#2a2a2a')};
         cursor: pointer;
         font-size: 11px;
         font-family: inherit;
       `;
+      confirmButton.style.setProperty('background', danger ? '#dc3545' : (dark ? '#f1f1f1' : '#2a2a2a'), 'important');
+      confirmButton.style.setProperty('border-color', danger ? '#dc3545' : (dark ? '#f1f1f1' : '#2a2a2a'), 'important');
+      confirmButton.style.setProperty('color', danger ? '#ffffff' : (dark ? '#181818' : '#ffffff'), 'important');
       confirmButton.addEventListener('click', () => close(input ? inputEl.value : true));
       actions.appendChild(confirmButton);
 
@@ -344,6 +428,8 @@ const UI = {
     this.get('bn-note-label').value = '';
     this.get('bn-editor').value = '';
     this.setFavoriteToggle(false);
+    this.setKingToggle(false);
+    this.setPinnedToggle(false);
     this.get('bn-btn-delete').style.display = 'none';
   },
 
@@ -353,6 +439,8 @@ const UI = {
     this.get('bn-note-label').value = note.label || '';
     this.get('bn-editor').value = note.content || '';
     this.setFavoriteToggle(!!note.favorite);
+    this.setKingToggle(!!note.king);
+    this.setPinnedToggle(!!note.pinned);
     this.get('bn-btn-delete').style.display = 'block';
   },
 
@@ -362,7 +450,9 @@ const UI = {
       title: this.get('bn-note-title').value.trim(),
       label: this.get('bn-note-label').value.trim(),
       content: this.get('bn-editor').value.trim(),
-      favorite: this.get('bn-note-favorite')?.dataset.active === 'true'
+      favorite: this.get('bn-note-favorite')?.dataset.active === 'true',
+      king: this.get('bn-note-king')?.dataset.active === 'true',
+      pinned: this.get('bn-note-pinned')?.dataset.active === 'true'
     };
   },
 
@@ -377,7 +467,37 @@ const UI = {
     button.title = enabled ? 'remove favorite' : 'favorite note';
     button.setAttribute('aria-label', button.title);
     if (icon) {
-      icon.src = chrome.runtime.getURL(enabled ? 'icons/bookmarked.png' : 'icons/bookmark.png');
+      icon.src = Utils.assetUrl(enabled ? 'icons/bookmarked.png' : 'icons/bookmark.png');
+    }
+  },
+
+  setKingToggle(active) {
+    const button = this.get('bn-note-king');
+    if (!button) return;
+
+    const enabled = !!active;
+    const icon = button.querySelector('img');
+    button.dataset.active = String(enabled);
+    button.setAttribute('aria-pressed', String(enabled));
+    button.title = enabled ? 'remove king note' : 'make king note';
+    button.setAttribute('aria-label', button.title);
+    if (icon) {
+      icon.src = Utils.assetUrl(enabled ? 'icons/crowned.png' : 'icons/crown.png');
+    }
+  },
+
+  setPinnedToggle(active) {
+    const button = this.get('bn-note-pinned');
+    if (!button) return;
+
+    const enabled = !!active;
+    const icon = button.querySelector('img');
+    button.dataset.active = String(enabled);
+    button.setAttribute('aria-pressed', String(enabled));
+    button.title = enabled ? 'unpin note' : 'pin note';
+    button.setAttribute('aria-label', button.title);
+    if (icon) {
+      icon.src = Utils.assetUrl(enabled ? 'icons/pinned.png' : 'icons/pin.png');
     }
   },
 
@@ -392,7 +512,7 @@ const UI = {
     button.title = enabled ? 'show all notes' : 'show favorite notes';
     button.setAttribute('aria-label', button.title);
     if (icon) {
-      icon.src = chrome.runtime.getURL(enabled ? 'icons/bookmarked.png' : 'icons/bookmark.png');
+      icon.src = Utils.assetUrl(enabled ? 'icons/bookmarked.png' : 'icons/bookmark.png');
     }
   },
 

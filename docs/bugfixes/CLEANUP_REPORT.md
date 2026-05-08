@@ -42,16 +42,6 @@
 
 ## Files to Keep
 
-### ✅ `generate-icons.html`
-**Status:** KEEP - utility tool
-
-**Alasan:**
-- Tool untuk generate icons
-- Digunakan saat setup
-- Documented in README
-
----
-
 ### ✅ `PROJECT_SUMMARY.md`
 **Status:** KEEP - documentation
 

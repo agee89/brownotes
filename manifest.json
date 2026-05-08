@@ -36,6 +36,7 @@
         "js/views/allnotes.js",
         "js/views/editor.js",
         "js/views/labels.js",
+        "js/views/trash.js",
         "js/views/settings.js",
         "js/app.js"
       ],

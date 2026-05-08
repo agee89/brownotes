@@ -22,7 +22,7 @@ const App = {
     });
 
     // Check initial state
-    chrome.storage.local.get(['globalEnabled'], (result) => {
+    Storage.get(['globalEnabled']).then((result) => {
       if (result.globalEnabled) {
         this.injectDrawer();
         this.restoreDrawerState();
@@ -36,6 +36,7 @@ const App = {
 
     const drawer = document.createElement('div');
     drawer.id = 'bronotes-drawer';
+    drawer.dataset.collapsed = 'true';
     drawer.style.cssText = `
       position: fixed !important;
       top: 0 !important;
@@ -67,19 +68,29 @@ const App = {
     UI.get('bn-nav-home').onclick = () => this.switchView('home');
     UI.get('bn-nav-allnotes').onclick = () => this.switchView('allnotes');
     UI.get('bn-nav-labels').onclick = () => this.switchView('labels');
+    UI.get('bn-nav-trash').onclick = () => this.switchView('trash');
     UI.get('bn-nav-settings').onclick = () => this.switchView('settings');
-    UI.get('bn-btn-close').onclick = async () => {
-      UI.hideDrawer();
-      await Storage.saveDrawerCollapsed(true);
-    };
-    UI.get('bn-btn-open-panel').onclick = async () => {
-      UI.showDrawer();
-      await Storage.saveDrawerCollapsed(false);
+    UI.get('bn-btn-drawer-ribbon').onclick = async () => {
+      const drawer = UI.get('bronotes-drawer');
+      const collapsed = drawer?.dataset.collapsed === 'true';
+
+      if (collapsed) {
+        UI.showDrawer();
+      } else {
+        UI.hideDrawer();
+      }
+
+      await Storage.saveDrawerCollapsed(!collapsed);
     };
     UI.get('bn-btn-transparency').onclick = async () => {
       const enabled = UI.get('bronotes-drawer').dataset.transparent !== 'true';
       UI.setDrawerTransparent(enabled);
       await Storage.saveDrawerTransparent(enabled);
+    };
+    UI.get('bn-btn-theme').onclick = async () => {
+      const theme = UI.get('bronotes-drawer').dataset.theme === 'dark' ? 'light' : 'dark';
+      UI.setDrawerTheme(theme);
+      await Storage.saveDrawerTheme(theme);
     };
 
     // Home
@@ -91,6 +102,7 @@ const App = {
     UI.get('bn-filter-label').onchange = () => AllNotesView.render();
     UI.get('bn-sort').onchange = () => AllNotesView.render();
     UI.get('bn-filter-favorite').onclick = () => AllNotesView.toggleFavoriteFilter();
+    UI.get('bn-filter-reset').onclick = () => AllNotesView.resetFilters();
 
     // Editor
     UI.get('bn-btn-back').onclick = () => this.switchView('allnotes');
@@ -101,9 +113,12 @@ const App = {
       UI.switchEditorTab('preview');
       EditorView.renderPreview();
     };
+    UI.get('bn-btn-export-md').onclick = () => EditorView.exportMarkdown();
     UI.get('bn-btn-save').onclick = () => EditorView.save(false);
     UI.get('bn-btn-delete').onclick = () => EditorView.delete();
     UI.get('bn-note-favorite').onclick = () => EditorView.toggleFavorite();
+    UI.get('bn-note-king').onclick = () => EditorView.toggleKing();
+    UI.get('bn-note-pinned').onclick = () => EditorView.togglePinned();
 
     // Editor input handlers
     UI.get('bn-note-title').oninput = () => EditorView.handleInput();
@@ -121,6 +136,9 @@ const App = {
     // Labels
     UI.get('bn-btn-add-label').onclick = () => LabelsView.add();
 
+    // Trash
+    UI.get('bn-btn-empty-trash').onclick = () => TrashView.empty();
+
     // Settings
     UI.get('bn-nickname').onchange = () => SettingsView.save();
     UI.get('bn-btn-export').onclick = () => SettingsView.export();
@@ -129,6 +147,9 @@ const App = {
 
     Storage.getDrawerTransparent().then((enabled) => {
       UI.setDrawerTransparent(enabled);
+    });
+    Storage.getDrawerTheme().then((theme) => {
+      UI.setDrawerTheme(theme);
     });
   },
 
@@ -152,6 +173,8 @@ const App = {
       AllNotesView.render();
     } else if (this.currentView === 'labels') {
       LabelsView.load();
+    } else if (this.currentView === 'trash') {
+      TrashView.load();
     } else if (this.currentView === 'settings') {
       SettingsView.load();
     }
@@ -172,6 +195,8 @@ const App = {
       // Don't reload content here to avoid overwriting
     } else if (view === 'labels') {
       LabelsView.load();
+    } else if (view === 'trash') {
+      TrashView.load();
     } else if (view === 'settings') {
       SettingsView.load();
     }

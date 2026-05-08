@@ -48,8 +48,7 @@ bronotes/
 ├── README.md                  # Main documentation
 ├── CHANGELOG.md               # Version history
 ├── TODO.md                    # Future plans
-├── LICENSE                    # MIT License
-└── generate-icons.html        # Icon generator tool
+└── LICENSE                    # MIT License
 ```
 
 ## ✨ Features (v3.0.0)

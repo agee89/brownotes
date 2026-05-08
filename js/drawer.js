@@ -18,6 +18,7 @@ const DrawerHTML = `
 
     #bronotes-drawer[data-transparent="true"] #bn-home-view,
     #bronotes-drawer[data-transparent="true"] #bn-labels-view,
+    #bronotes-drawer[data-transparent="true"] #bn-trash-view,
     #bronotes-drawer[data-transparent="true"] #bn-settings-view,
     #bronotes-drawer[data-transparent="true"] #bn-notes-list {
       text-shadow: none !important;
@@ -47,6 +48,23 @@ const DrawerHTML = `
     #bronotes-drawer[data-transparent="true"] textarea:focus,
     #bronotes-drawer[data-transparent="true"] select:focus {
       border-color: rgba(42, 42, 42, 0.62) !important;
+    }
+
+    #bronotes-drawer select {
+      -webkit-appearance: none !important;
+      appearance: none !important;
+      background-image: url("${chrome.runtime.getURL('icons/down.png')}") !important;
+      background-position: right 10px center !important;
+      background-repeat: no-repeat !important;
+      background-size: 10px 10px !important;
+      padding-right: 28px !important;
+    }
+
+    #bronotes-drawer[data-transparent="true"] select {
+      background-image: url("${chrome.runtime.getURL('icons/down.png')}") !important;
+      background-position: right 10px center !important;
+      background-repeat: no-repeat !important;
+      background-size: 10px 10px !important;
     }
 
     .bn-drawer-brand {
@@ -167,7 +185,8 @@ const DrawerHTML = `
       opacity: 0.9;
     }
 
-    .bn-filter-favorite {
+    .bn-filter-favorite,
+    .bn-filter-reset {
       height: 31px;
       width: 34px;
     }
@@ -180,6 +199,30 @@ const DrawerHTML = `
     #bronotes-drawer[data-transparent="true"] .bn-icon-toggle[data-active="true"] {
       background: rgba(255, 255, 255, 0.34) !important;
       border-color: rgba(42, 42, 42, 0.12) !important;
+    }
+
+    .bn-trash-restore {
+      background: #ffffff !important;
+      border: 1px solid #2a2a2a !important;
+      color: #2a2a2a !important;
+    }
+
+    .bn-trash-delete {
+      background: transparent !important;
+      border: 1px solid #dc3545 !important;
+      color: #dc3545 !important;
+    }
+
+    #bronotes-drawer[data-transparent="true"] .bn-trash-restore {
+      background: rgba(255, 255, 255, 0.22) !important;
+      border-color: rgba(42, 42, 42, 0.58) !important;
+      color: #2a2a2a !important;
+    }
+
+    #bronotes-drawer[data-transparent="true"] .bn-trash-delete {
+      background: rgba(255, 255, 255, 0.08) !important;
+      border-color: rgba(220, 53, 69, 0.58) !important;
+      color: #b72838 !important;
     }
 
     .bn-summary-heading {
@@ -278,26 +321,116 @@ const DrawerHTML = `
 
     #bn-drawer-ribbon {
       position: absolute;
-      top: 76px;
-      left: -44px;
-      width: 44px;
-      height: 44px;
-      display: none;
+      top: 88px;
+      left: -42px;
+      width: 42px;
+      height: 40px;
+      display: flex;
       align-items: center;
       justify-content: center;
-      background: rgba(255, 255, 255, 0.92);
-      border: 1px solid #e8e8e8;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid #dedede;
       border-right: none;
       box-sizing: border-box;
+      z-index: 1;
     }
 
-    #bronotes-drawer[data-collapsed="true"] #bn-drawer-ribbon {
+    #bn-drawer-ribbon button {
+      align-items: center;
+      background: transparent;
+      border: none;
+      box-sizing: border-box;
+      cursor: pointer;
       display: flex;
+      height: 100%;
+      justify-content: center;
+      padding: 0;
+      transition: background 0.15s ease, transform 0.1s ease;
+      width: 100%;
+    }
+
+    #bn-drawer-ribbon button:hover {
+      background: rgba(42, 42, 42, 0.04);
+    }
+
+    #bn-drawer-ribbon img {
+      display: block;
+      height: 18px;
+      opacity: 0.78;
+      pointer-events: none;
+      width: 18px;
+    }
+
+    #bronotes-drawer[data-transparent="true"] #bn-drawer-ribbon {
+      background: rgba(255, 255, 255, 0.34) !important;
+      border-color: rgba(255, 255, 255, 0.42) !important;
+    }
+
+    #bronotes-drawer[data-theme="dark"] {
+      background: #181818 !important;
+      color: #e8e8e8 !important;
+      box-shadow: -1px 0 0 #303030 !important;
+    }
+
+    #bronotes-drawer[data-theme="dark"] * {
+      border-color: #333333 !important;
+      color: #e8e8e8 !important;
+    }
+
+    #bronotes-drawer[data-theme="dark"] input,
+    #bronotes-drawer[data-theme="dark"] textarea,
+    #bronotes-drawer[data-theme="dark"] select,
+    #bronotes-drawer[data-theme="dark"] #bn-preview-container,
+    #bronotes-drawer[data-theme="dark"] #bn-privacy-panel,
+    #bronotes-drawer[data-theme="dark"] #bn-summary-panel,
+    #bronotes-drawer[data-theme="dark"] #bn-label-autocomplete {
+      background: #202020 !important;
+      color: #f1f1f1 !important;
+    }
+
+    #bronotes-drawer[data-theme="dark"] button {
+      background: transparent !important;
+      color: #f1f1f1 !important;
+    }
+
+    #bronotes-drawer[data-theme="dark"] .bn-new-note-button {
+      background: #f1f1f1 !important;
+      color: #181818 !important;
+    }
+
+    #bronotes-drawer[data-theme="dark"] .bn-new-note-button * {
+      color: #181818 !important;
+    }
+
+    #bronotes-drawer[data-theme="dark"] .bn-trash-delete,
+    #bronotes-drawer[data-theme="dark"] .bn-label-delete {
+      border-color: #dc3545 !important;
+      color: #ff6b7a !important;
+    }
+
+    #bronotes-drawer[data-theme="dark"] #bn-drawer-ribbon {
+      background: rgba(24, 24, 24, 0.96) !important;
+      border-color: #333333 !important;
+    }
+
+    #bronotes-drawer[data-theme="dark"][data-transparent="true"] {
+      background: rgba(20, 20, 20, 0.52) !important;
+      box-shadow: none !important;
+    }
+
+    #bronotes-drawer[data-theme="dark"][data-transparent="true"] input,
+    #bronotes-drawer[data-theme="dark"][data-transparent="true"] textarea,
+    #bronotes-drawer[data-theme="dark"][data-transparent="true"] select,
+    #bronotes-drawer[data-theme="dark"][data-transparent="true"] #bn-preview-container,
+    #bronotes-drawer[data-theme="dark"][data-transparent="true"] #bn-privacy-panel,
+    #bronotes-drawer[data-theme="dark"][data-transparent="true"] #bn-summary-panel,
+    #bronotes-drawer[data-theme="dark"][data-transparent="true"] #bn-label-autocomplete {
+      background: rgba(20, 20, 20, 0.42) !important;
     }
   </style>
   <div id="bn-drawer-ribbon">
-    <button id="bn-btn-open-panel" title="open panel" aria-label="open panel" style="width: 100%; height: 100%; padding: 10px; background: transparent; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center;" onmousedown="this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">
-      <img src="${chrome.runtime.getURL('icons/panel-left-close.png')}" alt="" style="width: 20px; height: 20px; display: block; pointer-events: none;" />
+    <button id="bn-btn-drawer-ribbon" title="open panel" aria-label="open panel" onmousedown="this.style.transform='scale(0.96)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">
+      <img id="bn-drawer-ribbon-icon" src="${chrome.runtime.getURL('icons/panel-left-close.png')}" alt="" />
     </button>
   </div>
   <div style="padding: 20px 24px 16px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #e8e8e8;">
@@ -308,8 +441,8 @@ const DrawerHTML = `
     <button id="bn-btn-transparency" title="toggle transparency" aria-label="toggle transparency" aria-pressed="false" style="width: 28px; height: 28px; padding: 5px; background: transparent; color: #9a9a9a; border: none; cursor: pointer; opacity: 0.72; transition: transform 0.1s ease, opacity 0.2s ease; display: flex; align-items: center; justify-content: center;" onmousedown="this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">
       <img id="bn-transparency-icon" src="${chrome.runtime.getURL('icons/eye.png')}" alt="" style="width: 18px; height: 18px; display: block; pointer-events: none;" />
     </button>
-    <button id="bn-btn-close" title="close panel" aria-label="close panel" style="width: 28px; height: 28px; padding: 5px; background: transparent; color: #9a9a9a; border: none; cursor: pointer; opacity: 0.72; transition: transform 0.1s ease, opacity 0.2s ease; display: flex; align-items: center; justify-content: center;" onmousedown="this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">
-      <img src="${chrome.runtime.getURL('icons/panel-right-close.png')}" alt="" style="width: 18px; height: 18px; display: block; pointer-events: none;" />
+    <button id="bn-btn-theme" title="switch to dark mode" aria-label="switch to dark mode" aria-pressed="false" style="width: 28px; height: 28px; padding: 5px; background: transparent; color: #9a9a9a; border: none; cursor: pointer; opacity: 0.72; transition: transform 0.1s ease, opacity 0.2s ease; display: flex; align-items: center; justify-content: center;" onmousedown="this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">
+      <img id="bn-theme-icon" src="${chrome.runtime.getURL('icons/dark.png')}" alt="" style="width: 18px; height: 18px; display: block; pointer-events: none;" />
     </button>
   </div>
   
@@ -367,6 +500,7 @@ const DrawerHTML = `
         <select id="bn-filter-label" style="flex: 1; min-width: 0; padding: 6px 8px; border: 1px solid #e8e8e8; background: transparent; font-family: inherit; font-size: 11px; color: #6a6a6a; outline: none; cursor: pointer; transition: transform 0.1s ease; box-sizing: border-box;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><option value="">all labels</option></select>
         <select id="bn-sort" style="padding: 6px 8px; border: 1px solid #e8e8e8; background: transparent; font-family: inherit; font-size: 11px; color: #6a6a6a; outline: none; cursor: pointer; transition: transform 0.1s ease; box-sizing: border-box;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><option value="updated-desc">latest</option><option value="updated-asc">oldest</option><option value="created-desc">newest</option><option value="created-asc">first</option></select>
         <button id="bn-filter-favorite" class="bn-icon-toggle bn-filter-favorite" type="button" title="show favorite notes" aria-label="show favorite notes" aria-pressed="false" data-active="false" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/bookmark.png')}" alt="" /></button>
+        <button id="bn-filter-reset" class="bn-icon-toggle bn-filter-reset" type="button" title="reset filters" aria-label="reset filters" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/reset.png')}" alt="" /></button>
       </div>
     </div>
     <div id="bn-notes-list" style="flex: 1; overflow-y: auto; padding: 0 24px 80px 24px;"></div>
@@ -376,10 +510,11 @@ const DrawerHTML = `
   <div id="bn-editor-view" style="flex: 1; display: none; flex-direction: column; overflow: hidden;">
     <div style="padding: 16px 24px; border-bottom: 1px solid #e8e8e8;"><button id="bn-btn-back" style="padding: 0; background: transparent; color: #6a6a6a; border: none; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">← back</button></div>
     <div style="padding: 16px 24px 0 24px;"><input id="bn-note-title" type="text" placeholder="note title..." style="width: 100%; padding: 12px 0; border: none; border-bottom: 1px solid #e8e8e8; background: transparent; font-size: 16px; font-family: inherit; font-weight: 600; color: #2a2a2a; outline: none; box-sizing: border-box;" /></div>
-    <div style="padding: 12px 24px 0 24px; position: relative;"><div style="display: flex; align-items: center; gap: 10px;"><input id="bn-note-label" type="text" placeholder="label..." autocomplete="off" style="flex: 1; min-width: 0; padding: 8px 0; border: none; border-bottom: 1px solid #e8e8e8; background: transparent; font-size: 12px; font-family: inherit; color: #6a6a6a; outline: none; box-sizing: border-box;" /><button id="bn-note-favorite" class="bn-icon-toggle" type="button" title="favorite note" aria-label="favorite note" aria-pressed="false" data-active="false" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/bookmark.png')}" alt="" /></button></div><div id="bn-label-autocomplete" style="display: none; position: absolute; left: 24px; right: 66px; top: 44px; z-index: 12; background: #ffffff; border: 1px solid #e8e8e8; max-height: 152px; overflow-y: auto; box-sizing: border-box;"></div></div>
-    <div style="padding: 12px 24px; display: flex; gap: 16px;">
-      <button id="bn-tab-edit" style="padding: 0; background: transparent; color: #2a2a2a; border: none; border-bottom: 2px solid #2a2a2a; cursor: pointer; font-size: 11px; font-family: inherit; letter-spacing: 0.5px; padding-bottom: 4px; transition: transform 0.1s ease;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">edit</button>
-      <button id="bn-tab-preview" style="padding: 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-size: 11px; font-family: inherit; letter-spacing: 0.5px; padding-bottom: 4px; transition: transform 0.1s ease;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">preview</button>
+    <div style="padding: 12px 24px 0 24px; position: relative;"><div style="display: flex; align-items: center; gap: 10px;"><input id="bn-note-label" type="text" placeholder="label..." autocomplete="off" style="flex: 1; min-width: 0; padding: 8px 0; border: none; border-bottom: 1px solid #e8e8e8; background: transparent; font-size: 12px; font-family: inherit; color: #6a6a6a; outline: none; box-sizing: border-box;" /><button id="bn-note-favorite" class="bn-icon-toggle" type="button" title="favorite note" aria-label="favorite note" aria-pressed="false" data-active="false" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/bookmark.png')}" alt="" /></button><button id="bn-note-king" class="bn-icon-toggle" type="button" title="make king note" aria-label="make king note" aria-pressed="false" data-active="false" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/crown.png')}" alt="" /></button><button id="bn-note-pinned" class="bn-icon-toggle" type="button" title="pin note" aria-label="pin note" aria-pressed="false" data-active="false" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/pin.png')}" alt="" /></button></div><div id="bn-label-autocomplete" style="display: none; position: absolute; left: 24px; right: 108px; top: 44px; z-index: 12; background: #ffffff; border: 1px solid #e8e8e8; max-height: 152px; overflow-y: auto; box-sizing: border-box;"></div></div>
+    <div style="padding: 12px 24px; display: flex; align-items: center; gap: 16px;">
+      <button id="bn-tab-edit" style="padding: 0; background: transparent; color: #2a2a2a; border: none; border-bottom: 2px solid #2a2a2a; cursor: pointer; font-size: 13px; font-family: inherit; letter-spacing: 0.5px; padding-bottom: 5px; transition: transform 0.1s ease; display: inline-flex; align-items: center; gap: 7px;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/write.png')}" alt="" style="width: 16px; height: 16px; display: block; pointer-events: none;" /><span>Write</span></button>
+      <button id="bn-tab-preview" style="padding: 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-size: 13px; font-family: inherit; letter-spacing: 0.5px; padding-bottom: 5px; transition: transform 0.1s ease; display: inline-flex; align-items: center; gap: 7px;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/markdown-view.png')}" alt="" style="width: 16px; height: 16px; display: block; pointer-events: none;" /><span>Preview</span></button>
+      <button id="bn-btn-export-md" disabled title="export markdown" aria-label="export markdown" style="margin-left: auto; padding: 0 0 5px 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: not-allowed; font-size: 13px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease, opacity 0.15s ease; display: inline-flex; align-items: center; gap: 7px; opacity: 0.45;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/export-md.png')}" alt="" style="width: 16px; height: 16px; display: block; pointer-events: none;" /><span>Export</span></button>
     </div>
     <div id="bn-editor-container" style="flex: 1; display: flex; flex-direction: column; overflow: hidden;"><textarea id="bn-editor" placeholder="start typing..." style="flex: 1; width: 100%; padding: 12px 24px 24px 24px; border: none; outline: none; resize: none; background: transparent; font-family: inherit; font-size: 13px; line-height: 1.7; color: #2a2a2a; overflow-y: auto; box-sizing: border-box;"></textarea></div>
     <div id="bn-preview-container" style="flex: 1; padding: 12px 24px 24px 24px; overflow-y: auto; display: none; font-size: 13px; line-height: 1.7;"></div>
@@ -393,6 +528,15 @@ const DrawerHTML = `
     <h3 style="margin: 0 0 16px 0; font-size: 13px; font-weight: 600; letter-spacing: 0.5px;">manage labels</h3>
     <div id="bn-labels-list" style="margin-bottom: 24px;"></div>
     <button id="bn-btn-add-label" style="width: 100%; padding: 10px; background: transparent; color: #2a2a2a; border: 1px solid #e8e8e8; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; box-sizing: border-box;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">+ add label</button>
+  </div>
+
+  <div id="bn-trash-view" style="flex: 1; display: none; flex-direction: column; overflow: hidden; padding: 24px;">
+    <div style="display: flex; align-items: center; gap: 8px; margin: 0 0 16px 0;">
+      <img src="${chrome.runtime.getURL('icons/trash.png')}" alt="" style="width: 16px; height: 16px; opacity: 0.7; pointer-events: none;" />
+      <h3 style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.5px;">trash</h3>
+    </div>
+    <div id="bn-trash-list" style="flex: 1; overflow-y: auto; padding: 0 0 16px 0;"></div>
+    <button id="bn-btn-empty-trash" style="display: none; width: 100%; padding: 10px; background: transparent; color: #dc3545; border: 1px solid #dc3545; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; box-sizing: border-box;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">empty trash</button>
   </div>
   
   <div id="bn-settings-view" style="flex: 1; display: none; flex-direction: column; overflow-y: auto; overflow-x: hidden; padding: 24px;">
@@ -409,6 +553,7 @@ const DrawerHTML = `
     <button id="bn-nav-home" style="flex: 1; padding: 4px 0 6px 0; background: transparent; color: #2a2a2a; border: none; border-bottom: 2px solid #2a2a2a; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; display: flex; flex-direction: column; align-items: center; gap: 5px;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/home.png')}" alt="" style="width: 18px; height: 18px; opacity: 1; pointer-events: none;" /><span>HOME</span></button>
     <button id="bn-nav-allnotes" style="flex: 1; padding: 4px 0 6px 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; display: flex; flex-direction: column; align-items: center; gap: 5px;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/allnotes.png')}" alt="" style="width: 18px; height: 18px; opacity: 0.45; pointer-events: none;" /><span>ALL NOTES</span></button>
     <button id="bn-nav-labels" style="flex: 1; padding: 4px 0 6px 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; display: flex; flex-direction: column; align-items: center; gap: 5px;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/label.png')}" alt="" style="width: 18px; height: 18px; opacity: 0.45; pointer-events: none;" /><span>LABELS</span></button>
+    <button id="bn-nav-trash" style="flex: 1; padding: 4px 0 6px 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; display: flex; flex-direction: column; align-items: center; gap: 5px;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/trash.png')}" alt="" style="width: 18px; height: 18px; opacity: 0.45; pointer-events: none;" /><span>TRASH</span></button>
     <button id="bn-nav-settings" style="flex: 1; padding: 4px 0 6px 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; display: flex; flex-direction: column; align-items: center; gap: 5px;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/settings.png')}" alt="" style="width: 18px; height: 18px; opacity: 0.45; pointer-events: none;" /><span>SETTINGS</span></button>
   </div>
 `;

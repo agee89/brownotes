@@ -49,7 +49,7 @@ const EditorView = {
   },
 
   async save(silent = false) {
-    const { title, label, content, favorite } = UI.getEditorValues();
+    const { title, label, content, favorite, king, pinned } = UI.getEditorValues();
 
     // Validation
     if (!title && !content) {
@@ -70,6 +70,8 @@ const EditorView = {
         label,
         content,
         favorite,
+        king,
+        pinned,
         updatedAt: now
       });
     } else {
@@ -80,6 +82,8 @@ const EditorView = {
         label,
         content,
         favorite,
+        king,
+        pinned,
         createdAt: now,
         updatedAt: now
       });
@@ -90,11 +94,29 @@ const EditorView = {
     UI.showSaveFeedback();
   },
 
+  async exportMarkdown() {
+    const { title, content } = UI.getEditorValues();
+    if (!title && !content) return;
+
+    if (!this.currentNoteId) {
+      clearTimeout(this.autoSaveTimeout);
+      await this.save(true);
+    }
+
+    const displayTitle = title || 'Untitled Note';
+    const filenameBase = Utils.slugifyFilename(displayTitle, 'untitled-note');
+    const uniqueId = Utils.shortExportId(this.currentNoteId);
+    const filename = `${filenameBase}_${uniqueId}.md`;
+    const markdown = title ? `# ${title}\n\n${content}` : content;
+
+    Utils.downloadFile(markdown, filename, 'text/markdown;charset=utf-8');
+  },
+
   async delete() {
     if (!this.currentNoteId) return;
     
-    const confirmed = await UI.showConfirm('Delete this note?', 'delete note', {
-      confirmText: 'delete',
+    const confirmed = await UI.showConfirm('Move this note to trash?', 'delete note', {
+      confirmText: 'move',
       danger: true
     });
     if (!confirmed) return;
@@ -118,6 +140,43 @@ const EditorView = {
     const favoriteButton = UI.get('bn-note-favorite');
     const active = favoriteButton?.dataset.active !== 'true';
     UI.setFavoriteToggle(active);
+    this.handleInput();
+  },
+
+  async toggleKing() {
+    const kingButton = UI.get('bn-note-king');
+    const active = kingButton?.dataset.active !== 'true';
+
+    if (active) {
+      const notes = await Storage.getNotes();
+      const existingKing = Object.entries(notes).find(([id, note]) => {
+        return id !== this.currentNoteId && !!note.king;
+      });
+
+      if (existingKing) {
+        const [, note] = existingKing;
+        const existingTitle = note.title || 'untitled note';
+        const confirmed = await UI.showConfirm(
+          `Only one note can be King Note. This will remove King status from "${existingTitle}" and make this note the new King Note.`,
+          'replace king note',
+          {
+            confirmText: 'replace',
+            cancelText: 'cancel'
+          }
+        );
+
+        if (!confirmed) return;
+      }
+    }
+
+    UI.setKingToggle(active);
+    this.handleInput();
+  },
+
+  togglePinned() {
+    const pinnedButton = UI.get('bn-note-pinned');
+    const active = pinnedButton?.dataset.active !== 'true';
+    UI.setPinnedToggle(active);
     this.handleInput();
   },
 

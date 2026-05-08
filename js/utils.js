@@ -5,6 +5,36 @@ const Utils = {
     return 'note_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
   },
 
+  // Create filesystem-safe names for exported files
+  slugifyFilename(value, fallback = 'untitled-note') {
+    const slug = String(value || '')
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 60);
+    return slug || fallback;
+  },
+
+  // Stable short id for filenames, derived from the stored note id when possible
+  shortExportId(noteId) {
+    const source = noteId || this.generateId();
+    const parts = String(source).split('_').filter(Boolean);
+    return (parts[parts.length - 1] || source)
+      .replace(/[^a-zA-Z0-9]+/g, '')
+      .slice(0, 10) || Date.now().toString(36);
+  },
+
+  assetUrl(path) {
+    try {
+      if (typeof chrome === 'undefined' || !chrome.runtime?.id) return '';
+      return chrome.runtime.getURL(path);
+    } catch (error) {
+      console.warn('Brow Notes: Extension context invalidated. Reload this page to reconnect the extension.', error);
+      return '';
+    }
+  },
+
   // Format date
   formatDate(timestamp, format = 'short') {
     const date = new Date(timestamp);
