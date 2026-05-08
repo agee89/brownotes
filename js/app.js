@@ -99,9 +99,10 @@ const App = {
     // All Notes
     UI.get('bn-fab-new').onclick = () => EditorView.open(null);
     UI.get('bn-search').oninput = () => AllNotesView.render();
-    UI.get('bn-filter-label').onchange = () => AllNotesView.render();
+    UI.get('bn-filter-label').onchange = () => AllNotesView.handleLabelFilterChange();
     UI.get('bn-sort').onchange = () => AllNotesView.render();
     UI.get('bn-filter-favorite').onclick = () => AllNotesView.toggleFavoriteFilter();
+    UI.get('bn-filter-label-lock').onclick = () => AllNotesView.toggleLabelFilterLock();
     UI.get('bn-filter-reset').onclick = () => AllNotesView.resetFilters();
 
     // Editor
@@ -121,8 +122,12 @@ const App = {
     UI.get('bn-note-pinned').onclick = () => EditorView.togglePinned();
 
     // Editor input handlers
-    UI.get('bn-note-title').oninput = () => EditorView.handleInput();
+    UI.get('bn-note-title').oninput = () => {
+      UI.updateTitleCharacterCount();
+      EditorView.handleInput();
+    };
     UI.get('bn-note-label').oninput = () => {
+      UI.updateLabelCharacterCount();
       EditorView.handleInput();
       UI.renderLabelAutocomplete();
     };
@@ -131,7 +136,17 @@ const App = {
     UI.get('bn-note-label').onblur = () => {
       setTimeout(() => UI.hideLabelAutocomplete(), 120);
     };
-    UI.get('bn-editor').oninput = () => EditorView.handleInput();
+    UI.get('bn-editor').oninput = () => EditorView.handleEditorInput();
+    UI.get('bn-editor').onkeydown = (event) => EditorView.handleEditorKeydown(event);
+    UI.get('bn-editor').onscroll = () => EditorView.syncEditorSearchHighlight();
+    UI.get('bn-editor').onblur = () => {
+      setTimeout(() => EditorView.hideNoteLinkAutocomplete(), 120);
+    };
+    UI.get('bn-editor-search').oninput = () => EditorView.updateEditorSearch(true);
+    UI.get('bn-editor-search').onkeydown = (event) => EditorView.handleSearchKeydown(event);
+    document.querySelectorAll('#bn-editor-toolbar [data-md-action]').forEach(button => {
+      button.onclick = () => EditorView.applyMarkdownFormat(button.dataset.mdAction);
+    });
 
     // Labels
     UI.get('bn-btn-add-label').onclick = () => LabelsView.add();

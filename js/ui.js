@@ -183,6 +183,18 @@ const UI = {
     exportBtn.setAttribute('aria-disabled', String(!enabled));
   },
 
+  updateEditorCount() {
+    const counter = this.get('bn-editor-count');
+    const editor = this.get('bn-editor');
+    if (!counter || !editor) return;
+
+    const content = editor.value || '';
+    const trimmed = content.trim();
+    const words = trimmed ? trimmed.split(/\s+/).length : 0;
+    const chars = content.length;
+    counter.textContent = `${words} ${words === 1 ? 'word' : 'words'} / ${chars} ${chars === 1 ? 'char' : 'chars'}`;
+  },
+
   setSaveStatus(status) {
     const saveBtn = this.get('bn-btn-save');
     if (!saveBtn) return;
@@ -228,7 +240,7 @@ const UI = {
   },
 
   // In-drawer modal dialog
-  showModal({ title, message, input = false, defaultValue = '', confirmText = 'ok', cancelText = 'cancel', danger = false }) {
+  showModal({ title, message, input = false, defaultValue = '', confirmText = 'ok', cancelText = 'cancel', danger = false, inputMaxLength = null, inputCounter = false }) {
     return new Promise((resolve) => {
       const drawer = this.get('bronotes-drawer');
       if (!drawer) {
@@ -283,10 +295,12 @@ const UI = {
       }
 
       let inputEl = null;
+      let inputCounterEl = null;
       if (input) {
         inputEl = document.createElement('input');
         inputEl.type = 'text';
         inputEl.value = defaultValue;
+        if (inputMaxLength) inputEl.maxLength = inputMaxLength;
         inputEl.style.cssText = `
           width: 100%;
           padding: 10px 12px;
@@ -297,12 +311,26 @@ const UI = {
           font-family: inherit;
           outline: none;
           box-sizing: border-box;
-          margin-bottom: 16px;
+          margin-bottom: ${inputCounter ? '6px' : '16px'};
         `;
         inputEl.style.setProperty('background', dark ? '#181818' : 'transparent', 'important');
         inputEl.style.setProperty('border-color', dark ? '#3a3a3a' : '#e0e0e0', 'important');
         inputEl.style.setProperty('color', dark ? '#f1f1f1' : '#2a2a2a', 'important');
         modal.appendChild(inputEl);
+
+        if (inputCounter && inputMaxLength) {
+          inputCounterEl = document.createElement('div');
+          inputCounterEl.style.cssText = `font-size: 10px; line-height: 1.4; text-align: right; margin-bottom: 14px; color: ${dark ? '#9f9f9f' : '#9a9a9a'};`;
+          inputCounterEl.style.setProperty('color', dark ? '#9f9f9f' : '#9a9a9a', 'important');
+          const updateInputCounter = () => {
+            const length = inputEl.value.length;
+            inputCounterEl.textContent = `${length}/${inputMaxLength}`;
+            inputCounterEl.style.setProperty('color', length >= inputMaxLength ? '#dc3545' : (dark ? '#9f9f9f' : '#9a9a9a'), 'important');
+          };
+          inputEl.addEventListener('input', updateInputCounter);
+          updateInputCounter();
+          modal.appendChild(inputCounterEl);
+        }
       }
 
       const actions = document.createElement('div');
@@ -398,18 +426,33 @@ const UI = {
     });
   },
 
+  showLimitedPrompt(message, defaultValue = '', title = 'input', maxLength = 32) {
+    return this.showModal({
+      title,
+      message,
+      input: true,
+      defaultValue,
+      confirmText: 'save',
+      cancelText: 'cancel',
+      inputMaxLength: maxLength,
+      inputCounter: true
+    });
+  },
+
   // Switch editor tab
   switchEditorTab(tab) {
     const editTab = this.get('bn-tab-edit');
     const previewTab = this.get('bn-tab-preview');
     const editorContainer = this.get('bn-editor-container');
     const previewContainer = this.get('bn-preview-container');
+    const editorToolbar = this.get('bn-editor-toolbar');
 
     if (tab === 'edit') {
       editTab.style.color = '#2a2a2a';
       editTab.style.borderBottom = '2px solid #2a2a2a';
       previewTab.style.color = '#9a9a9a';
       previewTab.style.borderBottom = '2px solid transparent';
+      if (editorToolbar) editorToolbar.style.display = 'flex';
       editorContainer.style.display = 'flex';
       previewContainer.style.display = 'none';
     } else {
@@ -417,6 +460,7 @@ const UI = {
       editTab.style.borderBottom = '2px solid transparent';
       previewTab.style.color = '#2a2a2a';
       previewTab.style.borderBottom = '2px solid #2a2a2a';
+      if (editorToolbar) editorToolbar.style.display = 'none';
       editorContainer.style.display = 'none';
       previewContainer.style.display = 'block';
     }
@@ -427,6 +471,9 @@ const UI = {
     this.get('bn-note-title').value = '';
     this.get('bn-note-label').value = '';
     this.get('bn-editor').value = '';
+    this.updateEditorCount();
+    this.updateTitleCharacterCount();
+    this.updateLabelCharacterCount();
     this.setFavoriteToggle(false);
     this.setKingToggle(false);
     this.setPinnedToggle(false);
@@ -438,6 +485,9 @@ const UI = {
     this.get('bn-note-title').value = note.title || '';
     this.get('bn-note-label').value = note.label || '';
     this.get('bn-editor').value = note.content || '';
+    this.updateEditorCount();
+    this.updateTitleCharacterCount();
+    this.updateLabelCharacterCount();
     this.setFavoriteToggle(!!note.favorite);
     this.setKingToggle(!!note.king);
     this.setPinnedToggle(!!note.pinned);
@@ -447,8 +497,8 @@ const UI = {
   // Get editor values
   getEditorValues() {
     return {
-      title: this.get('bn-note-title').value.trim(),
-      label: this.get('bn-note-label').value.trim(),
+      title: this.get('bn-note-title').value.trim().slice(0, Storage.maxTitleLength),
+      label: Storage.normalizeLabel(this.get('bn-note-label').value),
       content: this.get('bn-editor').value.trim(),
       favorite: this.get('bn-note-favorite')?.dataset.active === 'true',
       king: this.get('bn-note-king')?.dataset.active === 'true',
@@ -516,10 +566,64 @@ const UI = {
     }
   },
 
+  setLabelFilterLock(locked) {
+    const button = this.get('bn-filter-label-lock');
+    const icon = this.get('bn-filter-label-lock-icon');
+    if (!button || !icon) return;
+
+    const enabled = !!locked;
+    button.dataset.active = String(enabled);
+    button.setAttribute('aria-pressed', String(enabled));
+    button.title = enabled ? 'unlock label filter' : 'lock label filter';
+    button.setAttribute('aria-label', button.title);
+    button.style.opacity = enabled ? '1' : '0.72';
+    icon.src = Utils.assetUrl(enabled ? 'icons/locked.png' : 'icons/unlocked.png');
+  },
+
   // Update label suggestions
   updateLabelSuggestions(labels) {
     this.labelSuggestions = labels || [];
     this.renderLabelAutocomplete();
+  },
+
+  getLabelInputValue() {
+    return Storage.normalizeLabel(this.get('bn-note-label')?.value || '');
+  },
+
+  updateLabelCharacterCount() {
+    const input = this.get('bn-note-label');
+    const counter = this.get('bn-note-label-count');
+    if (!input || !counter) return;
+
+    const length = input.value.length;
+    counter.textContent = `${length}/${Storage.maxLabelLength}`;
+    counter.style.color = length >= Storage.maxLabelLength ? '#dc3545' : '#9a9a9a';
+  },
+
+  updateTitleCharacterCount() {
+    const input = this.get('bn-note-title');
+    const counter = this.get('bn-note-title-count');
+    if (!input || !counter) return;
+
+    const length = input.value.length;
+    counter.textContent = `${length}/${Storage.maxTitleLength}`;
+    counter.style.color = length >= Storage.maxTitleLength ? '#dc3545' : '#9a9a9a';
+  },
+
+  getLabelMenuItems() {
+    const query = this.getLabelInputValue();
+    const lowerQuery = query.toLowerCase();
+    const matches = this.labelSuggestions
+      .filter(label => label.toLowerCase().includes(lowerQuery))
+      .slice(0, 8)
+      .map(label => ({ type: 'select', label }));
+    const exactMatch = this.labelSuggestions.some(label => label.toLowerCase() === lowerQuery);
+
+    if (query && !exactMatch) {
+      matches.push({ type: 'create', label: query });
+    }
+
+    return matches;
   },
 
   renderLabelAutocomplete() {
@@ -527,29 +631,35 @@ const UI = {
     const menu = this.get('bn-label-autocomplete');
     if (!input || !menu) return;
 
-    const query = input.value.trim().toLowerCase();
-    const matches = this.labelSuggestions
-      .filter(label => label.toLowerCase().includes(query))
-      .slice(0, 8);
+    if (input.value !== Storage.normalizeLabel(input.value)) {
+      input.value = Storage.normalizeLabel(input.value);
+    }
+    this.updateLabelCharacterCount();
 
-    if (matches.length === 0 || document.activeElement !== input) {
+    const items = this.getLabelMenuItems();
+
+    if (items.length === 0 || document.activeElement !== input) {
       this.hideLabelAutocomplete();
       return;
     }
 
-    if (this.labelSuggestionIndex >= matches.length) {
-      this.labelSuggestionIndex = matches.length - 1;
+    if (this.labelSuggestionIndex >= items.length) {
+      this.labelSuggestionIndex = items.length - 1;
     }
 
-    menu.innerHTML = matches.map((label, index) =>
-      `<button type="button" class="bn-label-option" data-label="${Utils.escapeHtml(label)}" style="width: 100%; padding: 8px 10px; background: ${index === this.labelSuggestionIndex ? '#f3f3f3' : 'transparent'}; color: #2a2a2a; border: none; cursor: pointer; display: block; text-align: left; font-size: 12px; font-family: inherit;">${Utils.escapeHtml(label)}</button>`
+    menu.innerHTML = items.map((item, index) =>
+      `<button type="button" class="bn-label-option" data-action="${item.type}" data-label="${Utils.escapeHtml(item.label)}" style="width: 100%; padding: 8px 10px; background: ${index === this.labelSuggestionIndex ? '#f3f3f3' : 'transparent'}; color: #2a2a2a; border: none; cursor: pointer; display: block; text-align: left; font-size: 12px; font-family: inherit;">${item.type === 'create' ? `+ create label "${Utils.escapeHtml(item.label)}"` : Utils.escapeHtml(item.label)}</button>`
     ).join('');
 
     menu.style.display = 'block';
     menu.querySelectorAll('.bn-label-option').forEach(button => {
       button.addEventListener('mousedown', (event) => {
         event.preventDefault();
-        this.selectLabelSuggestion(button.dataset.label);
+        if (button.dataset.action === 'create') {
+          this.createLabelFromInput(button.dataset.label);
+        } else {
+          this.selectLabelSuggestion(button.dataset.label);
+        }
       });
     });
   },
@@ -566,22 +676,18 @@ const UI = {
   },
 
   handleLabelAutocompleteKey(event) {
-    const input = this.get('bn-note-label');
-    const query = input.value.trim().toLowerCase();
-    const matches = this.labelSuggestions
-      .filter(label => label.toLowerCase().includes(query))
-      .slice(0, 8);
+    const items = this.getLabelMenuItems();
 
     if (event.key === 'Escape') {
       this.hideLabelAutocomplete();
       return;
     }
 
-    if (matches.length === 0) return;
+    if (items.length === 0) return;
 
     if (event.key === 'ArrowDown') {
       event.preventDefault();
-      this.labelSuggestionIndex = Math.min(this.labelSuggestionIndex + 1, matches.length - 1);
+      this.labelSuggestionIndex = Math.min(this.labelSuggestionIndex + 1, items.length - 1);
       this.renderLabelAutocomplete();
     } else if (event.key === 'ArrowUp') {
       event.preventDefault();
@@ -589,8 +695,30 @@ const UI = {
       this.renderLabelAutocomplete();
     } else if (event.key === 'Enter' && this.labelSuggestionIndex >= 0) {
       event.preventDefault();
-      this.selectLabelSuggestion(matches[this.labelSuggestionIndex]);
+      const item = items[this.labelSuggestionIndex];
+      if (item.type === 'create') {
+        this.createLabelFromInput(item.label);
+      } else {
+        this.selectLabelSuggestion(item.label);
+      }
     }
+  },
+
+  async createLabelFromInput(label) {
+    const normalized = Storage.normalizeLabel(label);
+    if (!normalized) return;
+
+    this.hideLabelAutocomplete();
+    const confirmed = await this.showConfirm(`Create label "${normalized}"?`, 'create label', {
+      confirmText: 'create',
+      cancelText: 'cancel'
+    });
+    if (!confirmed) return;
+
+    const createdLabel = await Storage.addLabel(normalized);
+    const labels = await Storage.getLabels();
+    this.updateLabelSuggestions(labels);
+    this.selectLabelSuggestion(createdLabel || normalized);
   },
 
   selectLabelSuggestion(label) {
@@ -598,6 +726,7 @@ const UI = {
     if (!input) return;
 
     input.value = label;
+    this.updateLabelCharacterCount();
     input.dispatchEvent(new Event('input', { bubbles: true }));
     this.hideLabelAutocomplete();
     input.focus();

@@ -2,6 +2,17 @@
 const Storage = {
   contextWarningShown: false,
   contextInvalidated: false,
+  maxTitleLength: 120,
+  maxLabelLength: 32,
+  labelColorPalette: [
+    '#8fb8ff', '#8fd8b8', '#f2c66d', '#f29c9c', '#c6a5ff', '#77c7d9',
+    '#d6a06d', '#a8c26d', '#a3b8f5', '#b0d4ef', '#d4b8f5', '#f5b8cc',
+    '#f5c9a8', '#f0e08a', '#a8e0d0', '#b8dca0', '#ddb8d4', '#a8e4f0',
+    '#f0ddb0', '#ccb8e8', '#e8a898', '#c8b090', '#9ab888', '#b0be80',
+    '#d4906a', '#80b8b8', '#d8c090', '#90a8c8', '#c8c080', '#c8a090',
+    '#6dddb8', '#ffb38a', '#f080c0', '#50d0e8', '#f0d040', '#b070f0',
+    '#f07070', '#90d840', '#60a8ff', '#f09860', '#40d4b8', '#8888f0'
+  ],
 
   isContextAvailable() {
     try {
@@ -233,6 +244,20 @@ const Storage = {
     await this.set({ lastBackupAt });
   },
 
+  async getLockedLabelFilter() {
+    const result = await this.get(['lockedLabelFilter']);
+    return result.lockedLabelFilter || { locked: false, value: '' };
+  },
+
+  async saveLockedLabelFilter(lockedLabelFilter) {
+    await this.set({
+      lockedLabelFilter: {
+        locked: !!lockedLabelFilter?.locked,
+        value: String(lockedLabelFilter?.value || '')
+      }
+    });
+  },
+
   // Get manually created labels
   async getManualLabels() {
     const result = await this.get(['labels']);
@@ -241,51 +266,119 @@ const Storage = {
 
   // Save manually created labels
   async saveManualLabels(labels) {
-    await this.set({ labels: Array.from(new Set(labels)).sort() });
+    const normalizedLabels = labels
+      .map(label => this.normalizeLabel(label))
+      .filter(Boolean);
+    await this.set({ labels: Array.from(new Set(normalizedLabels)).sort() });
+  },
+
+  normalizeLabel(label) {
+    return String(label || '').replace(/\s+/g, ' ').trim().slice(0, this.maxLabelLength);
+  },
+
+  isDuplicateLabel(label, labels, ignoredLabel = '') {
+    const normalized = this.normalizeLabel(label).toLowerCase();
+    const ignored = this.normalizeLabel(ignoredLabel).toLowerCase();
+    return labels.some(existingLabel => {
+      const existing = this.normalizeLabel(existingLabel).toLowerCase();
+      return existing === normalized && existing !== ignored;
+    });
+  },
+
+  // Get label color map
+  async getLabelColors() {
+    const result = await this.get(['labelColors']);
+    return result.labelColors || {};
+  },
+
+  // Get a calm fallback color for labels without a stored color
+  getDefaultLabelColor(label) {
+    const text = String(label || '');
+    let hash = 0;
+    for (let i = 0; i < text.length; i++) {
+      hash = ((hash << 5) - hash) + text.charCodeAt(i);
+      hash |= 0;
+    }
+    return this.labelColorPalette[Math.abs(hash) % this.labelColorPalette.length];
+  },
+
+  getResolvedLabelColor(label, labelColors = {}) {
+    if (!label) return '#b8b8b8';
+    return labelColors[label] || '';
+  },
+
+  // Save one label color
+  async saveLabelColor(label, color) {
+    const labelColors = await this.getLabelColors();
+    labelColors[label] = color;
+    await this.set({ labelColors });
+  },
+
+  // Remove stored label color
+  async resetLabelColor(label) {
+    const labelColors = await this.getLabelColors();
+    delete labelColors[label];
+    await this.set({ labelColors });
   },
 
   // Get all unique labels
   async getLabels() {
-    const notes = await this.getNotes();
-    const manualLabels = await this.getManualLabels();
-    const labels = new Set(manualLabels);
-    Object.values(notes).forEach(note => {
-      if (note.label) labels.add(note.label);
-    });
-    return Array.from(labels).sort();
+    return this.getManualLabels();
   },
 
   // Add manual label
   async addLabel(label) {
+    const normalized = this.normalizeLabel(label);
+    if (!normalized) return '';
     const labels = await this.getManualLabels();
-    labels.push(label);
+    if (this.isDuplicateLabel(normalized, labels)) return normalized;
+    labels.push(normalized);
     await this.saveManualLabels(labels);
+    return normalized;
   },
 
   // Rename label across all notes
   async renameLabel(oldLabel, newLabel) {
+    const normalizedOldLabel = this.normalizeLabel(oldLabel);
+    const normalizedNewLabel = this.normalizeLabel(newLabel);
+    if (!normalizedOldLabel || !normalizedNewLabel) return '';
     const notes = await this.getNotes();
     const manualLabels = await this.getManualLabels();
+    const labelColors = await this.getLabelColors();
+    if (this.isDuplicateLabel(normalizedNewLabel, manualLabels, normalizedOldLabel)) return '';
     Object.keys(notes).forEach(id => {
-      if (notes[id].label === oldLabel) {
-        notes[id].label = newLabel;
+      if (notes[id].label === normalizedOldLabel) {
+        notes[id].label = normalizedNewLabel;
       }
     });
+    if (labelColors[normalizedOldLabel] && !labelColors[normalizedNewLabel]) {
+      labelColors[normalizedNewLabel] = labelColors[normalizedOldLabel];
+    }
+    delete labelColors[normalizedOldLabel];
     await this.saveNotes(notes);
-    await this.saveManualLabels(manualLabels.map(label => label === oldLabel ? newLabel : label));
+    await this.set({
+      labels: Array.from(new Set(manualLabels.map(label => label === normalizedOldLabel ? normalizedNewLabel : label))).sort(),
+      labelColors
+    });
+    return normalizedNewLabel;
   },
 
   // Delete label from all notes
   async deleteLabel(label) {
     const notes = await this.getNotes();
     const manualLabels = await this.getManualLabels();
+    const labelColors = await this.getLabelColors();
     Object.keys(notes).forEach(id => {
       if (notes[id].label === label) {
         notes[id].label = '';
       }
     });
+    delete labelColors[label];
     await this.saveNotes(notes);
-    await this.saveManualLabels(manualLabels.filter(existingLabel => existingLabel !== label));
+    await this.set({
+      labels: manualLabels.filter(existingLabel => existingLabel !== label),
+      labelColors
+    });
   },
 
   // Export all data
@@ -294,12 +387,14 @@ const Storage = {
     const trashNotes = await this.getTrashNotes();
     const nickname = await this.getNickname();
     const labels = await this.getManualLabels();
+    const labelColors = await this.getLabelColors();
     const exportedAt = new Date().toISOString();
     return {
       notes,
       trashNotes,
       nickname,
       labels,
+      labelColors,
       exportedAt
     };
   },
@@ -322,7 +417,8 @@ const Storage = {
       notes,
       trashNotes: data.trashNotes || {},
       nickname: data.nickname || 'Brow',
-      labels: data.labels || []
+      labels: data.labels || [],
+      labelColors: data.labelColors || {}
     });
   }
 };

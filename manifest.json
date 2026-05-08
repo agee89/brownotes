@@ -48,6 +48,7 @@
     {
       "resources": [
         "icons/*",
+        "icons/toolbar/*.svg",
         "Quote.md",
         "js/*.js",
         "js/views/*.js"

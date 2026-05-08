@@ -29,10 +29,10 @@ const TrashView = {
       .map(([id, note]) => ({ id, ...note }))
       .sort((a, b) => (b.deletedAt || 0) - (a.deletedAt || 0));
 
-    this.renderList(notesArray);
+    await this.renderList(notesArray);
   },
 
-  renderList(notesArray) {
+  async renderList(notesArray) {
     const listDiv = UI.get('bn-trash-list');
     const emptyButton = UI.get('bn-btn-empty-trash');
     if (!listDiv) return;
@@ -50,10 +50,16 @@ const TrashView = {
 
     const labelIcon = Utils.assetUrl('icons/label.png');
     const calendarIcon = Utils.assetUrl('icons/calendar.png');
+    const labelColors = await Storage.getLabelColors();
 
     listDiv.innerHTML = notesArray.map(note => {
       const title = Utils.escapeHtml(note.title || 'untitled');
       const label = Utils.escapeHtml(note.label || 'no label');
+      const labelColor = Storage.getResolvedLabelColor(note.label, labelColors);
+      const labelDot = note.label
+        && labelColor
+        ? `<span title="label color" style="display: inline-block; flex: 0 0 auto; width: 8px; height: 8px; background: ${Utils.escapeHtml(labelColor)}; margin-right: 6px; box-shadow: 0 0 0 1px rgba(0,0,0,0.08);"></span>`
+        : '';
       const preview = Utils.escapeHtml((note.content || '').substring(0, 96));
       const noteId = Utils.escapeHtml(note.id);
       const deletedAt = note.deletedAt ? Utils.formatDate(note.deletedAt, 'long') : 'recently';
@@ -66,7 +72,7 @@ const TrashView = {
           <div style="font-size: 13px; font-weight: 650; margin-bottom: 6px; color: #2a2a2a;">${title}</div>
           <div style="font-size: 12px; color: #6a6a6a; margin-bottom: 8px; line-height: 1.5;">${preview}${preview.length >= 96 ? '...' : ''}</div>
           <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 11px; color: #9a9a9a; margin-bottom: 6px;">
-            <span style="display: inline-flex; align-items: center; gap: 0; min-width: 0;"><img src="${labelIcon}" alt="" style="width: 11px; height: 11px; opacity: 0.55; pointer-events: none; flex: 0 0 auto;" /><span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${label}</span></span>
+            <span style="display: inline-flex; align-items: center; gap: 0; min-width: 0;">${labelDot}<img src="${labelIcon}" alt="" style="width: 11px; height: 11px; opacity: 0.55; pointer-events: none; flex: 0 0 auto;" /><span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${label}</span></span>
             <span style="display: inline-flex; align-items: center; gap: 4px; flex: 0 0 auto;"><img src="${calendarIcon}" alt="" style="width: 11px; height: 11px; opacity: 0.55; pointer-events: none;" />${deletedAt}</span>
           </div>
           <div style="display: flex; align-items: center; gap: 4px; font-size: 10px; line-height: 1.45; color: #8a8a8a; margin-bottom: 10px;">

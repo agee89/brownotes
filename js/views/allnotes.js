@@ -1,7 +1,7 @@
 // All Notes view controller
 const AllNotesView = {
   async render() {
-    if (!UI.get('bn-notes-list') || !UI.get('bn-filter-label') || !UI.get('bn-filter-favorite') || !UI.get('bn-search') || !UI.get('bn-sort')) {
+    if (!UI.get('bn-notes-list') || !UI.get('bn-filter-label') || !UI.get('bn-filter-label-lock') || !UI.get('bn-filter-favorite') || !UI.get('bn-search') || !UI.get('bn-sort')) {
       setTimeout(() => this.render(), 50);
       return;
     }
@@ -31,8 +31,14 @@ const AllNotesView = {
       );
     }
 
+    const lockedLabelFilter = await Storage.getLockedLabelFilter();
+    UI.setLabelFilterLock(lockedLabelFilter.locked);
+    if (lockedLabelFilter.locked && UI.get('bn-filter-label').value !== lockedLabelFilter.value) {
+      UI.get('bn-filter-label').value = lockedLabelFilter.value;
+    }
+
     // Label filter
-    const filterLabel = UI.get('bn-filter-label').value;
+    const filterLabel = lockedLabelFilter.locked ? lockedLabelFilter.value : UI.get('bn-filter-label').value;
     if (filterLabel === '__NO_LABEL__') {
       notesArray = notesArray.filter(note => !note.label);
     } else if (filterLabel) {
@@ -64,22 +70,43 @@ const AllNotesView = {
 
     // Update label filter options
     const labels = await Storage.getLabels();
+    const labelColors = await Storage.getLabelColors();
 
     if (Storage.hasContextIssue?.()) {
       this.renderList([], { reloadRequired: true });
       return;
     }
 
-    const currentFilter = UI.get('bn-filter-label').value;
+    const currentFilter = lockedLabelFilter.locked ? lockedLabelFilter.value : UI.get('bn-filter-label').value;
     UI.updateLabelFilter(labels, currentFilter);
 
-    // Render notes list
-    this.renderList(notesArray, { totalNotes, searchTerm, filterLabel, favoriteOnly });
+    // Render notes list
+    this.renderList(notesArray, { totalNotes, searchTerm, filterLabel, favoriteOnly, labelColors });
   },
 
   toggleFavoriteFilter() {
     const active = UI.get('bn-filter-favorite')?.dataset.active !== 'true';
     UI.setFavoriteFilter(active);
+    this.render();
+  },
+
+  async handleLabelFilterChange() {
+    const label = UI.get('bn-filter-label');
+    const lockedLabelFilter = await Storage.getLockedLabelFilter();
+    if (lockedLabelFilter.locked && label) {
+      await Storage.saveLockedLabelFilter({ locked: true, value: label.value });
+    }
+    this.render();
+  },
+
+  async toggleLabelFilterLock() {
+    const label = UI.get('bn-filter-label');
+    const lockedLabelFilter = await Storage.getLockedLabelFilter();
+    const locked = !lockedLabelFilter.locked;
+    const value = locked ? (label?.value || '') : '';
+
+    await Storage.saveLockedLabelFilter({ locked, value });
+    UI.setLabelFilterLock(locked);
     this.render();
   },
 
@@ -91,7 +118,8 @@ const AllNotesView = {
       search.value = '';
     }
 
-    if (label) {
+    const locked = UI.get('bn-filter-label-lock')?.dataset.active === 'true';
+    if (label && !locked) {
       label.value = '';
     }
 
@@ -103,6 +131,9 @@ const AllNotesView = {
     const listDiv = UI.get('bn-notes-list');
     
     if (notesArray.length === 0) {
+      listDiv.style.display = 'flex';
+      listDiv.style.alignItems = 'center';
+      listDiv.style.justifyContent = 'center';
       listDiv.innerHTML = this.renderEmptyState(filters);
       listDiv.querySelector('[data-action="reload-page"]')?.addEventListener('click', () => {
         window.location.reload();
@@ -110,6 +141,9 @@ const AllNotesView = {
       return;
     }
 
+    listDiv.style.display = 'block';
+    listDiv.style.alignItems = '';
+    listDiv.style.justifyContent = '';
     listDiv.innerHTML = notesArray.map(note => {
       const drawer = UI.get('bronotes-drawer');
       const dark = drawer?.dataset.theme === 'dark';
@@ -119,6 +153,11 @@ const AllNotesView = {
       const title = Utils.escapeHtml(note.title || 'untitled');
       const label = Utils.escapeHtml(note.label || 'no label');
       const noteId = Utils.escapeHtml(note.id);
+      const labelColor = Storage.getResolvedLabelColor(note.label, filters.labelColors || {});
+      const labelDot = note.label
+        && labelColor
+        ? `<span title="label color" style="display: inline-block; flex: 0 0 auto; width: 8px; height: 8px; background: ${Utils.escapeHtml(labelColor)}; margin-right: 6px; box-shadow: 0 0 0 1px rgba(0,0,0,0.08);"></span>`
+        : '';
       const labelIcon = Utils.assetUrl('icons/label.png');
       const calendarIcon = Utils.assetUrl('icons/calendar.png');
       const bookmarkIcon = Utils.assetUrl('icons/bookmark.png');
@@ -136,7 +175,7 @@ const AllNotesView = {
           <div style="font-size: 13px; font-weight: 600; margin-bottom: 6px; color: #2a2a2a;">${title}</div>
           <div style="font-size: 12px; color: #6a6a6a; margin-bottom: 8px; line-height: 1.5;">${Utils.escapeHtml(preview)}${preview.length >= 100 ? '...' : ''}</div>
           <div style="display: flex; justify-content: space-between; font-size: 11px; color: #9a9a9a;">
-            <span style="display: inline-flex; align-items: center; gap: 4px; min-width: 0;"><span style="display: inline-flex; align-items: center; gap: 0; min-width: 0;"><img src="${labelIcon}" alt="" style="width: 11px; height: 11px; opacity: 0.55; pointer-events: none; flex: 0 0 auto;" /><span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${label}</span></span>${favoriteIcon}${pinnedIcon}</span>
+            <span style="display: inline-flex; align-items: center; gap: 4px; min-width: 0;">${labelDot}<span style="display: inline-flex; align-items: center; gap: 0; min-width: 0;"><img src="${labelIcon}" alt="" style="width: 11px; height: 11px; opacity: 0.55; pointer-events: none; flex: 0 0 auto;" /><span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${label}</span></span>${favoriteIcon}${pinnedIcon}</span>
             <span style="display: inline-flex; align-items: center; gap: 4px; flex: 0 0 auto;"><img src="${calendarIcon}" alt="" style="width: 11px; height: 11px; opacity: 0.55; pointer-events: none;" />${dateStr}</span>
           </div>
         </div>
@@ -233,9 +272,11 @@ const AllNotesView = {
         <div style="font-size: 11px; line-height: 1.5; margin: 0 auto; max-width: 260px;">${action}</div>
       `
       : `<div style="font-size: 11px; line-height: 1.5; margin: 0 auto; max-width: 260px;">${action}</div>`;
+    const icon = Utils.assetUrl(reloadRequired ? 'icons/reset.png' : 'icons/allnotes.png');
 
     return `
-      <div style="padding: 48px 8px; text-align: center; color: #8a8a8a;">
+      <div style="padding: 40px 8px; text-align: center; color: #8a8a8a; max-width: 292px;">
+        <img src="${icon}" alt="" style="width: 24px; height: 24px; opacity: 0.38; pointer-events: none; margin: 0 auto 12px auto; display: block;" />
         <div style="font-size: 13px; font-weight: 700; color: #4a4a4a; margin-bottom: 8px;">${title}</div>
         <div style="font-size: 12px; line-height: 1.55; margin: 0 auto 10px auto; max-width: 280px;">${message}</div>
         ${actionHtml}
