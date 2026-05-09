@@ -14,6 +14,12 @@ const UI = {
     if (drawer) {
       drawer.dataset.collapsed = 'false';
       drawer.style.transform = 'translateX(0)';
+      drawer.classList.remove('animate-drawer-shake');
+      void drawer.offsetWidth;
+      drawer.classList.add('animate-drawer-shake');
+      drawer.addEventListener('animationend', () => {
+        drawer.classList.remove('animate-drawer-shake');
+      }, { once: true });
       this.updateDrawerRibbon(false);
     }
   },
@@ -167,6 +173,7 @@ const UI = {
     saveBtn.style.opacity = enabled ? '1' : '0.5';
     saveBtn.style.cursor = enabled ? 'pointer' : 'not-allowed';
     this.updateExportMdButton(enabled);
+    this.updatePrintButton(enabled);
     if (!enabled) {
       this.setSaveStatus('empty');
     }
@@ -183,6 +190,17 @@ const UI = {
     exportBtn.setAttribute('aria-disabled', String(!enabled));
   },
 
+  updatePrintButton(enabled) {
+    const printBtn = this.get('bn-btn-print-note');
+    if (!printBtn) return;
+
+    printBtn.disabled = !enabled;
+    printBtn.style.opacity = enabled ? '1' : '0.45';
+    printBtn.style.cursor = enabled ? 'pointer' : 'not-allowed';
+    printBtn.style.color = enabled ? '#2a2a2a' : '#9a9a9a';
+    printBtn.setAttribute('aria-disabled', String(!enabled));
+  },
+
   updateEditorCount() {
     const counter = this.get('bn-editor-count');
     const editor = this.get('bn-editor');
@@ -193,6 +211,73 @@ const UI = {
     const words = trimmed ? trimmed.split(/\s+/).length : 0;
     const chars = content.length;
     counter.textContent = `${words} ${words === 1 ? 'word' : 'words'} / ${chars} ${chars === 1 ? 'char' : 'chars'}`;
+  },
+
+  updateHistoryDropdown(history = []) {
+    const button = this.get('bn-history-button');
+    const menu = this.get('bn-history-menu');
+    if (!button || !menu) return;
+
+    const versions = Array.isArray(history) ? history : [];
+    button.disabled = versions.length === 0;
+    button.textContent = versions.length ? `version ${this.formatHistoryVersionTime(versions[0].snapshotAt)} ▾` : 'version --.-- ▾';
+    button.setAttribute('aria-disabled', String(versions.length === 0));
+
+    if (!versions.length) {
+      menu.style.display = 'none';
+      button.setAttribute('aria-expanded', 'false');
+      menu.innerHTML = '';
+      return;
+    }
+
+    menu.innerHTML = versions.map((item, index) => {
+      const preview = Utils.escapeHtml((item.title || item.content || 'untitled note').replace(/\s+/g, ' ').slice(0, 64));
+      const time = Utils.escapeHtml(this.formatHistoryVersionTime(item.snapshotAt));
+      const relative = Utils.escapeHtml(this.formatHistoryRelativeTime(item.snapshotAt));
+      return `<button class="bn-history-option" type="button" data-history-index="${index}"><span class="bn-history-time">version ${time}</span><span class="bn-history-preview">${relative} · ${preview}</span></button>`;
+    }).join('');
+  },
+
+  toggleHistoryDropdown() {
+    const button = this.get('bn-history-button');
+    const menu = this.get('bn-history-menu');
+    if (!button || !menu || button.disabled) return;
+
+    const open = menu.style.display === 'block';
+    menu.style.display = open ? 'none' : 'block';
+    button.setAttribute('aria-expanded', open ? 'false' : 'true');
+  },
+
+  hideHistoryDropdown() {
+    const button = this.get('bn-history-button');
+    const menu = this.get('bn-history-menu');
+    if (!button || !menu) return;
+
+    menu.style.display = 'none';
+    button.setAttribute('aria-expanded', 'false');
+  },
+
+  formatHistoryVersionTime(timestamp) {
+    const date = new Date(timestamp || Date.now());
+    return date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }).replace(':', '.');
+  },
+
+  formatHistoryRelativeTime(timestamp) {
+    const date = new Date(timestamp || Date.now());
+    const diff = Date.now() - date.getTime();
+    const minute = 60 * 1000;
+    const hour = 60 * minute;
+    const day = 24 * hour;
+    const today = new Date();
+    const sameDay = date.toDateString() === today.toDateString();
+
+    if (diff < minute) return 'just now';
+    if (diff < hour) return `${Math.floor(diff / minute)} min ago`;
+    if (sameDay) return date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+    if (diff < 2 * day) {
+      return `Yesterday ${date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}`;
+    }
+    return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
   },
 
   setSaveStatus(status) {
@@ -446,6 +531,8 @@ const UI = {
     const editorContainer = this.get('bn-editor-container');
     const previewContainer = this.get('bn-preview-container');
     const editorToolbar = this.get('bn-editor-toolbar');
+    const exportBtn = this.get('bn-btn-export-md');
+    const printBtn = this.get('bn-btn-print-note');
 
     if (tab === 'edit') {
       editTab.style.color = '#2a2a2a';
@@ -453,6 +540,8 @@ const UI = {
       previewTab.style.color = '#9a9a9a';
       previewTab.style.borderBottom = '2px solid transparent';
       if (editorToolbar) editorToolbar.style.display = 'flex';
+      if (exportBtn) exportBtn.style.display = 'inline-flex';
+      if (printBtn) printBtn.style.display = 'none';
       editorContainer.style.display = 'flex';
       previewContainer.style.display = 'none';
     } else {
@@ -461,6 +550,8 @@ const UI = {
       previewTab.style.color = '#2a2a2a';
       previewTab.style.borderBottom = '2px solid #2a2a2a';
       if (editorToolbar) editorToolbar.style.display = 'none';
+      if (exportBtn) exportBtn.style.display = 'none';
+      if (printBtn) printBtn.style.display = 'inline-flex';
       editorContainer.style.display = 'none';
       previewContainer.style.display = 'block';
     }

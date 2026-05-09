@@ -2,6 +2,7 @@
 const EditorView = {
   currentNoteId: null,
   autoSaveTimeout: null,
+  historyVersions: [],
   noteLinkSuggestionIndex: -1,
   noteLinkMatches: [],
   noteLinkRange: null,
@@ -39,6 +40,7 @@ const EditorView = {
     // Update save button state
     this.updateSaveButton();
     this.updateEditorSearch(false);
+    await this.refreshHistoryDropdown();
     const { title, content } = UI.getEditorValues();
     UI.setSaveStatus(title || content ? 'saved' : 'empty');
     
@@ -58,10 +60,27 @@ const EditorView = {
     const availableLabels = await Storage.getLabels();
     const labelExists = !label || availableLabels.some(existingLabel => existingLabel.toLowerCase() === label.toLowerCase());
     const savedLabel = labelExists ? label : (existingNote?.label || '');
+    const clearsExistingContent = this.isClearingExistingContent(existingNote, content);
 
     if (label && !labelExists && !silent) {
       await UI.showAlert('Create this label from the label menu before saving it to a note.', 'label not created');
       return;
+    }
+
+    if (clearsExistingContent) {
+      await Storage.addNoteHistory(this.currentNoteId, existingNote, 'before-empty');
+      await this.refreshHistoryDropdown();
+
+      if (silent) {
+        UI.setSaveStatus('dirty');
+        return;
+      }
+
+      const confirmed = await UI.showConfirm('This will save the note with empty content. Continue?', 'clear note content', {
+        confirmText: 'save empty',
+        danger: true
+      });
+      if (!confirmed) return;
     }
 
     // Validation
@@ -75,6 +94,7 @@ const EditorView = {
     UI.setSaveStatus('saving');
 
     if (this.currentNoteId) {
+      await Storage.addNoteHistory(this.currentNoteId, existingNote, silent ? 'autosave' : 'manual');
       // Update existing note
       await Storage.saveNote(this.currentNoteId, {
         ...existingNote,
@@ -103,7 +123,149 @@ const EditorView = {
       UI.get('bn-btn-delete').style.display = 'block';
     }
 
+    await this.refreshHistoryDropdown();
     UI.showSaveFeedback();
+  },
+
+  isClearingExistingContent(existingNote, nextContent) {
+    return !!existingNote?.content?.trim() && !String(nextContent || '').trim();
+  },
+
+  async refreshHistoryDropdown() {
+    this.historyVersions = this.currentNoteId ? await Storage.getNoteHistory(this.currentNoteId) : [];
+    UI.updateHistoryDropdown(this.historyVersions);
+  },
+
+  async restoreHistoryVersion(index) {
+    if (!this.currentNoteId || !this.historyVersions[index]) return;
+
+    const version = this.historyVersions[index];
+    const current = UI.getEditorValues();
+    await Storage.addNoteHistory(this.currentNoteId, current, 'before-restore');
+
+    UI.get('bn-note-title').value = version.title || '';
+    UI.get('bn-note-label').value = version.label || '';
+    UI.get('bn-editor').value = version.content || '';
+    UI.setFavoriteToggle(!!version.favorite);
+    UI.setKingToggle(!!version.king);
+    UI.setPinnedToggle(!!version.pinned);
+    UI.updateEditorCount();
+    UI.updateTitleCharacterCount();
+    UI.updateLabelCharacterCount();
+    this.updateSaveButton();
+    this.updateEditorSearch(false);
+    UI.hideHistoryDropdown();
+    await this.refreshHistoryDropdown();
+    this.handleInput();
+  },
+
+  async showTemplatePicker() {
+    if (typeof NoteTemplates === 'undefined') return;
+
+    const drawer = UI.get('bronotes-drawer');
+    if (!drawer) return;
+
+    const existingModal = UI.get('bn-modal-overlay');
+    if (existingModal) existingModal.remove();
+
+    const dark = drawer.dataset.theme === 'dark';
+    const overlay = document.createElement('div');
+    overlay.id = 'bn-modal-overlay';
+    overlay.style.cssText = `
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      background: ${dark ? 'rgba(0,0,0,0.58)' : 'rgba(255,255,255,0.72)'};
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      box-sizing: border-box;
+      backdrop-filter: blur(2px);
+    `;
+
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+      width: 100%;
+      max-width: 380px;
+      background: ${dark ? '#202020' : '#ffffff'};
+      border: 1px solid ${dark ? '#3a3a3a' : '#e0e0e0'};
+      box-shadow: 0 12px 36px ${dark ? 'rgba(0,0,0,0.46)' : 'rgba(0,0,0,0.16)'};
+      padding: 18px;
+      box-sizing: border-box;
+    `;
+    modal.style.setProperty('background', dark ? '#202020' : '#ffffff', 'important');
+    modal.style.setProperty('border-color', dark ? '#3a3a3a' : '#e0e0e0', 'important');
+
+    const title = document.createElement('div');
+    title.textContent = 'templates';
+    title.style.cssText = `font-size: 13px; font-weight: 600; color: ${dark ? '#f1f1f1' : '#2a2a2a'}; margin-bottom: 12px; letter-spacing: 0.5px;`;
+    title.style.setProperty('color', dark ? '#f1f1f1' : '#2a2a2a', 'important');
+    modal.appendChild(title);
+
+    const grid = document.createElement('div');
+    grid.className = 'bn-template-grid';
+    NoteTemplates.items.forEach(template => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'bn-template-card';
+      button.dataset.templateId = template.id;
+      button.innerHTML = `<span class="bn-template-name">${Utils.escapeHtml(template.name)}</span><span class="bn-template-category">${Utils.escapeHtml(template.category)}</span>`;
+      grid.appendChild(button);
+    });
+    modal.appendChild(grid);
+
+    const actions = document.createElement('div');
+    actions.style.cssText = 'display: flex; justify-content: flex-end; margin-top: 14px;';
+    const cancel = document.createElement('button');
+    cancel.type = 'button';
+    cancel.textContent = 'cancel';
+    cancel.style.cssText = `
+      padding: 8px 12px;
+      background: transparent;
+      color: ${dark ? '#c7c7c7' : '#6a6a6a'};
+      border: 1px solid ${dark ? '#3a3a3a' : '#e0e0e0'};
+      cursor: pointer;
+      font-size: 11px;
+      font-family: inherit;
+    `;
+    cancel.addEventListener('click', () => overlay.remove());
+    actions.appendChild(cancel);
+    modal.appendChild(actions);
+
+    grid.addEventListener('click', async (event) => {
+      const card = event.target.closest('[data-template-id]');
+      if (!card) return;
+
+      overlay.remove();
+      await this.applyTemplate(card.dataset.templateId);
+    });
+
+    overlay.appendChild(modal);
+    drawer.appendChild(overlay);
+  },
+
+  async applyTemplate(templateId) {
+    const template = NoteTemplates.items.find(item => item.id === templateId);
+    if (!template) return;
+
+    const current = UI.getEditorValues();
+    if (current.title || current.content) {
+      const confirmed = await UI.showConfirm('Replace the current editor content with this template?', 'apply template', {
+        confirmText: 'apply'
+      });
+      if (!confirmed) return;
+    }
+
+    const rendered = await NoteTemplates.render(template.content);
+    const parsed = NoteTemplates.splitTitle(rendered);
+    UI.get('bn-note-title').value = parsed.title.slice(0, Storage.maxTitleLength);
+    UI.get('bn-editor').value = parsed.content;
+    UI.updateTitleCharacterCount();
+    UI.updateEditorCount();
+    this.updateEditorSearch(false);
+    this.handleInput();
+    UI.get('bn-editor').focus({ preventScroll: true });
   },
 
   async exportMarkdown() {
@@ -122,6 +284,224 @@ const EditorView = {
     const markdown = title ? `# ${title}\n\n${content}` : content;
 
     Utils.downloadFile(markdown, filename, 'text/markdown;charset=utf-8');
+  },
+
+  printNote() {
+    const { title, content } = UI.getEditorValues();
+    if (!title && !content) return;
+
+    this.renderPreview();
+
+    const displayTitle = title || 'Untitled Note';
+    const safeTitle = Utils.escapeHtml(displayTitle);
+    const renderedContent = content
+      ? Utils.markdownToHtml(content)
+      : '<p style="margin: 12px 0; color: #777777;">empty note</p>';
+    const printFrame = document.createElement('iframe');
+
+    printFrame.setAttribute('aria-hidden', 'true');
+    printFrame.style.position = 'fixed';
+    printFrame.style.right = '0';
+    printFrame.style.bottom = '0';
+    printFrame.style.width = '1px';
+    printFrame.style.height = '1px';
+    printFrame.style.border = '0';
+    printFrame.style.opacity = '0';
+    printFrame.style.pointerEvents = 'none';
+
+    const cleanup = () => {
+      setTimeout(() => printFrame.remove(), 250);
+    };
+
+    document.body.appendChild(printFrame);
+
+    const printDocument = printFrame.contentDocument || printFrame.contentWindow.document;
+    printDocument.open();
+    printDocument.write(`<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>${safeTitle}</title>
+  <style>
+    @page {
+      margin: 0;
+      size: A4 portrait;
+    }
+    * { box-sizing: border-box; text-shadow: none !important; }
+    html {
+      background: #ffffff;
+    }
+    body {
+      background: #ffffff;
+      color: #1b1b1b;
+      font-family: ui-monospace, "SFMono-Regular", "Cascadia Mono", "Cascadia Code", Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 13.5pt;
+      font-weight: 400;
+      line-height: 1.58;
+      margin: 0;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    main {
+      margin: 0;
+      max-width: none;
+      min-height: 100vh;
+      padding: 16mm 18mm 18mm 18mm;
+      width: 100%;
+    }
+    h1.bn-print-title {
+      color: #111111;
+      font-size: 27pt;
+      font-weight: 750;
+      letter-spacing: 0;
+      line-height: 1.18;
+      margin: 0 0 34px 0 !important;
+      padding: 0 0 14px 0 !important;
+      border-bottom: 1px solid #d8d8d8;
+    }
+    h1:not(.bn-print-title),
+    h2,
+    h3 {
+      color: #151515;
+      font-weight: 720;
+      letter-spacing: 0;
+      line-height: 1.24;
+      margin: 34px 0 14px 0 !important;
+      page-break-after: avoid;
+    }
+    h1:not(.bn-print-title) { font-size: 22pt; }
+    h2 { font-size: 18pt; }
+    h3 { font-size: 15.5pt; }
+    p {
+      line-height: 1.58 !important;
+      margin: 0 0 18px 0 !important;
+      orphans: 3;
+      widows: 3;
+    }
+    p + p {
+      margin-top: 4px !important;
+    }
+    p + h1,
+    p + h2,
+    p + h3,
+    ul + h1,
+    ul + h2,
+    ul + h3,
+    ol + h1,
+    ol + h2,
+    ol + h3,
+    blockquote + h1,
+    blockquote + h2,
+    blockquote + h3,
+    table + h1,
+    table + h2,
+    table + h3,
+    .bn-code-block + h1,
+    .bn-code-block + h2,
+    .bn-code-block + h3 {
+      margin-top: 40px !important;
+    }
+    a {
+      color: #111111;
+      text-decoration: underline;
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.14em;
+    }
+    ul,
+    ol {
+      margin: 12px 0 22px 0 !important;
+      padding-left: 28px !important;
+    }
+    li {
+      line-height: 1.55 !important;
+      margin: 7px 0 !important;
+    }
+    li > span {
+      line-height: 1.55 !important;
+    }
+    img {
+      display: block;
+      margin: 24px 0 !important;
+      max-width: 100%;
+      page-break-inside: avoid;
+    }
+    table {
+      border-collapse: collapse;
+      font-size: 12.5pt;
+      line-height: 1.45;
+      margin: 24px 0 !important;
+      page-break-inside: avoid;
+      width: 100%;
+    }
+    th, td {
+      border: 1px solid #d2d2d2;
+      padding: 9px 11px;
+      text-align: left;
+      vertical-align: top;
+    }
+    th {
+      background: #f4f4f4;
+      color: #111111;
+      font-weight: 700;
+    }
+    blockquote {
+      border-left: 4px solid #bdbdbd;
+      color: #3f3f3f;
+      font-size: 13pt;
+      font-style: italic;
+      line-height: 1.56;
+      margin: 24px 0 !important;
+      padding: 6px 0 6px 18px !important;
+      page-break-inside: avoid;
+    }
+    code {
+      background: #f3f3f3 !important;
+      color: #202020 !important;
+      font-family: ui-monospace, "SFMono-Regular", "Cascadia Mono", "Cascadia Code", Consolas, "Liberation Mono", Menlo, monospace !important;
+      font-size: 0.92em;
+      text-shadow: none !important;
+    }
+    .bn-code-block {
+      margin: 26px 0 !important;
+      page-break-inside: avoid;
+      position: relative;
+    }
+    .bn-code-block pre {
+      background: #f7f7f7 !important;
+      border: 1px solid #d8d8d8 !important;
+      color: #202020 !important;
+      font-size: 11.5pt;
+      line-height: 1.48;
+      margin: 0 !important;
+      overflow: visible;
+      padding: 16px 17px !important;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .bn-copy-code { display: none !important; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1 class="bn-print-title">${safeTitle}</h1>
+    ${renderedContent}
+  </main>
+</body>
+</html>`);
+    printDocument.close();
+
+    const printWindow = printFrame.contentWindow;
+    printWindow.addEventListener('afterprint', cleanup, { once: true });
+
+    setTimeout(() => {
+      try {
+        printWindow.focus();
+        printWindow.print();
+      } catch (error) {
+        console.error('Brow Notes: Error printing note:', error);
+        cleanup();
+      }
+    }, 50);
   },
 
   async delete() {
@@ -181,6 +561,7 @@ const EditorView = {
       code: () => selected.includes('\n')
         ? this.wrapSelection('```\n', '\n```', 'code')
         : this.wrapSelection('`', '`', 'code'),
+      'code-block': () => this.wrapSelection('```\n', '\n```', 'code'),
       h1: () => this.prefixSelectedLines('# '),
       h2: () => this.prefixSelectedLines('## '),
       quote: () => this.prefixSelectedLines('> '),
@@ -262,10 +643,15 @@ const EditorView = {
     const editor = UI.get('bn-editor');
     if (!editor) return;
 
+    const scrollTop = editor.scrollTop;
+    const scrollLeft = editor.scrollLeft;
     editor.value = `${editor.value.slice(0, start)}${replacement}${editor.value.slice(end)}`;
-    editor.focus();
+    editor.focus({ preventScroll: true });
     editor.setSelectionRange(selectionStart, selectionEnd);
     editor.dispatchEvent(new Event('input', { bubbles: true }));
+    editor.scrollTop = scrollTop;
+    editor.scrollLeft = scrollLeft;
+    this.syncEditorSearchHighlight();
   },
 
   openEditorSearch() {

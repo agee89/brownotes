@@ -1,6 +1,16 @@
 // Drawer HTML template
 const DrawerHTML = `
   <style>
+    @keyframes drawer-shake {
+      0%, 100% { transform: translateX(0); }
+      10%, 50%, 90% { transform: translateX(-3px); }
+      30%, 70% { transform: translateX(3px); }
+    }
+
+    #bronotes-drawer.animate-drawer-shake {
+      animation: drawer-shake 0.4s ease-in-out;
+    }
+
     #bronotes-drawer[data-transparent="true"] {
       background: rgba(255, 255, 255, 0.38) !important;
       box-shadow: none !important;
@@ -308,12 +318,193 @@ const DrawerHTML = `
       width: 12px;
     }
 
+    .bn-toolbar-template {
+      margin-left: auto;
+    }
+
     .bn-toolbar-text-icon {
       color: #2a2a2a;
       font-size: 13px;
       font-weight: 800;
       line-height: 1;
       pointer-events: none;
+    }
+
+    .bn-code-block {
+      margin: 12px 0;
+      position: relative;
+    }
+
+    .bn-code-block pre {
+      background: rgba(42, 42, 42, 0.025) !important;
+      border: 1px solid rgba(42, 42, 42, 0.12) !important;
+      box-sizing: border-box;
+      color: #2a2a2a !important;
+      font-size: 12px;
+      line-height: 1.5;
+      margin: 0;
+      overflow-x: visible;
+      padding: 12px 12px 34px 12px !important;
+      text-shadow: none !important;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .bn-code-block code {
+      background: transparent !important;
+      color: inherit !important;
+      font-family: inherit;
+      text-shadow: none !important;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .bn-copy-code {
+      align-items: center;
+      background: transparent !important;
+      border: 1px solid rgba(42, 42, 42, 0.18) !important;
+      color: #6a6a6a !important;
+      cursor: pointer;
+      display: inline-flex;
+      font-family: inherit;
+      font-size: 10px;
+      justify-content: center;
+      padding: 4px 7px;
+      position: absolute;
+      right: 8px;
+      text-shadow: none !important;
+      top: 8px;
+    }
+
+    .bn-code-block-actions {
+      display: contents;
+    }
+
+    .bn-history-wrap {
+      left: 50%;
+      pointer-events: auto;
+      position: absolute;
+      top: 46%;
+      transform: translate(-50%, -50%);
+      z-index: 50;
+    }
+
+    .bn-history-button {
+      align-items: center;
+      background: #ffffff !important;
+      border: 1px solid #e8e8e8;
+      box-sizing: border-box;
+      color: #7a7a7a;
+      cursor: pointer;
+      display: inline-flex;
+      font-family: inherit;
+      font-size: 10px;
+      gap: 5px;
+      height: 24px;
+      justify-content: center;
+      min-width: 96px;
+      padding: 4px 10px;
+      white-space: nowrap;
+    }
+
+    .bn-history-button:disabled {
+      cursor: not-allowed;
+      opacity: 0.45;
+    }
+
+    .bn-history-menu {
+      background: #ffffff !important;
+      border: 1px solid #e8e8e8;
+      bottom: 30px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+      box-sizing: border-box;
+      display: none;
+      max-height: 188px;
+      min-width: 190px;
+      overflow-y: auto !important;
+      overscroll-behavior: contain;
+      pointer-events: auto;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 60;
+    }
+
+    .bn-history-option {
+      background: #ffffff !important;
+      border: none;
+      border-bottom: 1px solid #f0f0f0;
+      box-sizing: border-box;
+      color: #4a4a4a;
+      cursor: pointer;
+      display: block;
+      font-family: inherit;
+      padding: 8px 10px;
+      text-align: left;
+      width: 100%;
+    }
+
+    .bn-history-option:hover {
+      background: #f7f7f7 !important;
+    }
+
+    .bn-history-time {
+      color: #6a6a6a;
+      display: block;
+      font-size: 10px;
+      line-height: 1.3;
+      margin-bottom: 3px;
+    }
+
+    .bn-history-preview {
+      color: #9a9a9a;
+      display: block;
+      font-size: 10px;
+      line-height: 1.35;
+      max-width: 220px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .bn-template-grid {
+      display: grid;
+      gap: 8px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      max-height: 360px;
+      overflow-y: auto;
+      padding-right: 2px;
+    }
+
+    .bn-template-card {
+      background: transparent;
+      border: 1px solid #e8e8e8;
+      box-sizing: border-box;
+      color: #2a2a2a;
+      cursor: pointer;
+      font-family: inherit;
+      min-height: 66px;
+      padding: 10px;
+      text-align: left;
+    }
+
+    .bn-template-card:hover {
+      background: rgba(42, 42, 42, 0.04);
+    }
+
+    .bn-template-name {
+      display: block;
+      font-size: 11px;
+      font-weight: 600;
+      line-height: 1.35;
+      margin-bottom: 5px;
+    }
+
+    .bn-template-category {
+      color: #9a9a9a;
+      display: block;
+      font-size: 10px;
+      line-height: 1.3;
     }
 
     #bronotes-drawer[data-transparent="true"] .bn-icon-toggle {
@@ -323,6 +514,33 @@ const DrawerHTML = `
 
     #bronotes-drawer[data-transparent="true"] #bn-editor-shell {
       background: rgba(255, 255, 255, 0.18) !important;
+    }
+
+    #bronotes-drawer[data-transparent="true"] .bn-code-block pre {
+      background: rgba(255, 255, 255, 0.16) !important;
+      border-color: rgba(42, 42, 42, 0.14) !important;
+      box-shadow: none !important;
+    }
+
+    #bronotes-drawer[data-transparent="true"] .bn-copy-code {
+      background: rgba(255, 255, 255, 0.12) !important;
+      border-color: rgba(42, 42, 42, 0.16) !important;
+      color: #5a5a5a !important;
+    }
+
+    #bronotes-drawer[data-transparent="true"] .bn-history-button,
+    #bronotes-drawer[data-transparent="true"] .bn-history-menu {
+      background: #ffffff !important;
+      border-color: rgba(42, 42, 42, 0.14) !important;
+    }
+
+    #bronotes-drawer[data-transparent="true"] .bn-history-option {
+      background: #ffffff !important;
+    }
+
+    #bronotes-drawer[data-transparent="true"] .bn-template-card {
+      background: rgba(255, 255, 255, 0.34) !important;
+      border-color: rgba(42, 42, 42, 0.14) !important;
     }
 
     #bronotes-drawer[data-transparent="true"] .bn-icon-toggle[data-active="true"] {
@@ -540,6 +758,11 @@ const DrawerHTML = `
       opacity: 0.78;
     }
 
+    #bronotes-drawer[data-theme="dark"] #bn-btn-print-note img {
+      filter: invert(1);
+      opacity: 0.78;
+    }
+
     #bronotes-drawer[data-theme="dark"] .bn-toolbar-text-icon {
       color: #f1f1f1 !important;
     }
@@ -559,6 +782,54 @@ const DrawerHTML = `
       background: #202020 !important;
       border-color: #3a3a3a !important;
       color: #f1f1f1 !important;
+    }
+
+    #bronotes-drawer[data-theme="dark"] .bn-code-block pre {
+      background: rgba(255, 255, 255, 0.035) !important;
+      border-color: rgba(255, 255, 255, 0.14) !important;
+      color: #e8e8e8 !important;
+    }
+
+    #bronotes-drawer[data-theme="dark"] .bn-copy-code {
+      background: transparent !important;
+      border-color: rgba(255, 255, 255, 0.18) !important;
+      color: #c7c7c7 !important;
+    }
+
+    #bronotes-drawer[data-theme="dark"] .bn-history-button,
+    #bronotes-drawer[data-theme="dark"] .bn-history-menu {
+      background: #202020 !important;
+      border-color: #333333 !important;
+      color: #c7c7c7 !important;
+    }
+
+    #bronotes-drawer[data-theme="dark"] .bn-history-option {
+      background: #202020 !important;
+      border-color: #303030 !important;
+      color: #e8e8e8 !important;
+    }
+
+    #bronotes-drawer[data-theme="dark"] .bn-history-option:hover {
+      background: rgba(255, 255, 255, 0.08) !important;
+    }
+
+    #bronotes-drawer[data-theme="dark"] .bn-history-time,
+    #bronotes-drawer[data-theme="dark"] .bn-history-preview {
+      color: #a8a8a8 !important;
+    }
+
+    #bronotes-drawer[data-theme="dark"] .bn-template-card {
+      background: #202020 !important;
+      border-color: #333333 !important;
+      color: #e8e8e8 !important;
+    }
+
+    #bronotes-drawer[data-theme="dark"] .bn-template-card:hover {
+      background: rgba(255, 255, 255, 0.08) !important;
+    }
+
+    #bronotes-drawer[data-theme="dark"] .bn-template-category {
+      color: #a8a8a8 !important;
     }
 
     #bronotes-drawer[data-theme="dark"] .bn-search-highlight {
@@ -615,6 +886,23 @@ const DrawerHTML = `
 
     #bronotes-drawer[data-theme="dark"][data-transparent="true"] #bn-editor-shell {
       background: rgba(20, 20, 20, 0.2) !important;
+    }
+
+    #bronotes-drawer[data-theme="dark"][data-transparent="true"] .bn-code-block pre {
+      background: rgba(20, 20, 20, 0.24) !important;
+      border-color: rgba(255, 255, 255, 0.16) !important;
+    }
+
+    #bronotes-drawer[data-theme="dark"][data-transparent="true"] .bn-copy-code {
+      background: rgba(20, 20, 20, 0.18) !important;
+      border-color: rgba(255, 255, 255, 0.18) !important;
+      color: #d8d8d8 !important;
+    }
+
+    #bronotes-drawer[data-theme="dark"][data-transparent="true"] .bn-history-button,
+    #bronotes-drawer[data-theme="dark"][data-transparent="true"] .bn-history-menu {
+      background: #202020 !important;
+      border-color: rgba(255, 255, 255, 0.16) !important;
     }
   </style>
   <div id="bn-drawer-ribbon">
@@ -705,6 +993,7 @@ const DrawerHTML = `
       <button id="bn-tab-edit" style="padding: 0; background: transparent; color: #2a2a2a; border: none; border-bottom: 2px solid #2a2a2a; cursor: pointer; font-size: 13px; font-family: inherit; letter-spacing: 0.5px; padding-bottom: 5px; transition: transform 0.1s ease; display: inline-flex; align-items: center; gap: 7px;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/write.png')}" alt="" style="width: 16px; height: 16px; display: block; pointer-events: none;" /><span>Write</span></button>
       <button id="bn-tab-preview" style="padding: 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-size: 13px; font-family: inherit; letter-spacing: 0.5px; padding-bottom: 5px; transition: transform 0.1s ease; display: inline-flex; align-items: center; gap: 7px;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/markdown-view.png')}" alt="" style="width: 16px; height: 16px; display: block; pointer-events: none;" /><span>Preview</span></button>
       <button id="bn-btn-export-md" disabled title="export markdown" aria-label="export markdown" style="margin-left: auto; padding: 0 0 5px 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: not-allowed; font-size: 13px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease, opacity 0.15s ease; display: inline-flex; align-items: center; gap: 7px; opacity: 0.45;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/export-md.png')}" alt="" style="width: 16px; height: 16px; display: block; pointer-events: none;" /><span>Export</span></button>
+      <button id="bn-btn-print-note" disabled title="print note" aria-label="print note" style="margin-left: auto; padding: 0 0 5px 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: not-allowed; font-size: 13px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease, opacity 0.15s ease; display: none; align-items: center; gap: 7px; opacity: 0.45;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/print.svg')}" alt="" style="width: 16px; height: 16px; display: block; pointer-events: none;" /><span>Print</span></button>
     </div>
     <div id="bn-editor-toolbar" class="bn-editor-toolbar" aria-label="markdown toolbar">
       <button class="bn-toolbar-button" type="button" title="bold" aria-label="bold" data-md-action="bold" onmousedown="event.preventDefault(); this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/toolbar/bold.svg')}" alt="" /></button>
@@ -715,14 +1004,16 @@ const DrawerHTML = `
       <button class="bn-toolbar-button" type="button" title="checklist" aria-label="checklist" data-md-action="checklist" onmousedown="event.preventDefault(); this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/toolbar/checklist.svg')}" alt="" /></button>
       <button class="bn-toolbar-button" type="button" title="quote" aria-label="quote" data-md-action="quote" onmousedown="event.preventDefault(); this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/toolbar/quotes.svg')}" alt="" /></button>
       <button class="bn-toolbar-button" type="button" title="code" aria-label="code" data-md-action="code" onmousedown="event.preventDefault(); this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/toolbar/code.svg')}" alt="" /></button>
+      <button class="bn-toolbar-button" type="button" title="code block" aria-label="code block" data-md-action="code-block" onmousedown="event.preventDefault(); this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/toolbar/code-block.svg')}" alt="" /></button>
       <button class="bn-toolbar-button" type="button" title="heading 1" aria-label="heading 1" data-md-action="h1" onmousedown="event.preventDefault(); this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/toolbar/h1.svg')}" alt="" /></button>
       <button class="bn-toolbar-button" type="button" title="heading 2" aria-label="heading 2" data-md-action="h2" onmousedown="event.preventDefault(); this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/toolbar/h2.svg')}" alt="" /></button>
       <button class="bn-toolbar-button" type="button" title="strikethrough" aria-label="strikethrough" data-md-action="strike" onmousedown="event.preventDefault(); this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/toolbar/strikethrough.svg')}" alt="" /></button>
       <button class="bn-toolbar-button" type="button" title="image" aria-label="image" data-md-action="image" onmousedown="event.preventDefault(); this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/toolbar/image.svg')}" alt="" /></button>
       <button class="bn-toolbar-button" type="button" title="table" aria-label="table" data-md-action="table" onmousedown="event.preventDefault(); this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/toolbar/table.svg')}" alt="" /></button>
       <button class="bn-toolbar-button" type="button" title="divider" aria-label="divider" data-md-action="line" onmousedown="event.preventDefault(); this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/toolbar/line.svg')}" alt="" /></button>
+      <button id="bn-btn-template" class="bn-toolbar-button bn-toolbar-template" type="button" title="templates" aria-label="templates" onmousedown="event.preventDefault(); this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/toolbar/preset.svg')}" alt="" /></button>
     </div>
-    <div id="bn-editor-container" style="flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative;"><div id="bn-editor-shell"><div id="bn-editor-highlight" aria-hidden="true"></div><textarea id="bn-editor" placeholder="start typing..." style="width: 100%; height: 100%; border: none; outline: none; resize: none; overflow-y: auto;"></textarea></div><div id="bn-editor-status" style="flex: 0 0 auto; display: flex; align-items: center; gap: 8px; padding: 6px 24px 12px 24px; box-sizing: border-box;"><div id="bn-editor-search-wrap" style="display: none; flex: 1; min-width: 0; align-items: center; gap: 6px;"><input id="bn-editor-search" type="search" placeholder="find..." autocomplete="off" aria-label="find in note" style="width: 120px; max-width: 100%; padding: 4px 7px; border: 1px solid #e8e8e8; background: transparent; color: #2a2a2a; font-family: inherit; font-size: 11px; line-height: 1.3; outline: none; box-sizing: border-box;" /><span id="bn-editor-search-count" aria-live="polite" style="flex: 0 0 auto; color: #9a9a9a; font-size: 10px; line-height: 1.4; white-space: nowrap;">0/0</span></div><div id="bn-editor-count" aria-live="polite" style="flex: 0 0 auto; margin-left: auto; color: #9a9a9a; font-size: 10px; line-height: 1.4; letter-spacing: 0.4px; text-align: right; white-space: nowrap; user-select: none; box-sizing: border-box;">0 words / 0 chars</div></div><div id="bn-note-link-autocomplete" style="display: none; position: absolute; left: 24px; right: 24px; top: 10px; z-index: 12; background: #ffffff; border: 1px solid #e8e8e8; max-height: 188px; overflow-y: auto; box-sizing: border-box; box-shadow: 0 8px 24px rgba(0,0,0,0.08);"></div></div>
+    <div id="bn-editor-container" style="flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative;"><div id="bn-editor-shell"><div id="bn-editor-highlight" aria-hidden="true"></div><textarea id="bn-editor" placeholder="start typing..." style="width: 100%; height: 100%; border: none; outline: none; resize: none; overflow-y: auto;"></textarea></div><div id="bn-editor-status" style="flex: 0 0 40px; height: 40px; padding: 0 24px; box-sizing: border-box; position: relative;"><div id="bn-editor-search-wrap" style="display: none; position: absolute; left: 24px; top: 50%; transform: translateY(-50%); min-width: 0; align-items: center; gap: 6px;"><input id="bn-editor-search" type="search" placeholder="find..." autocomplete="off" aria-label="find in note" style="width: 100px; max-width: 100%; height: 24px; padding: 4px 7px; border: 1px solid #e8e8e8; background: transparent; color: #2a2a2a; font-family: inherit; font-size: 11px; line-height: 1.3; outline: none; box-sizing: border-box;" /><span id="bn-editor-search-count" aria-live="polite" style="flex: 0 0 auto; color: #9a9a9a; font-size: 10px; line-height: 1.4; white-space: nowrap;">0/0</span></div><div id="bn-history-wrap" class="bn-history-wrap"><button id="bn-history-button" class="bn-history-button" type="button" title="version history" aria-label="version history" aria-expanded="false" disabled>history ▾</button><div id="bn-history-menu" class="bn-history-menu"></div></div><div id="bn-editor-count" aria-live="polite" style="position: absolute; right: 24px; top: 50%; transform: translateY(-50%); min-width: 0; color: #9a9a9a; font-size: 10px; line-height: 1.4; letter-spacing: 0.4px; text-align: right; white-space: nowrap; user-select: none; box-sizing: border-box;">0 words / 0 chars</div></div><div id="bn-note-link-autocomplete" style="display: none; position: absolute; left: 24px; right: 24px; top: 10px; z-index: 12; background: #ffffff; border: 1px solid #e8e8e8; max-height: 188px; overflow-y: auto; box-sizing: border-box; box-shadow: 0 8px 24px rgba(0,0,0,0.08);"></div></div>
     <div id="bn-preview-container" style="flex: 1; padding: 12px 24px 24px 24px; overflow-y: auto; display: none; font-size: 13px; line-height: 1.7;"></div>
     <div style="padding: 16px 24px; border-top: 1px solid #e8e8e8; display: flex; gap: 12px;">
       <button id="bn-btn-save" style="flex: 1; padding: 10px; background: #2a2a2a; color: #ffffff; border: none; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; box-sizing: border-box; display: flex; align-items: center; justify-content: center; gap: 6px;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">save</button>

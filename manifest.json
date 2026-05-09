@@ -30,6 +30,7 @@
         "js/utils.js",
         "js/quotes.js",
         "js/storage.js",
+        "js/templates.js",
         "js/ui.js",
         "js/drawer.js",
         "js/views/home.js",
@@ -49,7 +50,6 @@
       "resources": [
         "icons/*",
         "icons/toolbar/*.svg",
-        "Quote.md",
         "js/*.js",
         "js/views/*.js"
       ],

@@ -58,6 +58,7 @@ chrome.action.onClicked.addListener(async (tab) => {
             'js/utils.js',
             'js/quotes.js',
             'js/storage.js',
+            'js/templates.js',
             'js/ui.js',
             'js/drawer.js',
             'js/views/home.js',

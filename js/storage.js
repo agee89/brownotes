@@ -4,6 +4,8 @@ const Storage = {
   contextInvalidated: false,
   maxTitleLength: 120,
   maxLabelLength: 32,
+  maxNoteHistoryEntries: 5,
+  noteHistoryAutoSnapshotInterval: 5 * 60 * 1000,
   labelColorPalette: [
     '#8fb8ff', '#8fd8b8', '#f2c66d', '#f29c9c', '#c6a5ff', '#77c7d9',
     '#d6a06d', '#a8c26d', '#a3b8f5', '#b0d4ef', '#d4b8f5', '#f5b8cc',
@@ -131,6 +133,51 @@ const Storage = {
     }
     notes[noteId] = noteData;
     await this.saveNotes(notes);
+  },
+
+  async getNoteHistory(noteId) {
+    const result = await this.get(['noteHistory']);
+    const noteHistory = result.noteHistory || {};
+    return Array.isArray(noteHistory[noteId]) ? noteHistory[noteId] : [];
+  },
+
+  async addNoteHistory(noteId, noteData, reason = 'autosave') {
+    if (!noteId || !noteData) return [];
+
+    const content = String(noteData.content || '').trim();
+    const title = String(noteData.title || '').trim();
+    if (!title && !content) return this.getNoteHistory(noteId);
+
+    const result = await this.get(['noteHistory']);
+    const noteHistory = result.noteHistory || {};
+    const history = Array.isArray(noteHistory[noteId]) ? noteHistory[noteId] : [];
+    const latest = history[0];
+    const now = Date.now();
+    const throttleAutosave = reason === 'autosave' &&
+      latest?.snapshotAt &&
+      now - latest.snapshotAt < this.noteHistoryAutoSnapshotInterval;
+
+    if (latest && latest.title === title && latest.content === content && latest.label === (noteData.label || '')) {
+      return history;
+    }
+
+    if (throttleAutosave) {
+      return history;
+    }
+
+    noteHistory[noteId] = [{
+      title,
+      label: noteData.label || '',
+      content,
+      favorite: !!noteData.favorite,
+      king: !!noteData.king,
+      pinned: !!noteData.pinned,
+      snapshotAt: now,
+      reason
+    }, ...history].slice(0, this.maxNoteHistoryEntries);
+
+    await this.set({ noteHistory });
+    return noteHistory[noteId];
   },
 
   // Delete note
@@ -385,6 +432,7 @@ const Storage = {
   async exportData() {
     const notes = await this.getNotes();
     const trashNotes = await this.getTrashNotes();
+    const result = await this.get(['noteHistory']);
     const nickname = await this.getNickname();
     const labels = await this.getManualLabels();
     const labelColors = await this.getLabelColors();
@@ -392,6 +440,7 @@ const Storage = {
     return {
       notes,
       trashNotes,
+      noteHistory: result.noteHistory || {},
       nickname,
       labels,
       labelColors,
@@ -416,6 +465,7 @@ const Storage = {
     await this.set({
       notes,
       trashNotes: data.trashNotes || {},
+      noteHistory: data.noteHistory || {},
       nickname: data.nickname || 'Brow',
       labels: data.labels || [],
       labelColors: data.labelColors || {}

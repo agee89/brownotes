@@ -115,6 +115,7 @@ const App = {
       EditorView.renderPreview();
     };
     UI.get('bn-btn-export-md').onclick = () => EditorView.exportMarkdown();
+    UI.get('bn-btn-print-note').onclick = () => EditorView.printNote();
     UI.get('bn-btn-save').onclick = () => EditorView.save(false);
     UI.get('bn-btn-delete').onclick = () => EditorView.delete();
     UI.get('bn-note-favorite').onclick = () => EditorView.toggleFavorite();
@@ -144,6 +145,25 @@ const App = {
     };
     UI.get('bn-editor-search').oninput = () => EditorView.updateEditorSearch(true);
     UI.get('bn-editor-search').onkeydown = (event) => EditorView.handleSearchKeydown(event);
+    UI.get('bn-btn-template').onclick = () => EditorView.showTemplatePicker();
+    UI.get('bn-history-button').onclick = (event) => {
+      event.stopPropagation();
+      UI.toggleHistoryDropdown();
+    };
+    UI.get('bn-history-menu').onclick = (event) => {
+      event.stopPropagation();
+      const option = event.target.closest('[data-history-index]');
+      if (!option) return;
+      EditorView.restoreHistoryVersion(Number(option.dataset.historyIndex));
+    };
+    UI.get('bn-history-menu').onwheel = (event) => {
+      event.stopPropagation();
+    };
+    document.addEventListener('click', (event) => {
+      if (!event.target.closest('#bn-history-wrap')) {
+        UI.hideHistoryDropdown();
+      }
+    });
     document.querySelectorAll('#bn-editor-toolbar [data-md-action]').forEach(button => {
       button.onclick = () => EditorView.applyMarkdownFormat(button.dataset.mdAction);
     });

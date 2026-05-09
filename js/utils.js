@@ -148,9 +148,9 @@ const Utils = {
         if (itemOrdered !== ordered) break;
 
         const checked = item[3] && /\[[xX]\]/.test(item[3]);
-        const task = item[3] ? `<input type="checkbox" disabled ${checked ? 'checked ' : ''}style="margin: 2px 6px 0 0; flex: 0 0 auto;">` : '';
+        const task = item[3] ? `<input type="checkbox" disabled ${checked ? 'checked ' : ''}style="margin: 6px 6px 0 0; flex: 0 0 auto;">` : '';
         const itemStyle = item[3] ? 'display: flex; align-items: flex-start; list-style-type: none; margin: 5px 0; padding-left: 0; margin-left: -18px;' : 'display: list-item; margin: 5px 0; padding-left: 2px;';
-        listHtml += `<li style="${itemStyle}">${task}<span>${inline(item[4])}</span>`;
+        listHtml += `<li style="${itemStyle}">${task}<span style="display: inline-block; line-height: 1.5;">${inline(item[4])}</span>`;
         index++;
 
         while (index < lines.length) {
@@ -193,7 +193,7 @@ const Utils = {
           i++;
         }
         if (i < lines.length) i++;
-        html += `<div class="bn-code-block" style="position: relative; margin: 12px 0;"><button type="button" class="bn-copy-code" style="position: absolute; top: 6px; right: 6px; padding: 4px 7px; background: rgba(255,255,255,0.86); color: #4a4a4a; border: 1px solid #e0e0e0; cursor: pointer; font-size: 10px; font-family: inherit;">copy</button><pre style="background: rgba(0,0,0,0.06); padding: 34px 12px 12px 12px; overflow-x: visible; white-space: pre-wrap; word-break: break-word; font-size: 12px; line-height: 1.5; margin: 0;"><code style="white-space: pre-wrap; word-break: break-word;">${this.escapeHtml(code.join('\n'))}</code></pre></div>`;
+        html += `<div class="bn-code-block"><button type="button" class="bn-copy-code">copy</button><pre><code>${this.escapeHtml(code.join('\n'))}</code></pre></div>`;
         continue;
       }
 
