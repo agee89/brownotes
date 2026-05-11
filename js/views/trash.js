@@ -1,6 +1,6 @@
 // Trash view controller
 const TrashView = {
-  retentionDays: 30,
+  retentionDays: Constants.TRASH.RETENTION_DAYS,
 
   async load() {
     if (Storage.hasContextIssue?.()) {
@@ -48,8 +48,8 @@ const TrashView = {
 
     listDiv.style.display = 'block';
 
-    const labelIcon = Utils.assetUrl('icons/label.png');
-    const calendarIcon = Utils.assetUrl('icons/calendar.png');
+    const labelIcon = Utils.assetUrl('icons/label.svg');
+    const calendarIcon = Utils.assetUrl('icons/calendar.svg');
     const labelColors = await Storage.getLabelColors();
 
     listDiv.innerHTML = notesArray.map(note => {
@@ -60,7 +60,7 @@ const TrashView = {
         && labelColor
         ? `<span title="label color" style="display: inline-block; flex: 0 0 auto; width: 8px; height: 8px; background: ${Utils.escapeHtml(labelColor)}; margin-right: 6px; box-shadow: 0 0 0 1px rgba(0,0,0,0.08);"></span>`
         : '';
-      const preview = Utils.escapeHtml((note.content || '').substring(0, 96));
+      const preview = Utils.escapeHtml((note.content || '').substring(0, Constants.NOTES.TRASH_PREVIEW_LENGTH));
       const noteId = Utils.escapeHtml(note.id);
       const deletedAt = note.deletedAt ? Utils.formatDate(note.deletedAt, 'long') : 'recently';
       const permanentlyDeleteAt = note.deletedAt
@@ -70,7 +70,7 @@ const TrashView = {
       return `
         <div class="bn-trash-item" data-note-id="${noteId}" style="padding: 14px 0; border-bottom: 1px solid #f0f0f0;">
           <div style="font-size: 13px; font-weight: 650; margin-bottom: 6px; color: #2a2a2a;">${title}</div>
-          <div style="font-size: 12px; color: #6a6a6a; margin-bottom: 8px; line-height: 1.5;">${preview}${preview.length >= 96 ? '...' : ''}</div>
+          <div style="font-size: 12px; color: #6a6a6a; margin-bottom: 8px; line-height: 1.5;">${preview}${preview.length >= Constants.NOTES.TRASH_PREVIEW_LENGTH ? '...' : ''}</div>
           <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 11px; color: #9a9a9a; margin-bottom: 6px;">
             <span style="display: inline-flex; align-items: center; gap: 0; min-width: 0;">${labelDot}<img src="${labelIcon}" alt="" style="width: 11px; height: 11px; opacity: 0.55; pointer-events: none; flex: 0 0 auto;" /><span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${label}</span></span>
             <span style="display: inline-flex; align-items: center; gap: 4px; flex: 0 0 auto;"><img src="${calendarIcon}" alt="" style="width: 11px; height: 11px; opacity: 0.55; pointer-events: none;" />${deletedAt}</span>
@@ -118,7 +118,7 @@ const TrashView = {
       emptyButton.style.display = 'none';
     }
 
-    const trashIcon = Utils.assetUrl('icons/trash.png');
+    const trashIcon = Utils.assetUrl('icons/trash.svg');
     listDiv.style.display = 'flex';
     listDiv.style.alignItems = 'center';
     listDiv.style.justifyContent = 'center';

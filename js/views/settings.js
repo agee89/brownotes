@@ -3,12 +3,42 @@ const SettingsView = {
   async load() {
     const nickname = await Storage.getNickname();
     UI.get('bn-nickname').value = nickname;
+    
+    // Load version from manifest
+    this.loadVersion();
+  },
+
+  loadVersion() {
+    const versionElement = UI.get('bn-app-version');
+    if (!versionElement) return;
+    
+    try {
+      const manifest = chrome.runtime.getManifest();
+      versionElement.textContent = `v${manifest.version}`;
+    } catch (error) {
+      console.warn('Brow Notes: Could not load version from manifest', error);
+    }
   },
 
   async save() {
     const nickname = UI.get('bn-nickname').value.trim() || 'Brow';
     await Storage.saveNickname(nickname);
     await UI.showAlert('Settings saved!', 'saved');
+  },
+
+  async showPreferences() {
+    const current = await Storage.getPreferences();
+    const saved = await UI.showPreferencesModal(current);
+    if (!saved) return;
+
+    const preferences = await Storage.savePreferences(saved);
+    UI.setDrawerTheme(preferences.drawerTheme);
+    EditorView.preferences = {
+      ...EditorView.preferences,
+      openNotesIn: preferences.openNotesIn,
+      autoSaveDelay: preferences.autoSaveDelay
+    };
+    await UI.showAlert('Preferences saved.', 'saved');
   },
 
   async export() {

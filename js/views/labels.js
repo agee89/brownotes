@@ -12,7 +12,7 @@ const LabelsView = {
     
     const counts = this.getLabelCounts(notes);
     const noLabelCount = this.getNoLabelCount(notes);
-    const labelIcon = Utils.assetUrl('icons/label.png');
+    const labelIcon = Utils.assetUrl('icons/label.svg');
 
     const labelItems = labels.map(label => {
       const escapedLabel = Utils.escapeHtml(label);

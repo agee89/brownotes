@@ -78,7 +78,7 @@ const DrawerHTML = `
     #bronotes-drawer select {
       -webkit-appearance: none !important;
       appearance: none !important;
-      background-image: url("${chrome.runtime.getURL('icons/down.png')}") !important;
+      background-image: url("${chrome.runtime.getURL('icons/down.svg')}") !important;
       background-position: right 10px center !important;
       background-repeat: no-repeat !important;
       background-size: 10px 10px !important;
@@ -86,7 +86,7 @@ const DrawerHTML = `
     }
 
     #bronotes-drawer[data-transparent="true"] select {
-      background-image: url("${chrome.runtime.getURL('icons/down.png')}") !important;
+      background-image: url("${chrome.runtime.getURL('icons/down.svg')}") !important;
       background-position: right 10px center !important;
       background-repeat: no-repeat !important;
       background-size: 10px 10px !important;
@@ -269,6 +269,15 @@ const DrawerHTML = `
 
     .bn-icon-toggle[data-active="true"] img {
       opacity: 0.9;
+    }
+
+    .bn-icon-toggle:disabled {
+      cursor: not-allowed;
+      opacity: 0.38;
+    }
+
+    .bn-icon-toggle:disabled img {
+      opacity: 0.42;
     }
 
     .bn-filter-favorite,
@@ -758,6 +767,19 @@ const DrawerHTML = `
       opacity: 0.78;
     }
 
+    #bronotes-drawer[data-theme="dark"] img[src$=".svg"] {
+      filter: invert(1);
+    }
+
+    #bronotes-drawer[data-theme="dark"] #bn-theme-icon {
+      filter: none !important;
+    }
+
+    #bronotes-drawer[data-theme="dark"] #bn-btn-context img {
+      filter: invert(1);
+      opacity: 0.78;
+    }
+
     #bronotes-drawer[data-theme="dark"] #bn-btn-print-note img {
       filter: invert(1);
       opacity: 0.78;
@@ -904,10 +926,160 @@ const DrawerHTML = `
       background: #202020 !important;
       border-color: rgba(255, 255, 255, 0.16) !important;
     }
+
+    .bn-preferences-button {
+      align-items: center;
+      background: transparent;
+      border: 1px solid #e8e8e8;
+      box-sizing: border-box;
+      color: #2a2a2a;
+      cursor: pointer;
+      display: flex;
+      font-family: inherit;
+      font-size: 12px;
+      gap: 8px;
+      justify-content: center;
+      letter-spacing: 0.4px;
+      margin-bottom: 24px;
+      padding: 10px 12px;
+      transition: transform 0.1s ease, opacity 0.15s ease;
+      width: 100%;
+    }
+
+    .bn-preferences-button:hover {
+      opacity: 0.86;
+    }
+
+    .bn-preferences-button img {
+      display: block;
+      height: 16px;
+      pointer-events: none;
+      width: 16px;
+    }
+
+    .bn-preference-modal {
+      max-height: calc(100% - 36px);
+      overflow-y: auto;
+    }
+
+    .bn-preference-row {
+      border-bottom: 1px solid #eeeeee;
+      box-sizing: border-box;
+      display: grid;
+      gap: 12px;
+      grid-template-columns: minmax(0, 1fr) 178px;
+      padding: 11px 0;
+    }
+
+    .bn-preference-row-title {
+      color: #2a2a2a;
+      font-size: 11px;
+      font-weight: 650;
+      letter-spacing: 0.2px;
+      line-height: 1.35;
+      margin-bottom: 3px;
+    }
+
+    .bn-preference-row-desc {
+      color: #7a7a7a;
+      font-size: 10px;
+      line-height: 1.5;
+      margin-bottom: 0;
+    }
+
+    .bn-preference-segment {
+      display: grid;
+      gap: 0;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .bn-preference-choice {
+      background: transparent;
+      border: 1px solid #e0e0e0;
+      box-sizing: border-box;
+      color: #6a6a6a;
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 10px;
+      line-height: 1.3;
+      min-height: 30px;
+      padding: 7px 6px;
+    }
+
+    .bn-preference-choice + .bn-preference-choice {
+      border-left: none;
+    }
+
+    .bn-preference-choice[data-active="true"] {
+      background: #2a2a2a !important;
+      border-color: #2a2a2a !important;
+      color: #ffffff !important;
+    }
+
+    .bn-preference-range {
+      align-items: center;
+      display: grid;
+      gap: 8px;
+      grid-template-columns: 1fr 58px;
+    }
+
+    .bn-preference-range input[type="range"] {
+      accent-color: #2a2a2a;
+      width: 100%;
+    }
+
+    .bn-preference-number {
+      background: transparent;
+      border: 1px solid #e0e0e0;
+      box-sizing: border-box;
+      color: #2a2a2a;
+      font-family: inherit;
+      font-size: 10px;
+      height: 30px;
+      padding: 6px;
+      text-align: center;
+      width: 58px;
+    }
+
+    #bronotes-drawer[data-theme="dark"] .bn-preferences-button {
+      background: transparent !important;
+      border-color: #333333 !important;
+      color: #f1f1f1 !important;
+    }
+
+    #bronotes-drawer[data-theme="dark"] .bn-preference-row {
+      border-color: #333333;
+    }
+
+    #bronotes-drawer[data-theme="dark"] .bn-preference-row-title {
+      color: #f1f1f1;
+    }
+
+    #bronotes-drawer[data-theme="dark"] .bn-preference-row-desc {
+      color: #a8a8a8;
+    }
+
+    #bronotes-drawer[data-theme="dark"] .bn-preference-choice,
+    #bronotes-drawer[data-theme="dark"] .bn-preference-number {
+      border-color: #3a3a3a;
+      color: #d8d8d8;
+    }
+
+    #bronotes-drawer[data-theme="dark"] .bn-preference-choice[data-active="true"] {
+      background: #f1f1f1 !important;
+      border-color: #f1f1f1 !important;
+      color: #181818 !important;
+    }
+
+    @media (max-width: 390px) {
+      .bn-preference-row {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
   <div id="bn-drawer-ribbon">
-    <button id="bn-btn-drawer-ribbon" title="open panel" aria-label="open panel" onmousedown="this.style.transform='scale(0.96)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">
-      <img id="bn-drawer-ribbon-icon" src="${chrome.runtime.getURL('icons/panel-left-close.png')}" alt="" />
+    <button id="bn-btn-drawer-ribbon" title="open panel" aria-label="open panel">
+      <img id="bn-drawer-ribbon-icon" src="${chrome.runtime.getURL('icons/slide-in.svg')}" alt="" />
     </button>
   </div>
   <div style="padding: 20px 24px 16px 24px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid #e8e8e8;">
@@ -915,11 +1087,11 @@ const DrawerHTML = `
       <img class="bn-drawer-brand-icon" src="${chrome.runtime.getURL('icons/icon32.png')}" alt="" />
       <div class="bn-drawer-brand-text">Brow Notes</div>
     </div>
-    <button id="bn-btn-transparency" title="toggle transparency" aria-label="toggle transparency" aria-pressed="false" style="width: 28px; height: 28px; padding: 5px; background: transparent; color: #9a9a9a; border: none; cursor: pointer; opacity: 0.72; transition: transform 0.1s ease, opacity 0.2s ease; display: flex; align-items: center; justify-content: center;" onmousedown="this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">
-      <img id="bn-transparency-icon" src="${chrome.runtime.getURL('icons/eye.png')}" alt="" style="width: 18px; height: 18px; display: block; pointer-events: none;" />
+    <button id="bn-btn-transparency" title="toggle transparency" aria-label="toggle transparency" aria-pressed="false" style="width: 28px; height: 28px; padding: 5px; background: transparent; color: #9a9a9a; border: none; cursor: pointer; opacity: 0.72; transition: transform 0.1s ease, opacity 0.2s ease; display: flex; align-items: center; justify-content: center;">
+      <img id="bn-transparency-icon" src="${chrome.runtime.getURL('icons/eye.svg')}" alt="" style="width: 18px; height: 18px; display: block; pointer-events: none;" />
     </button>
-    <button id="bn-btn-theme" title="switch to dark mode" aria-label="switch to dark mode" aria-pressed="false" style="width: 28px; height: 28px; padding: 5px; background: transparent; color: #9a9a9a; border: none; cursor: pointer; opacity: 0.72; transition: transform 0.1s ease, opacity 0.2s ease; display: flex; align-items: center; justify-content: center;" onmousedown="this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">
-      <img id="bn-theme-icon" src="${chrome.runtime.getURL('icons/dark.png')}" alt="" style="width: 18px; height: 18px; display: block; pointer-events: none;" />
+    <button id="bn-btn-theme" title="switch to dark mode" aria-label="switch to dark mode" aria-pressed="false" style="width: 28px; height: 28px; padding: 5px; background: transparent; color: #9a9a9a; border: none; cursor: pointer; opacity: 0.72; transition: transform 0.1s ease, opacity 0.2s ease; display: flex; align-items: center; justify-content: center;">
+      <img id="bn-theme-icon" src="${chrome.runtime.getURL('icons/dark.svg')}" alt="" style="width: 18px; height: 18px; display: block; pointer-events: none;" />
     </button>
   </div>
   
@@ -927,42 +1099,42 @@ const DrawerHTML = `
     <div class="bn-home-intro">
       <h2 id="bn-welcome-message" class="bn-welcome-title">Welcome back, Brow 👋</h2>
       <p class="bn-welcome-copy">Let's turn today's scattered thoughts into tomorrow's clear plans.</p>
-      <button id="bn-btn-new-note" class="bn-new-note-button" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">
+      <button id="bn-btn-new-note" class="bn-new-note-button">
         <img src="${chrome.runtime.getURL('icons/new-notes.png')}" alt="" />
         <span>New Note</span>
       </button>
     </div>
     <div id="bn-summary" style="display: none; width: 100%;">
       <h3 class="bn-summary-heading">
-        <img class="bn-summary-heading-icon" src="${chrome.runtime.getURL('icons/summary.png')}" alt="" />
+        <img class="bn-summary-heading-icon" src="${chrome.runtime.getURL('icons/summary.svg')}" alt="" />
         <span class="bn-summary-heading-text">summary</span>
       </h3>
       <div id="bn-summary-panel">
         <div class="bn-summary-row">
-          <img class="bn-summary-dot" src="${chrome.runtime.getURL('icons/dot-outline.png')}" alt="" />
+          <img class="bn-summary-dot" src="${chrome.runtime.getURL('icons/dot-outline.svg')}" alt="" />
           <div class="bn-summary-text"><span class="bn-summary-label">total notes</span><span id="bn-total-notes" class="bn-summary-value">0</span></div>
         </div>
         <div class="bn-summary-row">
-          <img class="bn-summary-dot" src="${chrome.runtime.getURL('icons/dot-outline.png')}" alt="" />
+          <img class="bn-summary-dot" src="${chrome.runtime.getURL('icons/dot-outline.svg')}" alt="" />
           <div class="bn-summary-text"><span class="bn-summary-label">total labels</span><span id="bn-total-labels" class="bn-summary-value">0</span></div>
         </div>
         <div class="bn-summary-row">
-          <img class="bn-summary-dot" src="${chrome.runtime.getURL('icons/dot-outline.png')}" alt="" />
+          <img class="bn-summary-dot" src="${chrome.runtime.getURL('icons/dot-outline.svg')}" alt="" />
           <div class="bn-summary-text"><span class="bn-summary-label">favorite notes</span><span id="bn-total-favorites" class="bn-summary-value">0</span></div>
         </div>
         <div class="bn-summary-row">
-          <img class="bn-summary-dot" src="${chrome.runtime.getURL('icons/dot-outline.png')}" alt="" />
+          <img class="bn-summary-dot" src="${chrome.runtime.getURL('icons/dot-outline.svg')}" alt="" />
           <div class="bn-summary-text"><span class="bn-summary-label">last note</span><span id="bn-last-note" class="bn-summary-value">-</span></div>
         </div>
         <div class="bn-summary-row">
-          <img class="bn-summary-dot" src="${chrome.runtime.getURL('icons/dot-outline.png')}" alt="" />
+          <img class="bn-summary-dot" src="${chrome.runtime.getURL('icons/dot-outline.svg')}" alt="" />
           <div class="bn-summary-text"><span class="bn-summary-label">last backup</span><span id="bn-last-backup" class="bn-summary-value">never</span></div>
         </div>
       </div>
     </div>
     <div id="bn-quote-card" style="display: none; width: 100%; margin-top: 74px; padding: 0 4px; box-sizing: border-box; text-align: center;">
       <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px; color: #6a6a6a; font-size: 11px; letter-spacing: 0.5px; text-transform: uppercase;">
-        <img src="${chrome.runtime.getURL('icons/quotes.png')}" alt="" style="width: 14px; height: 14px; opacity: 0.62; pointer-events: none;" />
+        <img src="${chrome.runtime.getURL('icons/quotes.svg')}" alt="" style="width: 14px; height: 14px; opacity: 0.62; pointer-events: none;" />
         <span>daily note spark</span>
       </div>
       <div id="bn-quote-text" style="font-size: 16px; line-height: 1.65; color: #686868; font-weight: 600; font-style: italic; margin: 0 auto 10px auto; max-width: 340px;"></div>
@@ -974,83 +1146,99 @@ const DrawerHTML = `
     <div style="padding: 16px 24px;">
       <input id="bn-search" type="text" placeholder="search..." style="width: 100%; padding: 8px 0; border: none; border-bottom: 1px solid #e8e8e8; background: transparent; font-size: 12px; font-family: inherit; color: #2a2a2a; outline: none; margin-bottom: 12px; box-sizing: border-box;" />
       <div style="display: flex; align-items: center; gap: 12px; font-size: 11px;">
-        <button id="bn-filter-label-lock" type="button" title="lock label filter" aria-label="lock label filter" aria-pressed="false" style="flex: 0 0 auto; width: 24px; height: 31px; padding: 0; background: transparent; border: none; cursor: pointer; opacity: 0.72; display: inline-flex; align-items: center; justify-content: center; transition: transform 0.1s ease, opacity 0.15s ease; box-sizing: border-box;" onmousedown="this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img id="bn-filter-label-lock-icon" src="${chrome.runtime.getURL('icons/unlocked.png')}" alt="" style="width: 16px; height: 16px; display: block; pointer-events: none;" /></button>
-        <select id="bn-filter-label" style="flex: 1; min-width: 0; height: 31px; padding: 6px 8px; border: 1px solid #e8e8e8; background: transparent; font-family: inherit; font-size: 11px; line-height: 1.2; color: #6a6a6a; outline: none; cursor: pointer; transition: transform 0.1s ease; box-sizing: border-box;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><option value="">all labels</option></select>
-        <select id="bn-sort" style="height: 31px; padding: 6px 8px; border: 1px solid #e8e8e8; background: transparent; font-family: inherit; font-size: 11px; line-height: 1.2; color: #6a6a6a; outline: none; cursor: pointer; transition: transform 0.1s ease; box-sizing: border-box;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><option value="updated-desc">latest</option><option value="updated-asc">oldest</option><option value="created-desc">newest</option><option value="created-asc">first</option></select>
-        <button id="bn-filter-favorite" class="bn-icon-toggle bn-filter-favorite" type="button" title="show favorite notes" aria-label="show favorite notes" aria-pressed="false" data-active="false" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/bookmark.png')}" alt="" /></button>
-        <button id="bn-filter-reset" class="bn-icon-toggle bn-filter-reset" type="button" title="reset filters" aria-label="reset filters" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/reset.png')}" alt="" /></button>
+        <button id="bn-filter-label-lock" type="button" title="lock label filter" aria-label="lock label filter" aria-pressed="false" style="flex: 0 0 auto; width: 24px; height: 31px; padding: 0; background: transparent; border: none; cursor: pointer; opacity: 0.72; display: inline-flex; align-items: center; justify-content: center; transition: transform 0.1s ease, opacity 0.15s ease; box-sizing: border-box;"><img id="bn-filter-label-lock-icon" src="${chrome.runtime.getURL('icons/unlocked.svg')}" alt="" style="width: 16px; height: 16px; display: block; pointer-events: none;" /></button>
+        <select id="bn-filter-label" style="flex: 1; min-width: 0; height: 31px; padding: 6px 8px; border: 1px solid #e8e8e8; background: transparent; font-family: inherit; font-size: 11px; line-height: 1.2; color: #6a6a6a; outline: none; cursor: pointer; transition: transform 0.1s ease; box-sizing: border-box;"><option value="">all labels</option></select>
+        <select id="bn-sort" style="height: 31px; padding: 6px 8px; border: 1px solid #e8e8e8; background: transparent; font-family: inherit; font-size: 11px; line-height: 1.2; color: #6a6a6a; outline: none; cursor: pointer; transition: transform 0.1s ease; box-sizing: border-box;"><option value="updated-desc">latest</option><option value="updated-asc">oldest</option><option value="created-desc">newest</option><option value="created-asc">first</option></select>
+        <button id="bn-filter-favorite" class="bn-icon-toggle bn-filter-favorite" type="button" title="show favorite notes" aria-label="show favorite notes" aria-pressed="false" data-active="false"><img src="${chrome.runtime.getURL('icons/bookmark.svg')}" alt="" /></button>
+        <button id="bn-filter-reset" class="bn-icon-toggle bn-filter-reset" type="button" title="reset filters" aria-label="reset filters"><img src="${chrome.runtime.getURL('icons/reset.svg')}" alt="" /></button>
       </div>
     </div>
     <div id="bn-notes-list" style="flex: 1; overflow-y: auto; padding: 0 24px 80px 24px;"></div>
-    <button id="bn-fab-new" title="new note" aria-label="new note" style="position: absolute; bottom: 100px; right: 24px; width: 52px; height: 52px; border-radius: 0; background: #2a2a2a; color: #ffffff; border: none; cursor: pointer; padding: 14px; display: flex; align-items: center; justify-content: center; transition: transform 0.1s ease; box-sizing: border-box;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/new-notes.png')}" alt="" style="width: 20px; height: 20px; display: block; pointer-events: none;" /></button>
+    <button id="bn-fab-new" title="new note" aria-label="new note" style="position: absolute; bottom: 100px; right: 24px; width: 52px; height: 52px; border-radius: 0; background: #2a2a2a; color: #ffffff; border: none; cursor: pointer; padding: 14px; display: flex; align-items: center; justify-content: center; transition: transform 0.1s ease; box-sizing: border-box;"><img src="${chrome.runtime.getURL('icons/new-notes.png')}" alt="" style="width: 20px; height: 20px; display: block; pointer-events: none;" /></button>
   </div>
   
   <div id="bn-editor-view" style="flex: 1; display: none; flex-direction: column; overflow: hidden;">
-    <div style="padding: 16px 24px; border-bottom: 1px solid #e8e8e8;"><button id="bn-btn-back" style="padding: 0; background: transparent; color: #6a6a6a; border: none; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">← back</button></div>
+    <div style="padding: 16px 24px; border-bottom: 1px solid #e8e8e8;"><button id="bn-btn-back" style="padding: 0; background: transparent; color: #6a6a6a; border: none; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease;">← back</button></div>
     <div style="padding: 16px 24px 0 24px; display: flex; align-items: center; gap: 10px;"><input id="bn-note-title" type="text" placeholder="note title..." maxlength="120" style="flex: 1; min-width: 0; padding: 12px 0; border: none; border-bottom: 1px solid #e8e8e8; background: transparent; font-size: 16px; font-family: inherit; font-weight: 600; color: #2a2a2a; outline: none; box-sizing: border-box;" /><span id="bn-note-title-count" aria-live="polite" style="flex: 0 0 auto; min-width: 42px; color: #9a9a9a; font-size: 10px; line-height: 1; text-align: right; white-space: nowrap; user-select: none;">0/120</span></div>
-    <div style="padding: 12px 24px 0 24px; position: relative;"><div style="display: flex; align-items: center; gap: 10px;"><input id="bn-note-label" type="text" placeholder="label..." autocomplete="off" maxlength="32" style="flex: 1; min-width: 0; padding: 8px 0; border: none; border-bottom: 1px solid #e8e8e8; background: transparent; font-size: 12px; font-family: inherit; color: #6a6a6a; outline: none; box-sizing: border-box;" /><span id="bn-note-label-count" aria-live="polite" style="flex: 0 0 auto; min-width: 34px; color: #9a9a9a; font-size: 10px; line-height: 1; text-align: right; white-space: nowrap; user-select: none;">0/32</span><button id="bn-note-favorite" class="bn-icon-toggle" type="button" title="favorite note" aria-label="favorite note" aria-pressed="false" data-active="false" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/bookmark.png')}" alt="" /></button><button id="bn-note-king" class="bn-icon-toggle" type="button" title="make king note" aria-label="make king note" aria-pressed="false" data-active="false" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/crown.png')}" alt="" /></button><button id="bn-note-pinned" class="bn-icon-toggle" type="button" title="pin note" aria-label="pin note" aria-pressed="false" data-active="false" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/pin.png')}" alt="" /></button></div><div id="bn-label-autocomplete" style="display: none; position: absolute; left: 24px; right: 152px; top: 44px; z-index: 12; background: #ffffff; border: 1px solid #e8e8e8; max-height: 152px; overflow-y: auto; box-sizing: border-box;"></div></div>
+    <div style="padding: 12px 24px 0 24px; position: relative;"><div style="display: flex; align-items: center; gap: 10px;"><input id="bn-note-label" type="text" placeholder="label..." autocomplete="off" maxlength="32" style="flex: 1; min-width: 0; padding: 8px 0; border: none; border-bottom: 1px solid #e8e8e8; background: transparent; font-size: 12px; font-family: inherit; color: #6a6a6a; outline: none; box-sizing: border-box;" /><span id="bn-note-label-count" aria-live="polite" style="flex: 0 0 auto; min-width: 34px; color: #9a9a9a; font-size: 10px; line-height: 1; text-align: right; white-space: nowrap; user-select: none;">0/32</span><button id="bn-btn-context" class="bn-icon-toggle" type="button" title="capture page context" aria-label="capture page context" disabled><img src="${chrome.runtime.getURL('icons/context.svg')}" alt="" /></button><button id="bn-note-favorite" class="bn-icon-toggle" type="button" title="favorite note" aria-label="favorite note" aria-pressed="false" data-active="false"><img src="${chrome.runtime.getURL('icons/bookmark.svg')}" alt="" /></button><button id="bn-note-king" class="bn-icon-toggle" type="button" title="make king note" aria-label="make king note" aria-pressed="false" data-active="false"><img src="${chrome.runtime.getURL('icons/crown.svg')}" alt="" /></button><button id="bn-note-pinned" class="bn-icon-toggle" type="button" title="pin note" aria-label="pin note" aria-pressed="false" data-active="false"><img src="${chrome.runtime.getURL('icons/pin.svg')}" alt="" /></button></div><div id="bn-label-autocomplete" style="display: none; position: absolute; left: 24px; right: 194px; top: 44px; z-index: 12; background: #ffffff; border: 1px solid #e8e8e8; max-height: 152px; overflow-y: auto; box-sizing: border-box;"></div></div>
     <div style="padding: 12px 24px; display: flex; align-items: center; gap: 16px;">
-      <button id="bn-tab-edit" style="padding: 0; background: transparent; color: #2a2a2a; border: none; border-bottom: 2px solid #2a2a2a; cursor: pointer; font-size: 13px; font-family: inherit; letter-spacing: 0.5px; padding-bottom: 5px; transition: transform 0.1s ease; display: inline-flex; align-items: center; gap: 7px;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/write.png')}" alt="" style="width: 16px; height: 16px; display: block; pointer-events: none;" /><span>Write</span></button>
-      <button id="bn-tab-preview" style="padding: 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-size: 13px; font-family: inherit; letter-spacing: 0.5px; padding-bottom: 5px; transition: transform 0.1s ease; display: inline-flex; align-items: center; gap: 7px;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/markdown-view.png')}" alt="" style="width: 16px; height: 16px; display: block; pointer-events: none;" /><span>Preview</span></button>
-      <button id="bn-btn-export-md" disabled title="export markdown" aria-label="export markdown" style="margin-left: auto; padding: 0 0 5px 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: not-allowed; font-size: 13px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease, opacity 0.15s ease; display: inline-flex; align-items: center; gap: 7px; opacity: 0.45;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/export-md.png')}" alt="" style="width: 16px; height: 16px; display: block; pointer-events: none;" /><span>Export</span></button>
-      <button id="bn-btn-print-note" disabled title="print note" aria-label="print note" style="margin-left: auto; padding: 0 0 5px 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: not-allowed; font-size: 13px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease, opacity 0.15s ease; display: none; align-items: center; gap: 7px; opacity: 0.45;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/print.svg')}" alt="" style="width: 16px; height: 16px; display: block; pointer-events: none;" /><span>Print</span></button>
+      <button id="bn-tab-edit" style="padding: 0; background: transparent; color: #2a2a2a; border: none; border-bottom: 2px solid #2a2a2a; cursor: pointer; font-size: 13px; font-family: inherit; letter-spacing: 0.5px; padding-bottom: 5px; transition: transform 0.1s ease; display: inline-flex; align-items: center; gap: 7px;"><img src="${chrome.runtime.getURL('icons/write.svg')}" alt="" style="width: 16px; height: 16px; display: block; pointer-events: none;" /><span>Write</span></button>
+      <button id="bn-tab-preview" style="padding: 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-size: 13px; font-family: inherit; letter-spacing: 0.5px; padding-bottom: 5px; transition: transform 0.1s ease; display: inline-flex; align-items: center; gap: 7px;"><img src="${chrome.runtime.getURL('icons/markdown-view.svg')}" alt="" style="width: 16px; height: 16px; display: block; pointer-events: none;" /><span>Preview</span></button>
+      <button id="bn-btn-export-md" disabled title="export markdown" aria-label="export markdown" style="margin-left: auto; padding: 0 0 5px 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: not-allowed; font-size: 13px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease, opacity 0.15s ease; display: inline-flex; align-items: center; gap: 7px; opacity: 0.45;"><img src="${chrome.runtime.getURL('icons/export-md.svg')}" alt="" style="width: 16px; height: 16px; display: block; pointer-events: none;" /><span>Export</span></button>
+      <button id="bn-btn-print-note" disabled title="print note" aria-label="print note" style="margin-left: auto; padding: 0 0 5px 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: not-allowed; font-size: 13px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease, opacity 0.15s ease; display: none; align-items: center; gap: 7px; opacity: 0.45;"><img src="${chrome.runtime.getURL('icons/print.svg')}" alt="" style="width: 16px; height: 16px; display: block; pointer-events: none;" /><span>Print</span></button>
     </div>
     <div id="bn-editor-toolbar" class="bn-editor-toolbar" aria-label="markdown toolbar">
-      <button class="bn-toolbar-button" type="button" title="bold" aria-label="bold" data-md-action="bold" onmousedown="event.preventDefault(); this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/toolbar/bold.svg')}" alt="" /></button>
-      <button class="bn-toolbar-button" type="button" title="italic" aria-label="italic" data-md-action="italic" onmousedown="event.preventDefault(); this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/toolbar/italic.svg')}" alt="" /></button>
-      <button class="bn-toolbar-button" type="button" title="link" aria-label="link" data-md-action="link" onmousedown="event.preventDefault(); this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/toolbar/link.svg')}" alt="" /></button>
-      <button class="bn-toolbar-button" type="button" title="bulleted list" aria-label="bulleted list" data-md-action="bullet-list" onmousedown="event.preventDefault(); this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/toolbar/list-bullets.svg')}" alt="" /></button>
-      <button class="bn-toolbar-button" type="button" title="numbered list" aria-label="numbered list" data-md-action="number-list" onmousedown="event.preventDefault(); this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/toolbar/list-numbers.svg')}" alt="" /></button>
-      <button class="bn-toolbar-button" type="button" title="checklist" aria-label="checklist" data-md-action="checklist" onmousedown="event.preventDefault(); this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/toolbar/checklist.svg')}" alt="" /></button>
-      <button class="bn-toolbar-button" type="button" title="quote" aria-label="quote" data-md-action="quote" onmousedown="event.preventDefault(); this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/toolbar/quotes.svg')}" alt="" /></button>
-      <button class="bn-toolbar-button" type="button" title="code" aria-label="code" data-md-action="code" onmousedown="event.preventDefault(); this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/toolbar/code.svg')}" alt="" /></button>
-      <button class="bn-toolbar-button" type="button" title="code block" aria-label="code block" data-md-action="code-block" onmousedown="event.preventDefault(); this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/toolbar/code-block.svg')}" alt="" /></button>
-      <button class="bn-toolbar-button" type="button" title="heading 1" aria-label="heading 1" data-md-action="h1" onmousedown="event.preventDefault(); this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/toolbar/h1.svg')}" alt="" /></button>
-      <button class="bn-toolbar-button" type="button" title="heading 2" aria-label="heading 2" data-md-action="h2" onmousedown="event.preventDefault(); this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/toolbar/h2.svg')}" alt="" /></button>
-      <button class="bn-toolbar-button" type="button" title="strikethrough" aria-label="strikethrough" data-md-action="strike" onmousedown="event.preventDefault(); this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/toolbar/strikethrough.svg')}" alt="" /></button>
-      <button class="bn-toolbar-button" type="button" title="image" aria-label="image" data-md-action="image" onmousedown="event.preventDefault(); this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/toolbar/image.svg')}" alt="" /></button>
-      <button class="bn-toolbar-button" type="button" title="table" aria-label="table" data-md-action="table" onmousedown="event.preventDefault(); this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/toolbar/table.svg')}" alt="" /></button>
-      <button class="bn-toolbar-button" type="button" title="divider" aria-label="divider" data-md-action="line" onmousedown="event.preventDefault(); this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/toolbar/line.svg')}" alt="" /></button>
-      <button id="bn-btn-template" class="bn-toolbar-button bn-toolbar-template" type="button" title="templates" aria-label="templates" onmousedown="event.preventDefault(); this.style.transform='scale(0.94)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/toolbar/preset.svg')}" alt="" /></button>
+      <button class="bn-toolbar-button" type="button" title="bold" aria-label="bold" data-md-action="bold"><img src="${chrome.runtime.getURL('icons/toolbar/bold.svg')}" alt="" /></button>
+      <button class="bn-toolbar-button" type="button" title="italic" aria-label="italic" data-md-action="italic"><img src="${chrome.runtime.getURL('icons/toolbar/italic.svg')}" alt="" /></button>
+      <button class="bn-toolbar-button" type="button" title="link" aria-label="link" data-md-action="link"><img src="${chrome.runtime.getURL('icons/toolbar/link.svg')}" alt="" /></button>
+      <button class="bn-toolbar-button" type="button" title="bulleted list" aria-label="bulleted list" data-md-action="bullet-list"><img src="${chrome.runtime.getURL('icons/toolbar/list-bullets.svg')}" alt="" /></button>
+      <button class="bn-toolbar-button" type="button" title="numbered list" aria-label="numbered list" data-md-action="number-list"><img src="${chrome.runtime.getURL('icons/toolbar/list-numbers.svg')}" alt="" /></button>
+      <button class="bn-toolbar-button" type="button" title="checklist" aria-label="checklist" data-md-action="checklist"><img src="${chrome.runtime.getURL('icons/toolbar/checklist.svg')}" alt="" /></button>
+      <button class="bn-toolbar-button" type="button" title="quote" aria-label="quote" data-md-action="quote"><img src="${chrome.runtime.getURL('icons/toolbar/quotes.svg')}" alt="" /></button>
+      <button class="bn-toolbar-button" type="button" title="code" aria-label="code" data-md-action="code"><img src="${chrome.runtime.getURL('icons/toolbar/code.svg')}" alt="" /></button>
+      <button class="bn-toolbar-button" type="button" title="code block" aria-label="code block" data-md-action="code-block"><img src="${chrome.runtime.getURL('icons/toolbar/code-block.svg')}" alt="" /></button>
+      <button class="bn-toolbar-button" type="button" title="heading 1" aria-label="heading 1" data-md-action="h1"><img src="${chrome.runtime.getURL('icons/toolbar/h1.svg')}" alt="" /></button>
+      <button class="bn-toolbar-button" type="button" title="heading 2" aria-label="heading 2" data-md-action="h2"><img src="${chrome.runtime.getURL('icons/toolbar/h2.svg')}" alt="" /></button>
+      <button class="bn-toolbar-button" type="button" title="strikethrough" aria-label="strikethrough" data-md-action="strike"><img src="${chrome.runtime.getURL('icons/toolbar/strikethrough.svg')}" alt="" /></button>
+      <button class="bn-toolbar-button" type="button" title="image" aria-label="image" data-md-action="image"><img src="${chrome.runtime.getURL('icons/toolbar/image.svg')}" alt="" /></button>
+      <button class="bn-toolbar-button" type="button" title="table" aria-label="table" data-md-action="table"><img src="${chrome.runtime.getURL('icons/toolbar/table.svg')}" alt="" /></button>
+      <button class="bn-toolbar-button" type="button" title="divider" aria-label="divider" data-md-action="line"><img src="${chrome.runtime.getURL('icons/toolbar/line.svg')}" alt="" /></button>
+      <button id="bn-btn-template" class="bn-toolbar-button bn-toolbar-template" type="button" title="templates" aria-label="templates"><img src="${chrome.runtime.getURL('icons/toolbar/preset.svg')}" alt="" /></button>
     </div>
     <div id="bn-editor-container" style="flex: 1; display: flex; flex-direction: column; overflow: hidden; position: relative;"><div id="bn-editor-shell"><div id="bn-editor-highlight" aria-hidden="true"></div><textarea id="bn-editor" placeholder="start typing..." style="width: 100%; height: 100%; border: none; outline: none; resize: none; overflow-y: auto;"></textarea></div><div id="bn-editor-status" style="flex: 0 0 40px; height: 40px; padding: 0 24px; box-sizing: border-box; position: relative;"><div id="bn-editor-search-wrap" style="display: none; position: absolute; left: 24px; top: 50%; transform: translateY(-50%); min-width: 0; align-items: center; gap: 6px;"><input id="bn-editor-search" type="search" placeholder="find..." autocomplete="off" aria-label="find in note" style="width: 100px; max-width: 100%; height: 24px; padding: 4px 7px; border: 1px solid #e8e8e8; background: transparent; color: #2a2a2a; font-family: inherit; font-size: 11px; line-height: 1.3; outline: none; box-sizing: border-box;" /><span id="bn-editor-search-count" aria-live="polite" style="flex: 0 0 auto; color: #9a9a9a; font-size: 10px; line-height: 1.4; white-space: nowrap;">0/0</span></div><div id="bn-history-wrap" class="bn-history-wrap"><button id="bn-history-button" class="bn-history-button" type="button" title="version history" aria-label="version history" aria-expanded="false" disabled>history ▾</button><div id="bn-history-menu" class="bn-history-menu"></div></div><div id="bn-editor-count" aria-live="polite" style="position: absolute; right: 24px; top: 50%; transform: translateY(-50%); min-width: 0; color: #9a9a9a; font-size: 10px; line-height: 1.4; letter-spacing: 0.4px; text-align: right; white-space: nowrap; user-select: none; box-sizing: border-box;">0 words / 0 chars</div></div><div id="bn-note-link-autocomplete" style="display: none; position: absolute; left: 24px; right: 24px; top: 10px; z-index: 12; background: #ffffff; border: 1px solid #e8e8e8; max-height: 188px; overflow-y: auto; box-sizing: border-box; box-shadow: 0 8px 24px rgba(0,0,0,0.08);"></div></div>
     <div id="bn-preview-container" style="flex: 1; padding: 12px 24px 24px 24px; overflow-y: auto; display: none; font-size: 13px; line-height: 1.7;"></div>
     <div style="padding: 16px 24px; border-top: 1px solid #e8e8e8; display: flex; gap: 12px;">
-      <button id="bn-btn-save" style="flex: 1; padding: 10px; background: #2a2a2a; color: #ffffff; border: none; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; box-sizing: border-box; display: flex; align-items: center; justify-content: center; gap: 6px;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">save</button>
-      <button id="bn-btn-delete" style="padding: 10px 16px; background: transparent; color: #dc3545; border: 1px solid #dc3545; cursor: pointer; font-size: 12px; font-family: inherit; transition: transform 0.1s ease; box-sizing: border-box;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">delete</button>
+      <button id="bn-btn-save" style="flex: 1; padding: 10px; background: #2a2a2a; color: #ffffff; border: none; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; box-sizing: border-box; display: flex; align-items: center; justify-content: center; gap: 6px;">save</button>
+      <button id="bn-btn-delete" style="padding: 10px 16px; background: transparent; color: #dc3545; border: 1px solid #dc3545; cursor: pointer; font-size: 12px; font-family: inherit; transition: transform 0.1s ease; box-sizing: border-box;">delete</button>
     </div>
   </div>
   
   <div id="bn-labels-view" style="flex: 1; display: none; flex-direction: column; overflow-y: auto; overflow-x: hidden; padding: 24px;">
     <h3 style="margin: 0 0 16px 0; font-size: 13px; font-weight: 600; letter-spacing: 0.5px;">manage labels</h3>
     <div id="bn-labels-list" style="margin-bottom: 24px;"></div>
-    <button id="bn-btn-add-label" style="width: 100%; padding: 10px; background: transparent; color: #2a2a2a; border: 1px solid #e8e8e8; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; box-sizing: border-box;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">+ add label</button>
+    <button id="bn-btn-add-label" style="width: 100%; padding: 10px; background: transparent; color: #2a2a2a; border: 1px solid #e8e8e8; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; box-sizing: border-box;">+ add label</button>
   </div>
 
   <div id="bn-trash-view" style="flex: 1; display: none; flex-direction: column; overflow: hidden; padding: 24px;">
     <div style="display: flex; align-items: center; gap: 8px; margin: 0 0 16px 0;">
-      <img src="${chrome.runtime.getURL('icons/trash.png')}" alt="" style="width: 16px; height: 16px; opacity: 0.7; pointer-events: none;" />
+      <img src="${chrome.runtime.getURL('icons/trash.svg')}" alt="" style="width: 16px; height: 16px; opacity: 0.7; pointer-events: none;" />
       <h3 style="margin: 0; font-size: 13px; font-weight: 600; letter-spacing: 0.5px;">trash</h3>
     </div>
     <div id="bn-trash-list" style="flex: 1; overflow-y: auto; padding: 0 0 16px 0;"></div>
-    <button id="bn-btn-empty-trash" style="display: none; width: 100%; padding: 10px; background: transparent; color: #dc3545; border: 1px solid #dc3545; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; box-sizing: border-box;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">empty trash</button>
+    <button id="bn-btn-empty-trash" style="display: none; width: 100%; padding: 10px; background: transparent; color: #dc3545; border: 1px solid #dc3545; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; box-sizing: border-box;">empty trash</button>
   </div>
   
   <div id="bn-settings-view" style="flex: 1; display: none; flex-direction: column; overflow-y: auto; overflow-x: hidden; padding: 24px;">
     <h3 style="margin: 0 0 16px 0; font-size: 13px; font-weight: 600; letter-spacing: 0.5px;">personal</h3>
     <div style="margin-bottom: 24px;"><label style="display: block; margin-bottom: 8px; font-size: 11px; color: #6a6a6a; letter-spacing: 0.5px;">nama panggilan</label><input id="bn-nickname" type="text" placeholder="Brow" style="width: 100%; padding: 8px 12px; border: 1px solid #e8e8e8; background: transparent; font-family: inherit; font-size: 12px; outline: none; box-sizing: border-box;" /></div>
+    <h3 style="margin: 24px 0 16px 0; font-size: 13px; font-weight: 600; letter-spacing: 0.5px;">preferences</h3>
+    <button id="bn-btn-preferences" class="bn-preferences-button" type="button"><img src="${chrome.runtime.getURL('icons/settings.svg')}" alt="" /><span>open preferences</span></button>
     <h3 style="margin: 24px 0 16px 0; font-size: 13px; font-weight: 600; letter-spacing: 0.5px;">data</h3>
-    <button id="bn-btn-export" style="width: 100%; padding: 10px; background: transparent; color: #2a2a2a; border: 1px solid #e8e8e8; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; margin-bottom: 12px; transition: transform 0.1s ease; box-sizing: border-box;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">export all notes</button>
-    <button id="bn-btn-import" style="width: 100%; padding: 10px; background: transparent; color: #2a2a2a; border: 1px solid #e8e8e8; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; box-sizing: border-box;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">import notes</button>
+    <button id="bn-btn-export" style="width: 100%; padding: 10px; background: transparent; color: #2a2a2a; border: 1px solid #e8e8e8; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; margin-bottom: 12px; transition: transform 0.1s ease; box-sizing: border-box;">export all notes</button>
+    <button id="bn-btn-import" style="width: 100%; padding: 10px; background: transparent; color: #2a2a2a; border: 1px solid #e8e8e8; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; box-sizing: border-box;">import notes</button>
     <input type="file" id="bn-import-file" accept=".json" style="display: none;">
     <div id="bn-privacy-panel" style="margin-top: 24px; padding: 12px; background: #f8f8f8; border-radius: 4px; font-size: 11px; color: #6a6a6a; line-height: 1.6;"><strong>privacy:</strong> all notes stored locally. no data sent to servers.</div>
+    <div style="margin-top: 32px; padding: 0; border-top: 1px solid #e8e8e8;">
+      <div style="padding: 20px 0 16px 0; display: flex; align-items: center; justify-content: space-between;">
+        <div style="flex: 1;">
+          <div style="font-size: 18px; font-weight: 750; color: #2a2a2a; letter-spacing: -0.3px; margin-bottom: 4px;">Brow Notes</div>
+          <div style="font-size: 10px; color: #9a9a9a; letter-spacing: 0.8px; text-transform: uppercase;">Version <span id="bn-app-version">3.0.0</span></div>
+        </div>
+        <div style="width: 32px; height: 32px; background: #2a2a2a; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; color: #ffffff; letter-spacing: -0.5px;">B</div>
+      </div>
+      <div style="padding: 12px 0; border-top: 1px solid #f0f0f0;">
+        <div style="font-size: 10px; color: #7a7a7a; line-height: 1.6;">
+          Crafted with care by <a href="https://github.com/gafurmog" target="_blank" rel="noopener noreferrer" style="color: #2a2a2a; text-decoration: none; font-weight: 600; border-bottom: 1px solid #e0e0e0; transition: border-color 0.2s;">@gafurmog</a>
+        </div>
+      </div>
+    </div>
   </div>
   
   <div style="padding: 12px 18px; border-top: 1px solid #e8e8e8; display: flex; justify-content: space-between; gap: 8px;">
-    <button id="bn-nav-home" style="flex: 1; padding: 4px 0 6px 0; background: transparent; color: #2a2a2a; border: none; border-bottom: 2px solid #2a2a2a; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; display: flex; flex-direction: column; align-items: center; gap: 5px;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/home.png')}" alt="" style="width: 18px; height: 18px; opacity: 1; pointer-events: none;" /><span>HOME</span></button>
-    <button id="bn-nav-allnotes" style="flex: 1; padding: 4px 0 6px 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; display: flex; flex-direction: column; align-items: center; gap: 5px;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/allnotes.png')}" alt="" style="width: 18px; height: 18px; opacity: 0.45; pointer-events: none;" /><span>ALL NOTES</span></button>
-    <button id="bn-nav-labels" style="flex: 1; padding: 4px 0 6px 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; display: flex; flex-direction: column; align-items: center; gap: 5px;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/label.png')}" alt="" style="width: 18px; height: 18px; opacity: 0.45; pointer-events: none;" /><span>LABELS</span></button>
-    <button id="bn-nav-trash" style="flex: 1; padding: 4px 0 6px 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; display: flex; flex-direction: column; align-items: center; gap: 5px;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/trash.png')}" alt="" style="width: 18px; height: 18px; opacity: 0.45; pointer-events: none;" /><span>TRASH</span></button>
-    <button id="bn-nav-settings" style="flex: 1; padding: 4px 0 6px 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; display: flex; flex-direction: column; align-items: center; gap: 5px;" onmousedown="this.style.transform='scale(0.98)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'"><img src="${chrome.runtime.getURL('icons/settings.png')}" alt="" style="width: 18px; height: 18px; opacity: 0.45; pointer-events: none;" /><span>SETTINGS</span></button>
+    <button id="bn-nav-home" style="flex: 1; padding: 4px 0 6px 0; background: transparent; color: #2a2a2a; border: none; border-bottom: 2px solid #2a2a2a; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; display: flex; flex-direction: column; align-items: center; gap: 5px;"><img src="${chrome.runtime.getURL('icons/home.svg')}" alt="" style="width: 18px; height: 18px; opacity: 1; pointer-events: none;" /><span>HOME</span></button>
+    <button id="bn-nav-allnotes" style="flex: 1; padding: 4px 0 6px 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; display: flex; flex-direction: column; align-items: center; gap: 5px;"><img src="${chrome.runtime.getURL('icons/allnotes.svg')}" alt="" style="width: 18px; height: 18px; opacity: 0.45; pointer-events: none;" /><span>ALL NOTES</span></button>
+    <button id="bn-nav-labels" style="flex: 1; padding: 4px 0 6px 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; display: flex; flex-direction: column; align-items: center; gap: 5px;"><img src="${chrome.runtime.getURL('icons/label.svg')}" alt="" style="width: 18px; height: 18px; opacity: 0.45; pointer-events: none;" /><span>LABELS</span></button>
+    <button id="bn-nav-trash" style="flex: 1; padding: 4px 0 6px 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; display: flex; flex-direction: column; align-items: center; gap: 5px;"><img src="${chrome.runtime.getURL('icons/trash.svg')}" alt="" style="width: 18px; height: 18px; opacity: 0.45; pointer-events: none;" /><span>TRASH</span></button>
+    <button id="bn-nav-settings" style="flex: 1; padding: 4px 0 6px 0; background: transparent; color: #9a9a9a; border: none; border-bottom: 2px solid transparent; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; display: flex; flex-direction: column; align-items: center; gap: 5px;"><img src="${chrome.runtime.getURL('icons/settings.svg')}" alt="" style="width: 18px; height: 18px; opacity: 0.45; pointer-events: none;" /><span>SETTINGS</span></button>
   </div>
 `;

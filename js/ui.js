@@ -57,7 +57,7 @@ const UI = {
     }
 
     if (icon) {
-      icon.src = Utils.assetUrl(isCollapsed ? 'icons/panel-left-close.png' : 'icons/panel-right-close.png');
+      icon.src = Utils.assetUrl(isCollapsed ? 'icons/slide-in.svg' : 'icons/slide-out.svg');
     }
   },
 
@@ -87,7 +87,7 @@ const UI = {
     }
 
     if (icon) {
-      icon.src = Utils.assetUrl(enabled ? 'icons/eye-off.png' : 'icons/eye.png');
+      icon.src = Utils.assetUrl(enabled ? 'icons/eye-off.svg' : 'icons/eye.svg');
     }
   },
 
@@ -111,7 +111,7 @@ const UI = {
     }
 
     if (icon) {
-      icon.src = Utils.assetUrl(dark ? 'icons/light.png' : 'icons/dark.png');
+      icon.src = Utils.assetUrl(dark ? 'icons/light.svg' : 'icons/dark.svg');
     }
 
     this.setDrawerTransparent(drawer.dataset.transparent === 'true');
@@ -490,6 +490,390 @@ const UI = {
     return this.showModal({ title, message, confirmText: 'ok', cancelText: '' });
   },
 
+  setContextCaptureButtonState(enabled) {
+    const button = this.get('bn-btn-context');
+    if (!button) return;
+
+    button.disabled = !enabled;
+    button.setAttribute('aria-disabled', String(!enabled));
+    button.title = enabled ? 'capture page context' : 'page context unavailable';
+    button.setAttribute('aria-label', button.title);
+  },
+
+  showContextCaptureModal(context) {
+    return new Promise((resolve) => {
+      const drawer = this.get('bronotes-drawer');
+      if (!drawer) {
+        resolve(false);
+        return;
+      }
+
+      const existingModal = this.get('bn-modal-overlay');
+      if (existingModal) existingModal.remove();
+
+      const dark = drawer.dataset.theme === 'dark';
+      const overlay = document.createElement('div');
+      overlay.id = 'bn-modal-overlay';
+      overlay.style.cssText = `
+        position: absolute;
+        inset: 0;
+        z-index: 10;
+        background: ${dark ? 'rgba(0,0,0,0.58)' : 'rgba(255,255,255,0.72)'};
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 18px;
+        box-sizing: border-box;
+        backdrop-filter: blur(2px);
+      `;
+
+      const modal = document.createElement('div');
+      modal.setAttribute('role', 'dialog');
+      modal.setAttribute('aria-modal', 'true');
+      modal.style.cssText = `
+        width: 100%;
+        max-width: 380px;
+        background: ${dark ? '#202020' : '#ffffff'};
+        border: 1px solid ${dark ? '#3a3a3a' : '#e0e0e0'};
+        box-shadow: 0 12px 32px ${dark ? 'rgba(0,0,0,0.46)' : 'rgba(0,0,0,0.14)'};
+        padding: 16px;
+        box-sizing: border-box;
+      `;
+      modal.style.setProperty('background', dark ? '#202020' : '#ffffff', 'important');
+
+      const title = document.createElement('div');
+      title.textContent = 'web reference';
+      title.style.cssText = `font-size: 13px; font-weight: 650; color: ${dark ? '#f1f1f1' : '#2a2a2a'}; margin-bottom: 12px; letter-spacing: 0.4px;`;
+      title.style.setProperty('color', dark ? '#f1f1f1' : '#2a2a2a', 'important');
+      modal.appendChild(title);
+
+      const list = document.createElement('div');
+      list.style.cssText = `border-top: 1px solid ${dark ? '#333333' : '#eeeeee'};`;
+      const rows = [
+        ['Title', context.title || 'Untitled page'],
+        ['URL', context.url],
+        ['Description', context.description || 'No description detected']
+      ];
+
+      rows.forEach(([label, value]) => {
+        const row = document.createElement('div');
+        row.style.cssText = `display: grid; grid-template-columns: 78px minmax(0, 1fr); gap: 10px; padding: 9px 0; border-bottom: 1px solid ${dark ? '#333333' : '#eeeeee'};`;
+
+        const labelEl = document.createElement('div');
+        labelEl.textContent = label;
+        labelEl.style.cssText = `font-size: 10px; color: ${dark ? '#9f9f9f' : '#7a7a7a'}; line-height: 1.45;`;
+
+        const valueEl = document.createElement('div');
+        valueEl.textContent = value;
+        valueEl.style.cssText = `font-size: 11px; color: ${dark ? '#e8e8e8' : '#2a2a2a'}; line-height: 1.45; overflow-wrap: anywhere;`;
+        valueEl.style.setProperty('color', dark ? '#e8e8e8' : '#2a2a2a', 'important');
+
+        row.appendChild(labelEl);
+        row.appendChild(valueEl);
+        list.appendChild(row);
+      });
+      modal.appendChild(list);
+
+      const actions = document.createElement('div');
+      actions.style.cssText = 'display: flex; gap: 8px; justify-content: flex-end; margin-top: 13px;';
+      const close = (value) => {
+        overlay.remove();
+        resolve(value);
+      };
+
+      const cancelButton = document.createElement('button');
+      cancelButton.type = 'button';
+      cancelButton.textContent = 'cancel';
+      cancelButton.style.cssText = `
+        min-width: 68px;
+        padding: 7px 12px;
+        background: transparent;
+        color: ${dark ? '#d8d8d8' : '#6a6a6a'};
+        border: 1px solid ${dark ? '#3a3a3a' : '#e0e0e0'};
+        cursor: pointer;
+        font-size: 11px;
+        font-family: inherit;
+        letter-spacing: 0.3px;
+      `;
+      cancelButton.onclick = () => close(false);
+
+      const insertButton = document.createElement('button');
+      insertButton.type = 'button';
+      insertButton.textContent = 'insert';
+      insertButton.style.cssText = `
+        min-width: 68px;
+        padding: 7px 12px;
+        background: ${dark ? '#f1f1f1' : '#2a2a2a'};
+        color: ${dark ? '#181818' : '#ffffff'};
+        border: 1px solid ${dark ? '#f1f1f1' : '#2a2a2a'};
+        cursor: pointer;
+        font-size: 11px;
+        font-family: inherit;
+        letter-spacing: 0.3px;
+      `;
+      insertButton.onclick = () => close(true);
+
+      actions.appendChild(cancelButton);
+      actions.appendChild(insertButton);
+      modal.appendChild(actions);
+      overlay.appendChild(modal);
+      drawer.appendChild(overlay);
+
+      overlay.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          close(false);
+        }
+      });
+      overlay.addEventListener('click', (event) => {
+        if (event.target === overlay) close(false);
+      });
+      insertButton.focus();
+    });
+  },
+
+  showPreferencesModal(preferences) {
+    return new Promise((resolve) => {
+      const drawer = this.get('bronotes-drawer');
+      if (!drawer) {
+        resolve(null);
+        return;
+      }
+
+      const existingModal = this.get('bn-modal-overlay');
+      if (existingModal) existingModal.remove();
+
+      const dark = drawer.dataset.theme === 'dark';
+      const state = {
+        openNotesIn: preferences?.openNotesIn === 'preview' ? 'preview' : 'edit',
+        autoSaveDelay: Number(preferences?.autoSaveDelay) || Constants.DEFAULTS.AUTO_SAVE_DELAY,
+        maxHistoryEntries: Number(preferences?.maxHistoryEntries) || Constants.DEFAULTS.MAX_HISTORY_ENTRIES,
+        drawerTheme: preferences?.drawerTheme === Constants.THEMES.DARK ? Constants.THEMES.DARK : Constants.THEMES.LIGHT
+      };
+
+      const overlay = document.createElement('div');
+      overlay.id = 'bn-modal-overlay';
+      overlay.style.cssText = `
+        position: absolute;
+        inset: 0;
+        z-index: 10;
+        background: ${dark ? 'rgba(0,0,0,0.58)' : 'rgba(255,255,255,0.72)'};
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 16px;
+        box-sizing: border-box;
+        backdrop-filter: blur(2px);
+      `;
+
+      const modal = document.createElement('div');
+      modal.className = 'bn-preference-modal';
+      modal.setAttribute('role', 'dialog');
+      modal.setAttribute('aria-modal', 'true');
+      modal.setAttribute('aria-labelledby', 'bn-preference-modal-title');
+      modal.style.cssText = `
+        width: 100%;
+        max-width: 390px;
+        background: ${dark ? '#202020' : '#ffffff'};
+        border: 1px solid ${dark ? '#3a3a3a' : '#e0e0e0'};
+        box-shadow: 0 12px 32px ${dark ? 'rgba(0,0,0,0.46)' : 'rgba(0,0,0,0.14)'};
+        padding: 16px 18px 14px 18px;
+        box-sizing: border-box;
+      `;
+      modal.style.setProperty('background', dark ? '#202020' : '#ffffff', 'important');
+      modal.style.setProperty('border-color', dark ? '#3a3a3a' : '#e0e0e0', 'important');
+
+      const titleEl = document.createElement('div');
+      titleEl.id = 'bn-preference-modal-title';
+      titleEl.textContent = 'preferences';
+      titleEl.style.cssText = `font-size: 13px; font-weight: 650; color: ${dark ? '#f1f1f1' : '#2a2a2a'}; margin-bottom: 12px; letter-spacing: 0.4px;`;
+      titleEl.style.setProperty('color', dark ? '#f1f1f1' : '#2a2a2a', 'important');
+      modal.appendChild(titleEl);
+
+      const createChoice = (label, value, group, update) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'bn-preference-choice';
+        button.textContent = label;
+        button.dataset.value = value;
+        button.onclick = () => {
+          state[group] = value;
+          update();
+        };
+        return button;
+      };
+
+      const createRow = (title, description) => {
+        const row = document.createElement('div');
+        row.className = 'bn-preference-row';
+        const copy = document.createElement('div');
+        const rowTitle = document.createElement('div');
+        rowTitle.className = 'bn-preference-row-title';
+        rowTitle.textContent = title;
+        const rowDesc = document.createElement('div');
+        rowDesc.className = 'bn-preference-row-desc';
+        rowDesc.textContent = description;
+        copy.appendChild(rowTitle);
+        copy.appendChild(rowDesc);
+        row.appendChild(copy);
+        return row;
+      };
+
+      const openRow = createRow('Open Notes In', 'Default tab when opening a note');
+      const openSegment = document.createElement('div');
+      openSegment.className = 'bn-preference-segment';
+      const openChoices = [
+        createChoice('Edit Mode', 'edit', 'openNotesIn', updateOpenChoices),
+        createChoice('Preview Mode', 'preview', 'openNotesIn', updateOpenChoices)
+      ];
+      function updateOpenChoices() {
+        openChoices.forEach(button => {
+          button.dataset.active = String(button.dataset.value === state.openNotesIn);
+        });
+      }
+      openChoices.forEach(button => openSegment.appendChild(button));
+      openRow.appendChild(openSegment);
+      modal.appendChild(openRow);
+
+      const delayRow = createRow('Auto-save Delay', 'Time before auto-saving changes (milliseconds)');
+      const delayWrap = document.createElement('div');
+      delayWrap.className = 'bn-preference-range';
+      const delayRange = document.createElement('input');
+      delayRange.type = 'range';
+      delayRange.min = '500';
+      delayRange.max = '5000';
+      delayRange.step = '100';
+      const delayNumber = document.createElement('input');
+      delayNumber.type = 'number';
+      delayNumber.min = '500';
+      delayNumber.max = '5000';
+      delayNumber.step = '100';
+      delayNumber.className = 'bn-preference-number';
+      delayWrap.appendChild(delayRange);
+      delayWrap.appendChild(delayNumber);
+      delayRow.appendChild(delayWrap);
+      modal.appendChild(delayRow);
+
+      const historyRow = createRow('Max History Entries', 'Maximum number of version history to keep');
+      const historyWrap = document.createElement('div');
+      historyWrap.className = 'bn-preference-range';
+      const historyRange = document.createElement('input');
+      historyRange.type = 'range';
+      historyRange.min = '3';
+      historyRange.max = '20';
+      historyRange.step = '1';
+      const historyNumber = document.createElement('input');
+      historyNumber.type = 'number';
+      historyNumber.min = '3';
+      historyNumber.max = '20';
+      historyNumber.step = '1';
+      historyNumber.className = 'bn-preference-number';
+      historyWrap.appendChild(historyRange);
+      historyWrap.appendChild(historyNumber);
+      historyRow.appendChild(historyWrap);
+      modal.appendChild(historyRow);
+
+      const themeRow = createRow('Default Theme', 'Visual theme for the drawer');
+      const themeSegment = document.createElement('div');
+      themeSegment.className = 'bn-preference-segment';
+      const themeChoices = [
+        createChoice('Light Mode', Constants.THEMES.LIGHT, 'drawerTheme', updateThemeChoices),
+        createChoice('Dark Mode', Constants.THEMES.DARK, 'drawerTheme', updateThemeChoices)
+      ];
+      function updateThemeChoices() {
+        themeChoices.forEach(button => {
+          button.dataset.active = String(button.dataset.value === state.drawerTheme);
+        });
+      }
+      themeChoices.forEach(button => themeSegment.appendChild(button));
+      themeRow.appendChild(themeSegment);
+      modal.appendChild(themeRow);
+
+      const clamp = (value, min, max, fallback) => {
+        const number = Number(value);
+        if (!Number.isFinite(number)) return fallback;
+        return Math.min(max, Math.max(min, Math.round(number)));
+      };
+      const syncDelay = (value) => {
+        state.autoSaveDelay = clamp(value, 500, 5000, Constants.DEFAULTS.AUTO_SAVE_DELAY);
+        delayRange.value = String(state.autoSaveDelay);
+        delayNumber.value = String(state.autoSaveDelay);
+      };
+      const syncHistory = (value) => {
+        state.maxHistoryEntries = clamp(value, 3, 20, Constants.DEFAULTS.MAX_HISTORY_ENTRIES);
+        historyRange.value = String(state.maxHistoryEntries);
+        historyNumber.value = String(state.maxHistoryEntries);
+      };
+
+      delayRange.oninput = () => syncDelay(delayRange.value);
+      delayNumber.oninput = () => syncDelay(delayNumber.value);
+      historyRange.oninput = () => syncHistory(historyRange.value);
+      historyNumber.oninput = () => syncHistory(historyNumber.value);
+
+      const actions = document.createElement('div');
+      actions.style.cssText = `display: flex; gap: 8px; justify-content: flex-end; margin-top: 13px; padding-top: 12px; border-top: 1px solid ${dark ? '#333333' : '#eeeeee'};`;
+
+      const close = (value) => {
+        overlay.remove();
+        resolve(value);
+      };
+
+      const cancelButton = document.createElement('button');
+      cancelButton.type = 'button';
+      cancelButton.textContent = 'cancel';
+      cancelButton.style.cssText = `
+        min-width: 68px;
+        padding: 7px 12px;
+        background: transparent;
+        color: ${dark ? '#d8d8d8' : '#6a6a6a'};
+        border: 1px solid ${dark ? '#3a3a3a' : '#e0e0e0'};
+        cursor: pointer;
+        font-size: 11px;
+        font-family: inherit;
+        letter-spacing: 0.3px;
+      `;
+      cancelButton.onclick = () => close(null);
+      actions.appendChild(cancelButton);
+
+      const saveButton = document.createElement('button');
+      saveButton.type = 'button';
+      saveButton.textContent = 'save';
+      saveButton.style.cssText = `
+        min-width: 68px;
+        padding: 7px 12px;
+        background: ${dark ? '#f1f1f1' : '#2a2a2a'};
+        color: ${dark ? '#181818' : '#ffffff'};
+        border: 1px solid ${dark ? '#f1f1f1' : '#2a2a2a'};
+        cursor: pointer;
+        font-size: 11px;
+        font-family: inherit;
+        letter-spacing: 0.3px;
+      `;
+      saveButton.onclick = () => close({ ...state });
+      actions.appendChild(saveButton);
+      modal.appendChild(actions);
+
+      overlay.appendChild(modal);
+      drawer.appendChild(overlay);
+
+      overlay.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') {
+          event.preventDefault();
+          close(null);
+        }
+      });
+      overlay.addEventListener('click', (event) => {
+        if (event.target === overlay) close(null);
+      });
+
+      updateOpenChoices();
+      updateThemeChoices();
+      syncDelay(state.autoSaveDelay);
+      syncHistory(state.maxHistoryEntries);
+      saveButton.focus();
+    });
+  },
+
   showConfirm(message, title = 'confirm', options = {}) {
     return this.showModal({
       title,
@@ -608,7 +992,7 @@ const UI = {
     button.title = enabled ? 'remove favorite' : 'favorite note';
     button.setAttribute('aria-label', button.title);
     if (icon) {
-      icon.src = Utils.assetUrl(enabled ? 'icons/bookmarked.png' : 'icons/bookmark.png');
+      icon.src = Utils.assetUrl(enabled ? 'icons/bookmarked.svg' : 'icons/bookmark.svg');
     }
   },
 
@@ -623,7 +1007,7 @@ const UI = {
     button.title = enabled ? 'remove king note' : 'make king note';
     button.setAttribute('aria-label', button.title);
     if (icon) {
-      icon.src = Utils.assetUrl(enabled ? 'icons/crowned.png' : 'icons/crown.png');
+      icon.src = Utils.assetUrl(enabled ? 'icons/crowned.svg' : 'icons/crown.svg');
     }
   },
 
@@ -638,7 +1022,7 @@ const UI = {
     button.title = enabled ? 'unpin note' : 'pin note';
     button.setAttribute('aria-label', button.title);
     if (icon) {
-      icon.src = Utils.assetUrl(enabled ? 'icons/pinned.png' : 'icons/pin.png');
+      icon.src = Utils.assetUrl(enabled ? 'icons/pinned.svg' : 'icons/pin.svg');
     }
   },
 
@@ -653,7 +1037,7 @@ const UI = {
     button.title = enabled ? 'show all notes' : 'show favorite notes';
     button.setAttribute('aria-label', button.title);
     if (icon) {
-      icon.src = Utils.assetUrl(enabled ? 'icons/bookmarked.png' : 'icons/bookmark.png');
+      icon.src = Utils.assetUrl(enabled ? 'icons/bookmarked.svg' : 'icons/bookmark.svg');
     }
   },
 
@@ -668,7 +1052,7 @@ const UI = {
     button.title = enabled ? 'unlock label filter' : 'lock label filter';
     button.setAttribute('aria-label', button.title);
     button.style.opacity = enabled ? '1' : '0.72';
-    icon.src = Utils.assetUrl(enabled ? 'icons/locked.png' : 'icons/unlocked.png');
+    icon.src = Utils.assetUrl(enabled ? 'icons/locked.svg' : 'icons/unlocked.svg');
   },
 
   // Update label suggestions
@@ -706,7 +1090,7 @@ const UI = {
     const lowerQuery = query.toLowerCase();
     const matches = this.labelSuggestions
       .filter(label => label.toLowerCase().includes(lowerQuery))
-      .slice(0, 8)
+      .slice(0, Constants.SEARCH.MAX_AUTOCOMPLETE_RESULTS)
       .map(label => ({ type: 'select', label }));
     const exactMatch = this.labelSuggestions.some(label => label.toLowerCase() === lowerQuery);
 
@@ -834,5 +1218,21 @@ const UI = {
       ).join('');
     
     filterSelect.value = currentValue;
+  },
+
+  // Set action button mode (export/print visibility)
+  setActionButtonMode(mode) {
+    const exportBtn = this.get('bn-btn-export-md');
+    const printBtn = this.get('bn-btn-print-note');
+    
+    if (!exportBtn || !printBtn) return;
+    
+    if (mode === 'write') {
+      exportBtn.style.display = 'inline-flex';
+      printBtn.style.display = 'none';
+    } else if (mode === 'preview') {
+      exportBtn.style.display = 'none';
+      printBtn.style.display = 'inline-flex';
+    }
   }
 };

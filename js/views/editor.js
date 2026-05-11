@@ -3,17 +3,24 @@ const EditorView = {
   currentNoteId: null,
   autoSaveTimeout: null,
   historyVersions: [],
+  preferences: {
+    openNotesIn: Constants.DEFAULTS.OPEN_NOTES_IN,
+    autoSaveDelay: Constants.DEFAULTS.AUTO_SAVE_DELAY
+  },
   noteLinkSuggestionIndex: -1,
   noteLinkMatches: [],
   noteLinkRange: null,
 
   async open(noteId) {
     console.log('EditorView.open called with noteId:', noteId);
+    if (this.currentNoteId !== noteId && !(await this.confirmDiscardUnsavedNewDraft())) return;
+
     this.currentNoteId = noteId;
+    this.preferences = await Storage.getPreferences();
 
     // Switch to editor view using App.switchView to properly update state
     console.log('Switching to editor view...');
-    App.switchView('editor');
+    await App.switchView('editor');
 
     // Load note or clear for new
     if (noteId) {
@@ -34,11 +41,16 @@ const EditorView = {
     const labels = await Storage.getLabels();
     UI.updateLabelSuggestions(labels);
 
-    // Switch to edit tab
-    UI.switchEditorTab('edit');
+    if (noteId && this.preferences.openNotesIn === 'preview') {
+      UI.switchEditorTab('preview');
+      this.renderPreview();
+    } else {
+      UI.switchEditorTab('edit');
+    }
     
     // Update save button state
     this.updateSaveButton();
+    this.refreshContextCaptureButton();
     this.updateEditorSearch(false);
     await this.refreshHistoryDropdown();
     const { title, content } = UI.getEditorValues();
@@ -55,6 +67,8 @@ const EditorView = {
   },
 
   async save(silent = false) {
+    if (silent && !this.currentNoteId) return;
+
     const { title, label, content, favorite, king, pinned } = UI.getEditorValues();
     const existingNote = this.currentNoteId ? await Storage.getNote(this.currentNoteId) : null;
     const availableLabels = await Storage.getLabels();
@@ -322,164 +336,7 @@ const EditorView = {
 <head>
   <meta charset="utf-8">
   <title>${safeTitle}</title>
-  <style>
-    @page {
-      margin: 0;
-      size: A4 portrait;
-    }
-    * { box-sizing: border-box; text-shadow: none !important; }
-    html {
-      background: #ffffff;
-    }
-    body {
-      background: #ffffff;
-      color: #1b1b1b;
-      font-family: ui-monospace, "SFMono-Regular", "Cascadia Mono", "Cascadia Code", Consolas, "Liberation Mono", Menlo, monospace;
-      font-size: 13.5pt;
-      font-weight: 400;
-      line-height: 1.58;
-      margin: 0;
-      -webkit-print-color-adjust: exact;
-      print-color-adjust: exact;
-    }
-    main {
-      margin: 0;
-      max-width: none;
-      min-height: 100vh;
-      padding: 16mm 18mm 18mm 18mm;
-      width: 100%;
-    }
-    h1.bn-print-title {
-      color: #111111;
-      font-size: 27pt;
-      font-weight: 750;
-      letter-spacing: 0;
-      line-height: 1.18;
-      margin: 0 0 34px 0 !important;
-      padding: 0 0 14px 0 !important;
-      border-bottom: 1px solid #d8d8d8;
-    }
-    h1:not(.bn-print-title),
-    h2,
-    h3 {
-      color: #151515;
-      font-weight: 720;
-      letter-spacing: 0;
-      line-height: 1.24;
-      margin: 34px 0 14px 0 !important;
-      page-break-after: avoid;
-    }
-    h1:not(.bn-print-title) { font-size: 22pt; }
-    h2 { font-size: 18pt; }
-    h3 { font-size: 15.5pt; }
-    p {
-      line-height: 1.58 !important;
-      margin: 0 0 18px 0 !important;
-      orphans: 3;
-      widows: 3;
-    }
-    p + p {
-      margin-top: 4px !important;
-    }
-    p + h1,
-    p + h2,
-    p + h3,
-    ul + h1,
-    ul + h2,
-    ul + h3,
-    ol + h1,
-    ol + h2,
-    ol + h3,
-    blockquote + h1,
-    blockquote + h2,
-    blockquote + h3,
-    table + h1,
-    table + h2,
-    table + h3,
-    .bn-code-block + h1,
-    .bn-code-block + h2,
-    .bn-code-block + h3 {
-      margin-top: 40px !important;
-    }
-    a {
-      color: #111111;
-      text-decoration: underline;
-      text-decoration-thickness: 0.08em;
-      text-underline-offset: 0.14em;
-    }
-    ul,
-    ol {
-      margin: 12px 0 22px 0 !important;
-      padding-left: 28px !important;
-    }
-    li {
-      line-height: 1.55 !important;
-      margin: 7px 0 !important;
-    }
-    li > span {
-      line-height: 1.55 !important;
-    }
-    img {
-      display: block;
-      margin: 24px 0 !important;
-      max-width: 100%;
-      page-break-inside: avoid;
-    }
-    table {
-      border-collapse: collapse;
-      font-size: 12.5pt;
-      line-height: 1.45;
-      margin: 24px 0 !important;
-      page-break-inside: avoid;
-      width: 100%;
-    }
-    th, td {
-      border: 1px solid #d2d2d2;
-      padding: 9px 11px;
-      text-align: left;
-      vertical-align: top;
-    }
-    th {
-      background: #f4f4f4;
-      color: #111111;
-      font-weight: 700;
-    }
-    blockquote {
-      border-left: 4px solid #bdbdbd;
-      color: #3f3f3f;
-      font-size: 13pt;
-      font-style: italic;
-      line-height: 1.56;
-      margin: 24px 0 !important;
-      padding: 6px 0 6px 18px !important;
-      page-break-inside: avoid;
-    }
-    code {
-      background: #f3f3f3 !important;
-      color: #202020 !important;
-      font-family: ui-monospace, "SFMono-Regular", "Cascadia Mono", "Cascadia Code", Consolas, "Liberation Mono", Menlo, monospace !important;
-      font-size: 0.92em;
-      text-shadow: none !important;
-    }
-    .bn-code-block {
-      margin: 26px 0 !important;
-      page-break-inside: avoid;
-      position: relative;
-    }
-    .bn-code-block pre {
-      background: #f7f7f7 !important;
-      border: 1px solid #d8d8d8 !important;
-      color: #202020 !important;
-      font-size: 11.5pt;
-      line-height: 1.48;
-      margin: 0 !important;
-      overflow: visible;
-      padding: 16px 17px !important;
-      white-space: pre-wrap;
-      word-break: break-word;
-    }
-    .bn-copy-code { display: none !important; }
-  </style>
+  <style>${PrintStyles.get()}</style>
 </head>
 <body>
   <main>
@@ -514,18 +371,48 @@ const EditorView = {
     if (!confirmed) return;
 
     await Storage.deleteNote(this.currentNoteId);
+    await App.switchView(Constants.VIEWS.ALLNOTES);
     this.currentNoteId = null;
-    App.switchView('allnotes');
   },
 
   handleInput() {
     this.updateSaveButton();
     
-    // Auto-save after 1 second of inactivity
+    // Auto-save after delay
     clearTimeout(this.autoSaveTimeout);
+    if (!this.currentNoteId) return;
+
     this.autoSaveTimeout = setTimeout(() => {
       this.save(true);
-    }, 1000);
+    }, this.preferences.autoSaveDelay || Constants.NOTES.AUTO_SAVE_DELAY);
+  },
+
+  hasUnsavedNewDraft() {
+    if (this.currentNoteId) return false;
+    const { title, label, content } = UI.getEditorValues();
+    return !!(title || label || content);
+  },
+
+  async confirmDiscardUnsavedNewDraft() {
+    if (!this.hasUnsavedNewDraft()) return true;
+
+    const confirmed = await UI.showConfirm(
+      'This new note has not been saved yet. Continue and discard this temporary draft?',
+      'unsaved draft',
+      {
+        confirmText: 'discard',
+        cancelText: 'keep editing',
+        danger: true
+      }
+    );
+
+    if (confirmed) {
+      clearTimeout(this.autoSaveTimeout);
+      UI.clearEditor();
+      UI.setSaveStatus('empty');
+    }
+
+    return confirmed;
   },
 
   handleEditorInput() {
@@ -652,6 +539,90 @@ const EditorView = {
     editor.scrollTop = scrollTop;
     editor.scrollLeft = scrollLeft;
     this.syncEditorSearchHighlight();
+  },
+
+  refreshContextCaptureButton() {
+    UI.setContextCaptureButtonState(!!this.getPageContext());
+  },
+
+  getPageContext() {
+    const url = String(window.location?.href || '').trim();
+    const protocol = String(window.location?.protocol || '').toLowerCase();
+    if (!url || !['http:', 'https:', 'file:'].includes(protocol)) return null;
+
+    const title = this.getMetaContent('og:title') ||
+      this.getMetaContent('twitter:title') ||
+      document.title ||
+      url;
+    const description = this.getMetaContent('description') ||
+      this.getMetaContent('og:description') ||
+      this.getMetaContent('twitter:description') ||
+      '';
+
+    return {
+      title: title.trim(),
+      url,
+      description: description.trim()
+    };
+  },
+
+  getMetaContent(name) {
+    const selector = `meta[name="${name}"], meta[property="${name}"]`;
+    return document.querySelector(selector)?.getAttribute('content') || '';
+  },
+
+  async captureContext() {
+    const context = this.getPageContext();
+    UI.setContextCaptureButtonState(!!context);
+    if (!context) return;
+
+    const confirmed = await UI.showContextCaptureModal(context);
+    if (!confirmed) return;
+
+    UI.switchEditorTab('edit');
+    this.insertContextReference(context);
+  },
+
+  insertContextReference(context) {
+    const editor = UI.get('bn-editor');
+    if (!editor) return;
+
+    const markdown = this.formatContextReference(context);
+    const start = editor.selectionStart;
+    const end = editor.selectionEnd;
+    const prefix = start > 0 && editor.value[start - 1] !== '\n' ? '\n\n' : (start > 0 ? '\n' : '');
+    const suffix = editor.value[end] && editor.value[end] !== '\n' ? '\n\n' : '\n';
+    const replacement = `${prefix}${markdown}${suffix}`;
+    const nextCursor = start + replacement.length;
+    this.replaceEditorRange(start, end, replacement, nextCursor, nextCursor);
+  },
+
+  formatContextReference(context) {
+    const lines = [
+      '### Web Reference',
+      '',
+      `- Title: [${this.escapeMarkdownLinkText(context.title)}](${this.escapeMarkdownUrl(context.url)})`,
+      `- URL: ${context.url}`
+    ];
+
+    if (context.description) {
+      lines.push(`- Description: ${this.escapeMarkdownText(context.description)}`);
+    }
+
+    lines.push(`- Captured: ${Utils.formatDate(Date.now(), 'datetime')}`);
+    return lines.join('\n');
+  },
+
+  escapeMarkdownLinkText(value) {
+    return String(value || 'Untitled page').replace(/([\\\[\]])/g, '\\$1');
+  },
+
+  escapeMarkdownUrl(value) {
+    return String(value || '').replace(/\)/g, '%29');
+  },
+
+  escapeMarkdownText(value) {
+    return String(value || '').replace(/\s+/g, ' ').replace(/([\\`*_{}[\]()#+\-.!|>])/g, '\\$1');
   },
 
   openEditorSearch() {
@@ -850,7 +821,7 @@ const EditorView = {
       }))
       .filter(note => note.title.toLowerCase().includes(query))
       .sort((a, b) => a.title.localeCompare(b.title))
-      .slice(0, 8);
+      .slice(0, Constants.SEARCH.MAX_AUTOCOMPLETE_RESULTS);
 
     if (!matches.length) {
       this.hideNoteLinkAutocomplete();

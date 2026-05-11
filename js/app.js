@@ -7,6 +7,9 @@ const App = {
   init() {
     console.log('Brow Notes: Content script loaded');
 
+    // Initialize button effects
+    ButtonEffects.init();
+
     // Message listener
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       if (request.action === 'toggleDrawer') {
@@ -77,6 +80,7 @@ const App = {
       if (collapsed) {
         UI.showDrawer();
       } else {
+        if (this.currentView === 'editor' && !(await EditorView.confirmDiscardUnsavedNewDraft())) return;
         UI.hideDrawer();
       }
 
@@ -116,6 +120,7 @@ const App = {
     };
     UI.get('bn-btn-export-md').onclick = () => EditorView.exportMarkdown();
     UI.get('bn-btn-print-note').onclick = () => EditorView.printNote();
+    UI.get('bn-btn-context').onclick = () => EditorView.captureContext();
     UI.get('bn-btn-save').onclick = () => EditorView.save(false);
     UI.get('bn-btn-delete').onclick = () => EditorView.delete();
     UI.get('bn-note-favorite').onclick = () => EditorView.toggleFavorite();
@@ -176,6 +181,7 @@ const App = {
 
     // Settings
     UI.get('bn-nickname').onchange = () => SettingsView.save();
+    UI.get('bn-btn-preferences').onclick = () => SettingsView.showPreferences();
     UI.get('bn-btn-export').onclick = () => SettingsView.export();
     UI.get('bn-btn-import').onclick = () => UI.get('bn-import-file').click();
     UI.get('bn-import-file').onchange = (e) => SettingsView.import(e);
@@ -185,6 +191,12 @@ const App = {
     });
     Storage.getDrawerTheme().then((theme) => {
       UI.setDrawerTheme(theme);
+    });
+
+    window.addEventListener('beforeunload', (event) => {
+      if (!EditorView.hasUnsavedNewDraft()) return;
+      event.preventDefault();
+      event.returnValue = '';
     });
   },
 
@@ -216,7 +228,12 @@ const App = {
   },
 
   // Switch between views
-  switchView(view) {
+  async switchView(view) {
+    if (view !== 'editor' && this.currentView === 'editor') {
+      const canLeave = await EditorView.confirmDiscardUnsavedNewDraft();
+      if (!canLeave) return false;
+    }
+
     this.currentView = view;
     UI.switchView(view);
 
@@ -235,6 +252,7 @@ const App = {
     } else if (view === 'settings') {
       SettingsView.load();
     }
+    return true;
   }
 };
 
