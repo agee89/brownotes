@@ -5,12 +5,20 @@
   "description": "Markdown note drawer yang selalu tersedia di setiap tab browser",
   "permissions": [
     "storage",
+    "identity",
     "activeTab",
     "scripting"
   ],
   "host_permissions": [
-    "<all_urls>"
+    "<all_urls>",
+    "https://www.googleapis.com/*"
   ],
+  "oauth2": {
+    "client_id": "457045219168-hkmv3o07b11e7pigq7frrprmeu0qt8rh.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/drive.appdata"
+    ]
+  },
   "action": {
     "default_icon": {
       "16": "icons/icon16.png",

@@ -185,6 +185,9 @@ const App = {
     UI.get('bn-btn-export').onclick = () => SettingsView.export();
     UI.get('bn-btn-import').onclick = () => UI.get('bn-import-file').click();
     UI.get('bn-import-file').onchange = (e) => SettingsView.import(e);
+    UI.get('bn-btn-drive-backup').onclick = () => SettingsView.backupToDrive();
+    UI.get('bn-btn-drive-restore').onclick = () => SettingsView.restoreFromDrive();
+    UI.get('bn-btn-drive-disconnect').onclick = () => SettingsView.disconnectDrive();
 
     Storage.getDrawerTransparent().then((enabled) => {
       UI.setDrawerTransparent(enabled);

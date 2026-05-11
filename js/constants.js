@@ -78,8 +78,11 @@ const Constants = {
     DRAWER_COLLAPSED: 'drawerCollapsed',
     OPEN_NOTES_IN: 'openNotesIn',
     AUTO_SAVE_DELAY: 'autoSaveDelay',
+    AUTO_BACKUP_ENABLED: 'autoBackupEnabled',
+    AUTO_BACKUP_DELAY: 'autoBackupDelay',
     MAX_HISTORY_ENTRIES: 'maxHistoryEntries',
     LAST_BACKUP_AT: 'lastBackupAt',
+    DRIVE_SYNC: 'driveSync',
     LOCKED_LABEL_FILTER: 'lockedLabelFilter',
     GLOBAL_ENABLED: 'globalEnabled'
   },
@@ -90,6 +93,8 @@ const Constants = {
     THEME: 'light',
     OPEN_NOTES_IN: 'edit',
     AUTO_SAVE_DELAY: 1000,
+    AUTO_BACKUP_ENABLED: true,
+    AUTO_BACKUP_DELAY: 45000,
     MAX_HISTORY_ENTRIES: 5
   },
 

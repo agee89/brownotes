@@ -1217,7 +1217,12 @@ const DrawerHTML = `
     <button id="bn-btn-export" style="width: 100%; padding: 10px; background: transparent; color: #2a2a2a; border: 1px solid #e8e8e8; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; margin-bottom: 12px; transition: transform 0.1s ease; box-sizing: border-box;">export all notes</button>
     <button id="bn-btn-import" style="width: 100%; padding: 10px; background: transparent; color: #2a2a2a; border: 1px solid #e8e8e8; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; box-sizing: border-box;">import notes</button>
     <input type="file" id="bn-import-file" accept=".json" style="display: none;">
-    <div id="bn-privacy-panel" style="margin-top: 24px; padding: 12px; background: #f8f8f8; border-radius: 4px; font-size: 11px; color: #6a6a6a; line-height: 1.6;"><strong>privacy:</strong> all notes stored locally. no data sent to servers.</div>
+    <h3 style="margin: 24px 0 16px 0; font-size: 13px; font-weight: 600; letter-spacing: 0.5px;">google drive</h3>
+    <div id="bn-drive-status" style="margin-bottom: 12px; padding: 10px 12px; border: 1px solid #e8e8e8; color: #6a6a6a; font-size: 11px; line-height: 1.5; box-sizing: border-box;">not synced yet</div>
+    <button id="bn-btn-drive-backup" style="width: 100%; padding: 10px; background: #2a2a2a; color: #ffffff; border: 1px solid #2a2a2a; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; margin-bottom: 12px; transition: transform 0.1s ease; box-sizing: border-box;">backup to drive</button>
+    <button id="bn-btn-drive-restore" style="width: 100%; padding: 10px; background: transparent; color: #2a2a2a; border: 1px solid #e8e8e8; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; margin-bottom: 12px; transition: transform 0.1s ease; box-sizing: border-box;">restore from drive</button>
+    <button id="bn-btn-drive-disconnect" style="width: 100%; padding: 10px; background: transparent; color: #dc3545; border: 1px solid #dc3545; cursor: pointer; font-size: 12px; font-family: inherit; letter-spacing: 0.5px; transition: transform 0.1s ease; box-sizing: border-box;">disconnect drive</button>
+    <div id="bn-privacy-panel" style="margin-top: 24px; padding: 12px; background: #f8f8f8; border-radius: 4px; font-size: 11px; color: #6a6a6a; line-height: 1.6;"><strong>privacy:</strong> notes stay local unless you choose Google Drive backup. Drive sync uses the hidden app data folder.</div>
     <div style="margin-top: 32px; padding: 0; border-top: 1px solid #e8e8e8;">
       <div style="padding: 20px 0 16px 0; display: flex; align-items: center; justify-content: space-between;">
         <div style="flex: 1;">

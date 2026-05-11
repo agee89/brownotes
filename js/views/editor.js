@@ -139,6 +139,7 @@ const EditorView = {
 
     await this.refreshHistoryDropdown();
     UI.showSaveFeedback();
+    SettingsView.scheduleAutoBackup(silent ? 'autosave' : 'manual-save');
   },
 
   isClearingExistingContent(existingNote, nextContent) {
@@ -371,6 +372,7 @@ const EditorView = {
     if (!confirmed) return;
 
     await Storage.deleteNote(this.currentNoteId);
+    SettingsView.scheduleAutoBackup('delete-note');
     await App.switchView(Constants.VIEWS.ALLNOTES);
     this.currentNoteId = null;
   },

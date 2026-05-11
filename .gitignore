@@ -27,3 +27,6 @@ node_modules/
 # Chrome extension files yang di-generate
 *.crx
 *.pem
+
+# Google OAuth credentials
+client_secret_*.json

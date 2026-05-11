@@ -647,6 +647,8 @@ const UI = {
       const state = {
         openNotesIn: preferences?.openNotesIn === 'preview' ? 'preview' : 'edit',
         autoSaveDelay: Number(preferences?.autoSaveDelay) || Constants.DEFAULTS.AUTO_SAVE_DELAY,
+        autoBackupEnabled: preferences?.autoBackupEnabled !== false,
+        autoBackupDelay: Number(preferences?.autoBackupDelay) || Constants.DEFAULTS.AUTO_BACKUP_DELAY,
         maxHistoryEntries: Number(preferences?.maxHistoryEntries) || Constants.DEFAULTS.MAX_HISTORY_ENTRIES,
         drawerTheme: preferences?.drawerTheme === Constants.THEMES.DARK ? Constants.THEMES.DARK : Constants.THEMES.LIGHT
       };
@@ -754,6 +756,48 @@ const UI = {
       delayRow.appendChild(delayWrap);
       modal.appendChild(delayRow);
 
+      const backupRow = createRow('Auto Backup', 'Back up saved changes to Google Drive');
+      const backupSegment = document.createElement('div');
+      backupSegment.className = 'bn-preference-segment';
+      const backupChoices = [
+        createChoice('On', 'true', 'autoBackupEnabled', updateBackupChoices),
+        createChoice('Off', 'false', 'autoBackupEnabled', updateBackupChoices)
+      ];
+      backupChoices.forEach(button => {
+        button.onclick = () => {
+          state.autoBackupEnabled = button.dataset.value === 'true';
+          updateBackupChoices();
+          updateBackupDelayState();
+        };
+      });
+      function updateBackupChoices() {
+        backupChoices.forEach(button => {
+          button.dataset.active = String((button.dataset.value === 'true') === state.autoBackupEnabled);
+        });
+      }
+      backupChoices.forEach(button => backupSegment.appendChild(button));
+      backupRow.appendChild(backupSegment);
+      modal.appendChild(backupRow);
+
+      const backupDelayRow = createRow('Backup Delay', 'Idle time before automatic Google Drive backup (seconds)');
+      const backupDelayWrap = document.createElement('div');
+      backupDelayWrap.className = 'bn-preference-range';
+      const backupDelayRange = document.createElement('input');
+      backupDelayRange.type = 'range';
+      backupDelayRange.min = '15';
+      backupDelayRange.max = '300';
+      backupDelayRange.step = '15';
+      const backupDelayNumber = document.createElement('input');
+      backupDelayNumber.type = 'number';
+      backupDelayNumber.min = '15';
+      backupDelayNumber.max = '300';
+      backupDelayNumber.step = '15';
+      backupDelayNumber.className = 'bn-preference-number';
+      backupDelayWrap.appendChild(backupDelayRange);
+      backupDelayWrap.appendChild(backupDelayNumber);
+      backupDelayRow.appendChild(backupDelayWrap);
+      modal.appendChild(backupDelayRow);
+
       const historyRow = createRow('Max History Entries', 'Maximum number of version history to keep');
       const historyWrap = document.createElement('div');
       historyWrap.className = 'bn-preference-range';
@@ -799,6 +843,17 @@ const UI = {
         delayRange.value = String(state.autoSaveDelay);
         delayNumber.value = String(state.autoSaveDelay);
       };
+      const syncBackupDelay = (value) => {
+        state.autoBackupDelay = clamp(Number(value) * 1000, 15000, 300000, Constants.DEFAULTS.AUTO_BACKUP_DELAY);
+        const seconds = String(Math.round(state.autoBackupDelay / 1000));
+        backupDelayRange.value = seconds;
+        backupDelayNumber.value = seconds;
+      };
+      const updateBackupDelayState = () => {
+        backupDelayRange.disabled = !state.autoBackupEnabled;
+        backupDelayNumber.disabled = !state.autoBackupEnabled;
+        backupDelayWrap.style.opacity = state.autoBackupEnabled ? '1' : '0.48';
+      };
       const syncHistory = (value) => {
         state.maxHistoryEntries = clamp(value, 3, 20, Constants.DEFAULTS.MAX_HISTORY_ENTRIES);
         historyRange.value = String(state.maxHistoryEntries);
@@ -807,6 +862,8 @@ const UI = {
 
       delayRange.oninput = () => syncDelay(delayRange.value);
       delayNumber.oninput = () => syncDelay(delayNumber.value);
+      backupDelayRange.oninput = () => syncBackupDelay(backupDelayRange.value);
+      backupDelayNumber.oninput = () => syncBackupDelay(backupDelayNumber.value);
       historyRange.oninput = () => syncHistory(historyRange.value);
       historyNumber.oninput = () => syncHistory(historyNumber.value);
 
@@ -868,7 +925,10 @@ const UI = {
 
       updateOpenChoices();
       updateThemeChoices();
+      updateBackupChoices();
       syncDelay(state.autoSaveDelay);
+      syncBackupDelay(state.autoBackupDelay / 1000);
+      updateBackupDelayState();
       syncHistory(state.maxHistoryEntries);
       saveButton.focus();
     });

@@ -31,6 +31,8 @@ const StorageSettings = {
     const result = await StorageCore.get([
       Constants.STORAGE_KEYS.OPEN_NOTES_IN,
       Constants.STORAGE_KEYS.AUTO_SAVE_DELAY,
+      Constants.STORAGE_KEYS.AUTO_BACKUP_ENABLED,
+      Constants.STORAGE_KEYS.AUTO_BACKUP_DELAY,
       Constants.STORAGE_KEYS.MAX_HISTORY_ENTRIES,
       Constants.STORAGE_KEYS.DRAWER_THEME
     ]);
@@ -38,6 +40,8 @@ const StorageSettings = {
     return {
       openNotesIn: result.openNotesIn === 'preview' ? 'preview' : Constants.DEFAULTS.OPEN_NOTES_IN,
       autoSaveDelay: this.clampNumber(result.autoSaveDelay, 500, 5000, Constants.DEFAULTS.AUTO_SAVE_DELAY),
+      autoBackupEnabled: result.autoBackupEnabled !== false,
+      autoBackupDelay: this.clampNumber(result.autoBackupDelay, 15000, 300000, Constants.DEFAULTS.AUTO_BACKUP_DELAY),
       maxHistoryEntries: this.clampNumber(result.maxHistoryEntries, 3, 20, Constants.DEFAULTS.MAX_HISTORY_ENTRIES),
       drawerTheme: result.drawerTheme === Constants.THEMES.DARK ? Constants.THEMES.DARK : Constants.THEMES.LIGHT
     };
@@ -47,6 +51,8 @@ const StorageSettings = {
     const nextPreferences = {
       openNotesIn: preferences?.openNotesIn === 'preview' ? 'preview' : 'edit',
       autoSaveDelay: this.clampNumber(preferences?.autoSaveDelay, 500, 5000, Constants.DEFAULTS.AUTO_SAVE_DELAY),
+      autoBackupEnabled: preferences?.autoBackupEnabled !== false,
+      autoBackupDelay: this.clampNumber(preferences?.autoBackupDelay, 15000, 300000, Constants.DEFAULTS.AUTO_BACKUP_DELAY),
       maxHistoryEntries: this.clampNumber(preferences?.maxHistoryEntries, 3, 20, Constants.DEFAULTS.MAX_HISTORY_ENTRIES),
       drawerTheme: preferences?.drawerTheme === Constants.THEMES.DARK ? Constants.THEMES.DARK : Constants.THEMES.LIGHT
     };
@@ -54,6 +60,8 @@ const StorageSettings = {
     await StorageCore.set({
       openNotesIn: nextPreferences.openNotesIn,
       autoSaveDelay: nextPreferences.autoSaveDelay,
+      autoBackupEnabled: nextPreferences.autoBackupEnabled,
+      autoBackupDelay: nextPreferences.autoBackupDelay,
       maxHistoryEntries: nextPreferences.maxHistoryEntries,
       drawerTheme: nextPreferences.drawerTheme
     });
@@ -98,6 +106,44 @@ const StorageSettings = {
 
   async saveLastBackupAt(lastBackupAt) {
     await StorageCore.set({ lastBackupAt });
+  },
+
+  async getDriveSync() {
+    const result = await StorageCore.get([Constants.STORAGE_KEYS.DRIVE_SYNC]);
+    return result.driveSync || {
+      fileId: null,
+      lastSyncedAt: null,
+      remoteModifiedTime: null,
+      size: null,
+      pendingSince: null,
+      lastError: null
+    };
+  },
+
+  async saveDriveSync(driveSync) {
+    await StorageCore.set({
+      driveSync: {
+        fileId: driveSync?.fileId || null,
+        lastSyncedAt: driveSync?.lastSyncedAt || null,
+        remoteModifiedTime: driveSync?.remoteModifiedTime || null,
+        size: driveSync?.size || null,
+        pendingSince: driveSync?.pendingSince || null,
+        lastError: driveSync?.lastError || null
+      }
+    });
+  },
+
+  async clearDriveSync() {
+    await StorageCore.set({
+      driveSync: {
+        fileId: null,
+        lastSyncedAt: null,
+        remoteModifiedTime: null,
+        size: null,
+        pendingSince: null,
+        lastError: null
+      }
+    });
   },
 
   async getLockedLabelFilter() {
@@ -157,6 +203,8 @@ const StorageSettings = {
       ...(data.preferences ? {
         openNotesIn: data.preferences.openNotesIn === 'preview' ? 'preview' : 'edit',
         autoSaveDelay: this.clampNumber(data.preferences.autoSaveDelay, 500, 5000, Constants.DEFAULTS.AUTO_SAVE_DELAY),
+        autoBackupEnabled: data.preferences.autoBackupEnabled !== false,
+        autoBackupDelay: this.clampNumber(data.preferences.autoBackupDelay, 15000, 300000, Constants.DEFAULTS.AUTO_BACKUP_DELAY),
         maxHistoryEntries: this.clampNumber(data.preferences.maxHistoryEntries, 3, 20, Constants.DEFAULTS.MAX_HISTORY_ENTRIES),
         drawerTheme: data.preferences.drawerTheme === Constants.THEMES.DARK ? Constants.THEMES.DARK : Constants.THEMES.LIGHT
       } : {})

@@ -1,5 +1,8 @@
 // Background service worker untuk mengelola global state
 let globalEnabled = false;
+const DRIVE_BACKUP_FILENAME = 'brownotes-sync.json';
+const DRIVE_API_BASE = 'https://www.googleapis.com/drive/v3';
+const DRIVE_UPLOAD_BASE = 'https://www.googleapis.com/upload/drive/v3';
 
 // Initialize state saat extension pertama kali diinstall
 chrome.runtime.onInstalled.addListener(async () => {
@@ -55,16 +58,26 @@ chrome.action.onClicked.addListener(async (tab) => {
         await chrome.scripting.executeScript({
           target: { tabId: t.id },
           files: [
-            'js/utils.js',
-            'js/quotes.js',
+            'js/constants.js',
+            'js/helpers/utils.js',
+            'js/renderers/markdown-renderer.js',
+            'js/renderers/print-styles.js',
+            'js/helpers/drawer-helpers.js',
+            'js/data/quotes.js',
+            'js/storage/core.js',
+            'js/storage/notes.js',
+            'js/storage/labels.js',
+            'js/storage/settings.js',
             'js/storage.js',
-            'js/templates.js',
+            'js/data/templates.js',
+            'js/helpers/button-effects.js',
             'js/ui.js',
             'js/drawer.js',
             'js/views/home.js',
             'js/views/allnotes.js',
             'js/views/editor.js',
             'js/views/labels.js',
+            'js/views/trash.js',
             'js/views/settings.js',
             'js/app.js'
           ]
@@ -128,6 +141,188 @@ function updateIcon(enabled) {
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'getGlobalState') {
     sendResponse({ enabled: globalEnabled });
+    return true;
   }
+
+  if (request.action === 'googleDriveBackup') {
+    handleGoogleDriveBackup(request.data, request.interactive !== false)
+      .then(sendResponse)
+      .catch((error) => sendResponse({ ok: false, error: error.message }));
+    return true;
+  }
+
+  if (request.action === 'googleDriveRestore') {
+    handleGoogleDriveRestore()
+      .then(sendResponse)
+      .catch((error) => sendResponse({ ok: false, error: error.message }));
+    return true;
+  }
+
+  if (request.action === 'googleDriveDisconnect') {
+    handleGoogleDriveDisconnect()
+      .then(sendResponse)
+      .catch((error) => sendResponse({ ok: false, error: error.message }));
+    return true;
+  }
+
   return true;
 });
+
+function getGoogleAuthToken(interactive = true) {
+  return new Promise((resolve, reject) => {
+    if (!chrome.identity?.getAuthToken) {
+      reject(new Error('Chrome identity API is not available.'));
+      return;
+    }
+
+    chrome.identity.getAuthToken({ interactive }, (token) => {
+      const error = chrome.runtime.lastError;
+      if (error) {
+        reject(new Error(error.message));
+        return;
+      }
+
+      if (!token) {
+        reject(new Error('Google authorization was cancelled.'));
+        return;
+      }
+
+      resolve(token);
+    });
+  });
+}
+
+async function fetchGoogleDrive(path, options = {}) {
+  const token = await getGoogleAuthToken(options.interactive !== false);
+  const response = await fetch(path, {
+    ...options,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      ...(options.headers || {})
+    }
+  });
+
+  if (response.status === 401) {
+    await removeCachedToken(token);
+  }
+
+  if (!response.ok) {
+    const message = await readGoogleError(response);
+    throw new Error(message);
+  }
+
+  return response;
+}
+
+async function readGoogleError(response) {
+  try {
+    const body = await response.json();
+    return body?.error?.message || `Google Drive request failed (${response.status})`;
+  } catch (error) {
+    return `Google Drive request failed (${response.status})`;
+  }
+}
+
+function removeCachedToken(token) {
+  return new Promise((resolve) => {
+    if (!token || !chrome.identity?.removeCachedAuthToken) {
+      resolve();
+      return;
+    }
+
+    chrome.identity.removeCachedAuthToken({ token }, () => resolve());
+  });
+}
+
+async function findDriveBackupFile(interactive = true) {
+  const query = encodeURIComponent(`name='${DRIVE_BACKUP_FILENAME}' and trashed=false`);
+  const fields = encodeURIComponent('files(id,name,modifiedTime,size)');
+  const response = await fetchGoogleDrive(`${DRIVE_API_BASE}/files?q=${query}&spaces=appDataFolder&fields=${fields}`, { interactive });
+  const result = await response.json();
+  return result.files?.[0] || null;
+}
+
+function createDriveMultipartBody(metadata, data) {
+  const boundary = `brownotes_${Date.now()}`;
+  const body = [
+    `--${boundary}`,
+    'Content-Type: application/json; charset=UTF-8',
+    '',
+    JSON.stringify(metadata),
+    `--${boundary}`,
+    'Content-Type: application/json; charset=UTF-8',
+    '',
+    JSON.stringify(data, null, 2),
+    `--${boundary}--`
+  ].join('\r\n');
+
+  return { boundary, body };
+}
+
+async function uploadDriveBackup(data, interactive = true) {
+  const existingFile = await findDriveBackupFile(interactive);
+  const metadata = existingFile
+    ? { name: DRIVE_BACKUP_FILENAME }
+    : { name: DRIVE_BACKUP_FILENAME, parents: ['appDataFolder'] };
+  const { boundary, body } = createDriveMultipartBody(metadata, {
+    ...data,
+    driveSyncedAt: new Date().toISOString()
+  });
+  const method = existingFile ? 'PATCH' : 'POST';
+  const url = existingFile
+    ? `${DRIVE_UPLOAD_BASE}/files/${existingFile.id}?uploadType=multipart&fields=id,modifiedTime,size`
+    : `${DRIVE_UPLOAD_BASE}/files?uploadType=multipart&fields=id,modifiedTime,size`;
+
+  const response = await fetchGoogleDrive(url, {
+    method,
+    interactive,
+    headers: {
+      'Content-Type': `multipart/related; boundary=${boundary}`
+    },
+    body
+  });
+
+  return response.json();
+}
+
+async function handleGoogleDriveBackup(data, interactive = true) {
+  if (!data?.notes) {
+    throw new Error('No notes data to back up.');
+  }
+
+  const file = await uploadDriveBackup(data, interactive);
+  return {
+    ok: true,
+    fileId: file.id,
+    modifiedTime: file.modifiedTime || null,
+    size: file.size || null
+  };
+}
+
+async function handleGoogleDriveRestore() {
+  const file = await findDriveBackupFile();
+  if (!file?.id) {
+    throw new Error('No Google Drive backup found.');
+  }
+
+  const response = await fetchGoogleDrive(`${DRIVE_API_BASE}/files/${file.id}?alt=media`);
+  const data = await response.json();
+  return {
+    ok: true,
+    data,
+    fileId: file.id,
+    modifiedTime: file.modifiedTime || null,
+    size: file.size || null
+  };
+}
+
+async function handleGoogleDriveDisconnect() {
+  try {
+    const token = await getGoogleAuthToken(false);
+    await removeCachedToken(token);
+  } catch (error) {
+    // It is already effectively disconnected if no cached token exists.
+  }
+
+  return { ok: true };
+}

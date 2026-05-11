@@ -112,6 +112,7 @@ const LabelsView = {
     if (!renamedLabel) return;
     await this.load();
     UI.updateLabelSuggestions(await Storage.getLabels());
+    SettingsView.scheduleAutoBackup('rename-label');
   },
 
   async delete(label) {
@@ -123,6 +124,7 @@ const LabelsView = {
 
     await Storage.deleteLabel(label);
     await this.load();
+    SettingsView.scheduleAutoBackup('delete-label');
   },
 
   async add() {
@@ -143,6 +145,7 @@ const LabelsView = {
     if (!createdLabel) return;
     await this.load();
     UI.updateLabelSuggestions(await Storage.getLabels());
+    SettingsView.scheduleAutoBackup('add-label');
   },
 
   async openColorPicker(label) {
@@ -228,6 +231,7 @@ const LabelsView = {
         await this.load();
         AllNotesView.render();
         TrashView.load();
+        SettingsView.scheduleAutoBackup('label-color');
       });
       grid.appendChild(button);
     });
@@ -258,6 +262,7 @@ const LabelsView = {
       await this.load();
       AllNotesView.render();
       TrashView.load();
+      SettingsView.scheduleAutoBackup('label-color-reset');
     });
     actions.appendChild(reset);
 

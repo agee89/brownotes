@@ -156,6 +156,7 @@ const TrashView = {
   async restore(noteId) {
     await Storage.restoreNote(noteId);
     await this.load();
+    SettingsView.scheduleAutoBackup('restore-note');
   },
 
   async deleteForever(noteId) {
@@ -167,6 +168,7 @@ const TrashView = {
 
     await Storage.deleteTrashNote(noteId);
     await this.load();
+    SettingsView.scheduleAutoBackup('delete-trash-note');
   },
 
   async empty() {
@@ -178,5 +180,6 @@ const TrashView = {
 
     await Storage.emptyTrash();
     await this.load();
+    SettingsView.scheduleAutoBackup('empty-trash');
   }
 };
