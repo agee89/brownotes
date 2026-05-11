@@ -1,4 +1,4 @@
-# Testing Guide - Bro Notes v3.0.0
+# Testing Guide - Brow Notes v3.0.0
 
 Quick guide to test all functionality after bug fixes.
 
@@ -8,7 +8,7 @@ Quick guide to test all functionality after bug fixes.
 
 ### 1. Extension Loads ✅
 1. Open Chrome
-2. Click Bro Notes extension icon
+2. Click Brow Notes extension icon
 3. **Expected**: Drawer slides in from right
 4. **If fails**: Check [Module Loading Fix](../bugfixes/BUGFIX_MODULE_LOADING.md)
 
@@ -132,7 +132,7 @@ Quick guide to test all functionality after bug fixes.
 1. Open Chrome DevTools (F12)
 2. Go to Console tab
 3. Reload page
-4. **Expected**: "Bro Notes: Content script loaded"
+4. **Expected**: "Brow Notes: Content script loaded"
 5. **No errors** should appear
 
 ### Module Loading

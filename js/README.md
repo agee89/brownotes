@@ -1,6 +1,6 @@
 # JavaScript Modules
 
-This directory contains all JavaScript modules for Bro Notes.
+This directory contains all JavaScript modules for Brow Notes.
 
 ## 📁 Structure
 
@@ -279,7 +279,7 @@ All async operations use async/await pattern.
 
 Each module logs its operations:
 ```javascript
-console.log('Bro Notes: [Module] Action');
+console.log('Brow Notes: [Module] Action');
 ```
 
 Check console for module-specific logs to trace execution flow.

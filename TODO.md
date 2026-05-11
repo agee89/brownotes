@@ -1,4 +1,4 @@
-# TODO List - Bro Notes
+# TODO List - Brow Notes
 
 ## MVP (v1.0.0) - Current
 

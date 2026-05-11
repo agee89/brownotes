@@ -1,16 +1,24 @@
 {
   "manifest_version": 3,
-  "name": "Bro Notes",
+  "name": "Brow Notes",
   "version": "3.0.0",
   "description": "Markdown note drawer yang selalu tersedia di setiap tab browser",
   "permissions": [
     "storage",
+    "identity",
     "activeTab",
     "scripting"
   ],
   "host_permissions": [
-    "<all_urls>"
+    "<all_urls>",
+    "https://www.googleapis.com/*"
   ],
+  "oauth2": {
+    "client_id": "457045219168-hkmv3o07b11e7pigq7frrprmeu0qt8rh.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/drive.appdata"
+    ]
+  },
   "action": {
     "default_icon": {
       "16": "icons/icon16.png",
@@ -18,7 +26,7 @@
       "48": "icons/icon48.png",
       "128": "icons/icon128.png"
     },
-    "default_title": "Toggle Bro Notes"
+    "default_title": "Toggle Brow Notes"
   },
   "background": {
     "service_worker": "background.js"
@@ -27,14 +35,26 @@
     {
       "matches": ["<all_urls>"],
       "js": [
-        "js/utils.js",
+        "js/constants.js",
+        "js/helpers/utils.js",
+        "js/renderers/markdown-renderer.js",
+        "js/renderers/print-styles.js",
+        "js/helpers/drawer-helpers.js",
+        "js/data/quotes.js",
+        "js/storage/core.js",
+        "js/storage/notes.js",
+        "js/storage/labels.js",
+        "js/storage/settings.js",
         "js/storage.js",
+        "js/data/templates.js",
+        "js/helpers/button-effects.js",
         "js/ui.js",
         "js/drawer.js",
         "js/views/home.js",
         "js/views/allnotes.js",
         "js/views/editor.js",
         "js/views/labels.js",
+        "js/views/trash.js",
         "js/views/settings.js",
         "js/app.js"
       ],
@@ -46,6 +66,7 @@
     {
       "resources": [
         "icons/*",
+        "icons/toolbar/*.svg",
         "js/*.js",
         "js/views/*.js"
       ],

@@ -12,7 +12,7 @@
 **1. Reload Extension**
 ```
 1. Buka chrome://extensions/
-2. Find "Bro Notes"
+2. Find "Brow Notes"
 3. Click reload icon (⟳)
 ```
 
@@ -24,7 +24,7 @@
 
 **3. Click Extension Icon**
 ```
-1. Click icon Bro Notes di toolbar
+1. Click icon Brow Notes di toolbar
 2. Drawer should slide in from right
 ```
 
@@ -34,14 +34,14 @@
 ```
 1. Press F12
 2. Go to Console tab
-3. Look for "Bro Notes:" messages
+3. Look for "Brow Notes:" messages
 4. Check for errors
 ```
 
 **Expected Console Output:**
 ```
-Bro Notes: Content script loaded
-Bro Notes: Service worker started
+Brow Notes: Content script loaded
+Brow Notes: Service worker started
 ```
 
 **If You See Errors:**

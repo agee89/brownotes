@@ -1,4 +1,4 @@
-# Icons untuk Bro Notes
+# Icons untuk Brow Notes
 
 Extension ini membutuhkan icon dalam berbagai ukuran. Anda perlu menambahkan file-file berikut:
 

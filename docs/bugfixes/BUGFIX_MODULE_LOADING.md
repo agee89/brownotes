@@ -135,7 +135,7 @@ Scripts load in this exact order:
 3. **Check Console**
    ```
    F12 → Console
-   Should see: "Bro Notes: Content script loaded"
+   Should see: "Brow Notes: Content script loaded"
    ```
 
 4. **Verify Drawer**

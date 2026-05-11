@@ -2,7 +2,7 @@
 
 ## Summary
 
-All documentation has been reviewed, updated, and cleaned up to reflect the current state of Bro Notes v3.0.0.
+All documentation has been reviewed, updated, and cleaned up to reflect the current state of Brow Notes v3.0.0.
 
 ## 🗑️ Files Deleted
 

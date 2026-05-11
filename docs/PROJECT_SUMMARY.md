@@ -1,8 +1,8 @@
-# Bro Notes - Project Summary
+# Brow Notes - Project Summary
 
 ## 📋 Overview
 
-**Bro Notes** adalah Chrome extension untuk note-taking dengan Markdown support. Extension ini menggunakan modular MVC architecture, dirancang dengan prinsip **privacy-first** dan **local-first**.
+**Brow Notes** adalah Chrome extension untuk note-taking dengan Markdown support. Extension ini menggunakan modular MVC architecture, dirancang dengan prinsip **privacy-first** dan **local-first**.
 
 ## 🎯 Project Status
 
@@ -48,8 +48,7 @@ bronotes/
 ├── README.md                  # Main documentation
 ├── CHANGELOG.md               # Version history
 ├── TODO.md                    # Future plans
-├── LICENSE                    # MIT License
-└── generate-icons.html        # Icon generator tool
+└── LICENSE                    # MIT License
 ```
 
 ## ✨ Features (v3.0.0)
@@ -266,6 +265,6 @@ MIT License - See [LICENSE](../LICENSE)
 
 ---
 
-**Bro Notes v3.0.0** - Modular, maintainable, production-ready 🚀
+**Brow Notes v3.0.0** - Modular, maintainable, production-ready 🚀
 
 Last Updated: January 2024

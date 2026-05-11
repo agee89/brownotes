@@ -1,4 +1,4 @@
-# Bro Notes - Developer Guide
+# Brow Notes - Developer Guide
 
 ## 🚀 Quick Start
 
@@ -18,7 +18,7 @@
 ### Development Workflow
 1. Make changes to code
 2. Go to `chrome://extensions/`
-3. Click reload icon on Bro Notes extension
+3. Click reload icon on Brow Notes extension
 4. Test changes in any tab
 5. Check console for errors (F12 → Console)
 
@@ -172,13 +172,13 @@ const UI = {
 ### Console Logging
 Each module logs its operations:
 ```javascript
-console.log('Bro Notes: [Module] Action');
+console.log('Brow Notes: [Module] Action');
 ```
 
 ### Debug Checklist
 1. Open DevTools (F12)
 2. Check Console for errors
-3. Check "Bro Notes:" logs
+3. Check "Brow Notes:" logs
 4. Inspect drawer element
 5. Check Chrome Storage (Application → Storage)
 

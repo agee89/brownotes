@@ -1,6 +1,6 @@
-# Git Workflow - Bro Notes
+# Git Workflow - Brow Notes
 
-Panduan penggunaan Git untuk development Bro Notes.
+Panduan penggunaan Git untuk development Brow Notes.
 
 ---
 
@@ -346,7 +346,7 @@ git stash drop stash@{0}
 
 ### Latest Commit
 ```
-b7a1fb8 Initial commit: Bro Notes v3.0.0 - Modular Architecture
+b7a1fb8 Initial commit: Brow Notes v3.0.0 - Modular Architecture
 ```
 
 ### Files Tracked
